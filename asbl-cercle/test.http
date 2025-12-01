@@ -1,0 +1,30 @@
+### LIST PUBLIC EVENTS
+GET http://localhost:8080/api/public/events
+
+### ADMIN LIST ALL EVENTS
+GET http://localhost:8080/api/admin/events
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5hZG1pbiIsImlhdCI6MTc2NDYyMTc4NCwiZXhwIjoxNzY0NjI1Mzg0fQ.5v2j9T7FEohjAbyttMyIu7Ad9qCDwITfR_b5N2fcp7o
+
+### ADMIN CREATE EVENT
+POST http://localhost:8080/api/admin/events
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5hZG1pbiIsImlhdCI6MTc2NDYyMTc4NCwiZXhwIjoxNzY0NjI1Mzg0fQ.5v2j9T7FEohjAbyttMyIu7Ad9qCDwITfR_b5N2fcp7o
+Content-Type: application/json
+
+{
+  "title": "Tournoi de Basket Privé",
+  "description": "Tournoi serieux de basket fermé sur invitation",
+  "startDateTime": "2025-12-22T10:00:00",
+  "endDateTime": "2025-12-22T14:00:00",
+  "capacity": 12,
+  "price": 99.0,
+  "status": "CANCELLED"
+}
+
+### LOGIN
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@admin.admin",
+  "password": "123456@789"
+}

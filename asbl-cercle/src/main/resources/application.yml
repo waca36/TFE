@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/asbl_cercle?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Europe/Brussels
+    username: root
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  port: 8080
+
+app:
+  security:
+    jwt:
+      secret: "4Fk!92q@Px#71Lm$Rz%8Bn^Ty&c3aVj*WQ6tEe0Hu!(YsDp)LKfG5Sd?XMb"
+      expiration: 3600000  # 1 heure en millisecondes

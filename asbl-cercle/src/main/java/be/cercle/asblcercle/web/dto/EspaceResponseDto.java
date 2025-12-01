@@ -1,0 +1,32 @@
+package be.cercle.asblcercle.web.dto;
+
+import be.cercle.asblcercle.entity.Espace;
+import be.cercle.asblcercle.entity.EspaceStatus;
+
+public class EspaceResponseDto {
+
+    private Long id;
+    private String name;
+    private String type;
+    private Integer capacity;
+    private Double basePrice;
+    private EspaceStatus status;
+
+    public static EspaceResponseDto fromEntity(Espace espace) {
+        EspaceResponseDto dto = new EspaceResponseDto();
+        dto.id = espace.getId();
+        dto.name = espace.getName();
+        dto.type = espace.getType();
+        dto.capacity = espace.getCapacity();
+        dto.basePrice = espace.getBasePrice();
+        dto.status = espace.getStatus();
+        return dto;
+    }
+
+    public Long getId() { return id; }
+    public String getName() { return name; }
+    public String getType() { return type; }
+    public Integer getCapacity() { return capacity; }
+    public Double getBasePrice() { return basePrice; }
+    public EspaceStatus getStatus() { return status; }
+}
