@@ -28,3 +28,44 @@ Content-Type: application/json
   "email": "admin@admin.admin",
   "password": "123456@789"
 }
+### LOGIN
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "ouassim2@example.com",
+  "password": "motdepasse123"
+}
+
+### PUBLIC - sessions garderie
+GET http://localhost:8080/api/public/garderie/sessions
+
+### ADMIN - créer une session garderie
+POST http://localhost:8080/api/admin/garderie/sessions
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5hZG1pbiIsImlhdCI6MTc2NDYzMDI0MSwiZXhwIjoxNzY0NjMzODQxfQ.2FOhUKsKgTnx5M28c4BvuIA5tkrhBomquvKRXJ0t9aA
+Content-Type: application/json
+
+{
+  "title": "Garderie du mercredi après-midi",
+  "description": "Accueil des enfants de 6 à 12 ans.",
+  "sessionDate": "2025-12-17",
+  "startTime": "14:00:00",
+  "endTime": "18:00:00",
+  "capacity": 15,
+  "pricePerChild": 5.0,
+  "status": "OPEN"
+}
+
+### USER - réserver une session garderie
+POST http://localhost:8080/api/public/garderie/reservations
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJvdWFzc2ltMkBleGFtcGxlLmNvbSIsImlhdCI6MTc2NDYzMDE1MiwiZXhwIjoxNzY0NjMzNzUyfQ.JqBn9UfzfpdkwmzdFiSJQdxsnCa64Ba9o0Pg3VZNQik
+Content-Type: application/json
+
+{
+  "sessionId": 1,
+  "numberOfChildren": 2
+}
+
+### USER - voir mes réservations garderie
+GET http://localhost:8080/api/public/garderie/reservations/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJvdWFzc2ltMkBleGFtcGxlLmNvbSIsImlhdCI6MTc2NDYzMDE1MiwiZXhwIjoxNzY0NjMzNzUyfQ.JqBn9UfzfpdkwmzdFiSJQdxsnCa64Ba9o0Pg3VZNQik

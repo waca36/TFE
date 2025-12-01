@@ -34,7 +34,7 @@ public class EventController {
     @PostMapping("/api/admin/events")
     public EventResponseDto create(@Valid @RequestBody EventRequest request) {
         return eventService.createEvent(request);
-    }
+    } // @TODO regler les events pas possible de mettre une date de fin avant la date de debut etc
 
     // ADMIN : modifier
     @PutMapping("/api/admin/events/{id}")

@@ -107,3 +107,52 @@ export async function adminDeleteEspace(id, token) {
   if (!res.ok) throw new Error("Erreur suppression espace (admin)");
 }
 
+export async function getPublicEvents() {
+  const res = await fetch("http://localhost:8080/api/public/events");
+  if (!res.ok) throw new Error("Erreur chargement événements");
+  return res.json();
+}
+
+export async function adminGetEvents(token) {
+  const res = await fetch("http://localhost:8080/api/admin/events", {
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error("Erreur admin events");
+  return res.json();
+}
+
+export async function adminCreateEvent(payload, token) {
+  const res = await fetch("http://localhost:8080/api/admin/events", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(token),
+    },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error("Erreur création event");
+  return res.json();
+}
+
+export async function adminUpdateEvent(id, payload, token) {
+  const res = await fetch(`http://localhost:8080/api/admin/events/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(token),
+    },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error("Erreur modification event");
+  return res.json();
+}
+
+export async function adminDeleteEvent(id, token) {
+  const res = await fetch(`http://localhost:8080/api/admin/events/${id}`, {
+    method: "DELETE",
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error("Erreur suppression event");
+}
+
+

@@ -38,11 +38,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/public/espaces/**").permitAll()
                         .requestMatchers("/api/public/events/**").permitAll()
+                        .requestMatchers("/api/public/garderie/sessions/**").permitAll()
                         .requestMatchers("/api/public/reservations/**").authenticated()
+                        .requestMatchers("/api/public/garderie/reservations/**").authenticated()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

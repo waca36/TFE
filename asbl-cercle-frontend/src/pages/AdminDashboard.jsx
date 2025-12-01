@@ -41,6 +41,11 @@ export default function AdminDashboard() {
 
       {error && <p style={{ color: "red" }}>{error}</p>}
 
+      <p>
+        <Link to="/admin/events">Gestion des événements</Link>
+      </p>
+
+
       <div style={{ marginBottom: "1rem" }}>
         <Link to="/admin/espaces/new">+ Créer un espace</Link>
       </div>

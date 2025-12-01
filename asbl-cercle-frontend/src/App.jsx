@@ -1,5 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
+
+import Layout from "./components/Layout";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import EspacesPage from "./pages/EspacesPage";
@@ -7,10 +9,10 @@ import MyReservationsPage from "./pages/MyReservationsPage";
 import CreateReservationPage from "./pages/CreateReservationPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminEspaceForm from "./pages/AdminEspaceForm";
+import EventsPage from "./pages/EventsPage";
+import AdminEventsDashboard from "./pages/AdminEventsDashboard";
+import AdminEventForm from "./pages/AdminEventForm";
 
-
-
-import Layout from "./components/Layout";
 
 export default function App() {
   return (
@@ -78,6 +80,44 @@ export default function App() {
           </Layout>
         }
       />
+
+      <Route
+        path="/events"
+        element={
+          <Layout>
+            <EventsPage />
+          </Layout>
+        }
+      />
+      
+      <Route
+        path="/admin/events"
+        element={
+          <Layout>
+            <AdminEventsDashboard />
+          </Layout>
+        }
+      />
+
+      <Route
+        path="/admin/events/new"
+        element={
+          <Layout>
+            <AdminEventForm />
+          </Layout>
+        }
+      />
+
+      <Route
+        path="/admin/events/:id/edit"
+        element={
+          <Layout>
+            <AdminEventForm />
+          </Layout>
+        }
+      />
+
+
 
 
       {/* Page 404 */}

@@ -18,6 +18,7 @@ export default function Navbar() {
 
       <nav style={styles.nav}>
         <Link to="/espace" style={styles.link}>Espaces</Link>
+        <Link to="/events" style={styles.link}>Événements</Link>
         <Link to="/reservations" style={styles.link}>Mes réservations</Link>
         {user?.role === "ADMIN" && (
           <Link to="/admin" style={styles.link}>Admin</Link>
