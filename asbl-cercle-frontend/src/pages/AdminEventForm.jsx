@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import {
-  adminCreateEvent,
-  adminUpdateEvent,
-} from "../services/api";
+import { adminCreateEvent, adminUpdateEvent } from "../services/api";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function AdminEventForm() {
   const { user, token } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const isEdit = !!id;
 
@@ -59,19 +58,19 @@ export default function AdminEventForm() {
     const endDate = new Date(event.endDateTime);
 
     if (!event.startDateTime || !event.endDateTime) {
-      return "Veuillez remplir les dates de début et de fin";
+      return t('reservation.dateError');
     }
 
     if (startDate < now) {
-      return "La date de début ne peut pas être dans le passé";
+      return t('validation.startDatePast');
     }
 
     if (endDate < now) {
-      return "La date de fin ne peut pas être dans le passé";
+      return t('validation.endDatePast');
     }
 
     if (endDate <= startDate) {
-      return "La date de fin doit être après la date de début";
+      return t('validation.endBeforeStart');
     }
 
     return null;
@@ -81,7 +80,6 @@ export default function AdminEventForm() {
     e.preventDefault();
     setError("");
 
-    // Validation côté client
     const dateError = validateDates();
     if (dateError) {
       setError(dateError);
@@ -102,16 +100,15 @@ export default function AdminEventForm() {
       }
       navigate("/admin/events");
     } catch (err) {
-      setError(err.message || "Une erreur est survenue");
+      setError(err.message || t('common.error'));
     }
   };
 
   const handleChange = (e) => {
     setEvent({ ...event, [e.target.name]: e.target.value });
-    setError(""); // Effacer l'erreur quand l'utilisateur modifie
+    setError("");
   };
 
-  // Obtenir la date/heure minimum (maintenant) pour les inputs
   const getMinDateTime = () => {
     const now = new Date();
     now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -122,15 +119,17 @@ export default function AdminEventForm() {
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.title}>{isEdit ? "Modifier" : "Créer"} un événement</h1>
+      <h1 style={styles.title}>
+        {isEdit ? t('admin.editEvent') : t('admin.createEvent')}
+      </h1>
 
-      <p><Link to="/admin/events">← Retour</Link></p>
+      <p><Link to="/admin/events">← {t('admin.backToList')}</Link></p>
 
       {error && <div style={styles.error}>{error}</div>}
 
       <form onSubmit={submit} style={styles.form}>
         <div style={styles.formGroup}>
-          <label style={styles.label}>Titre *</label>
+          <label style={styles.label}>{t('common.title')} *</label>
           <input
             name="title"
             value={event.title}
@@ -141,7 +140,7 @@ export default function AdminEventForm() {
         </div>
 
         <div style={styles.formGroup}>
-          <label style={styles.label}>Description *</label>
+          <label style={styles.label}>{t('common.description')} *</label>
           <textarea
             name="description"
             value={event.description}
@@ -153,7 +152,7 @@ export default function AdminEventForm() {
 
         <div style={styles.formRow}>
           <div style={styles.formGroup}>
-            <label style={styles.label}>Date de début *</label>
+            <label style={styles.label}>{t('reservation.startDate')} *</label>
             <input
               type="datetime-local"
               name="startDateTime"
@@ -166,7 +165,7 @@ export default function AdminEventForm() {
           </div>
 
           <div style={styles.formGroup}>
-            <label style={styles.label}>Date de fin *</label>
+            <label style={styles.label}>{t('reservation.endDate')} *</label>
             <input
               type="datetime-local"
               name="endDateTime"
@@ -181,7 +180,7 @@ export default function AdminEventForm() {
 
         <div style={styles.formRow}>
           <div style={styles.formGroup}>
-            <label style={styles.label}>Capacité (optionnel)</label>
+            <label style={styles.label}>{t('common.capacity')}</label>
             <input
               type="number"
               name="capacity"
@@ -193,7 +192,7 @@ export default function AdminEventForm() {
           </div>
 
           <div style={styles.formGroup}>
-            <label style={styles.label}>Prix € (optionnel)</label>
+            <label style={styles.label}>{t('common.price')} (€)</label>
             <input
               type="number"
               name="price"
@@ -207,16 +206,16 @@ export default function AdminEventForm() {
         </div>
 
         <div style={styles.formGroup}>
-          <label style={styles.label}>Statut *</label>
+          <label style={styles.label}>{t('common.status')} *</label>
           <select
             name="status"
             value={event.status}
             onChange={handleChange}
             style={styles.select}
           >
-            <option value="DRAFT">DRAFT</option>
-            <option value="PUBLISHED">PUBLISHED</option>
-            <option value="CANCELLED">CANCELLED</option>
+            <option value="DRAFT">{t('status.draft')}</option>
+            <option value="PUBLISHED">{t('status.published')}</option>
+            <option value="CANCELLED">{t('status.cancelled')}</option>
           </select>
         </div>
 
@@ -226,10 +225,10 @@ export default function AdminEventForm() {
             onClick={() => navigate("/admin/events")}
             style={styles.cancelButton}
           >
-            Annuler
+            {t('common.cancel')}
           </button>
           <button type="submit" style={styles.submitButton}>
-            {isEdit ? "Enregistrer" : "Créer"}
+            {isEdit ? t('common.save') : t('common.create')}
           </button>
         </div>
       </form>

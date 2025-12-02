@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getGarderieSessions } from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import { useTranslation } from "react-i18next";
 import PaymentForm from "../components/PaymentForm";
 
 const STRIPE_PUBLIC_KEY = "pk_test_51SZtvU43LA5MMUSyvqwMUBrZfuUUVrERUSNHtXE6j60tCbnIc5DTcaKJO1RlgpjgniuXjsFiIJsyM9jjZizdLxxn008fF3zfDs";
@@ -11,6 +12,7 @@ export default function GarderieReservePage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { token } = useAuth();
+  const { t } = useTranslation();
 
   const [session, setSession] = useState(null);
   const [numberOfChildren, setNumberOfChildren] = useState(1);
@@ -41,13 +43,11 @@ export default function GarderieReservePage() {
     setShowPayment(true);
   };
 
-  // Appelé quand le paiement Stripe est réussi
   const handlePaymentSuccess = async (paymentIntentId) => {
     setCreatingReservation(true);
     setError("");
 
     try {
-      // Créer la réservation avec le paymentIntentId
       const response = await fetch(`${API_URL}/api/public/garderie/reservations`, {
         method: "POST",
         headers: {
@@ -66,7 +66,7 @@ export default function GarderieReservePage() {
         throw new Error(errorData.message || "Erreur lors de la création de la réservation");
       }
 
-      alert("Paiement réussi ! Votre réservation est confirmée.");
+      alert(t('payment.success'));
       navigate("/garderie/my");
     } catch (err) {
       setError(err.message);
@@ -80,25 +80,24 @@ export default function GarderieReservePage() {
     setShowPayment(false);
   };
 
-  if (loading) return <p>Chargement...</p>;
+  if (loading) return <p>{t('common.loading')}</p>;
   if (error && !session) return <p style={{ color: "red" }}>{error}</p>;
 
-  // Afficher le formulaire de paiement
   if (showPayment) {
     return (
       <div style={styles.container}>
-        <h1 style={styles.title}>Paiement</h1>
+        <h1 style={styles.title}>{t('payment.title')}</h1>
         
         {creatingReservation ? (
           <div style={styles.loadingBox}>
-            <p>Création de votre réservation en cours...</p>
+            <p>{t('reservation.creating')}</p>
           </div>
         ) : (
           <PaymentForm
             stripePublicKey={STRIPE_PUBLIC_KEY}
             token={token}
             amount={totalAmount}
-            description={`Garderie: ${session.title} - ${numberOfChildren} enfant(s)`}
+            description={`${t('childcare.session')}: ${session.title} - ${numberOfChildren} ${t('common.children')}`}
             reservationType="GARDERIE"
             metadata={{
               sessionId: parseInt(id),
@@ -114,26 +113,25 @@ export default function GarderieReservePage() {
     );
   }
 
-  // Afficher le formulaire de sélection
   return (
     <div style={styles.container}>
-      <h1 style={styles.title}>Réserver une place en garderie</h1>
+      <h1 style={styles.title}>{t('childcare.reservePlace')}</h1>
 
       {session && (
         <div style={styles.sessionCard}>
           <h2 style={styles.sessionTitle}>{session.title}</h2>
           <div style={styles.sessionInfo}>
-            <p><strong>Date :</strong> {session.sessionDate}</p>
-            <p><strong>Horaire :</strong> {session.startTime} - {session.endTime}</p>
-            <p><strong>Prix par enfant :</strong> {session.pricePerChild} €</p>
-            <p><strong>Description :</strong> {session.description || "Aucune"}</p>
+            <p><strong>{t('common.date')} :</strong> {session.sessionDate}</p>
+            <p><strong>{t('common.time')} :</strong> {session.startTime} - {session.endTime}</p>
+            <p><strong>{t('childcare.pricePerChild')} :</strong> {session.pricePerChild} €</p>
+            <p><strong>{t('common.description')} :</strong> {session.description || "-"}</p>
           </div>
         </div>
       )}
 
       <form onSubmit={handleProceedToPayment} style={styles.form}>
         <div style={styles.formGroup}>
-          <label style={styles.label}>Nombre d'enfants :</label>
+          <label style={styles.label}>{t('childcare.numberOfChildren')} :</label>
           <input
             type="number"
             min="1"
@@ -144,7 +142,7 @@ export default function GarderieReservePage() {
         </div>
 
         <div style={styles.totalBox}>
-          <span>Total à payer :</span>
+          <span>{t('reservation.totalPrice')} :</span>
           <span style={styles.totalAmount}>{totalAmount.toFixed(2)} €</span>
         </div>
 
@@ -156,13 +154,13 @@ export default function GarderieReservePage() {
             onClick={() => navigate("/garderie")}
             style={styles.cancelButton}
           >
-            Annuler
+            {t('common.cancel')}
           </button>
           <button
             type="submit"
             style={styles.submitButton}
           >
-            Procéder au paiement
+            {t('reservation.proceedPayment')}
           </button>
         </div>
       </form>

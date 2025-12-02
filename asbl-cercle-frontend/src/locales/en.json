@@ -1,0 +1,181 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "back": "Back",
+    "yes": "Yes",
+    "no": "No",
+    "confirm": "Confirm",
+    "actions": "Actions",
+    "status": "Status",
+    "price": "Price",
+    "date": "Date",
+    "time": "Time",
+    "title": "Title",
+    "description": "Description",
+    "capacity": "Capacity",
+    "type": "Type",
+    "total": "Total",
+    "persons": "persons",
+    "hours": "hours",
+    "perHour": "/ hour",
+    "perChild": "/ child",
+    "children": "child(ren)",
+    "from": "From",
+    "to": "To",
+    "noData": "No data"
+  },
+
+  "nav": {
+    "spaces": "Spaces",
+    "events": "Events",
+    "childcare": "Childcare",
+    "myReservations": "My reservations",
+    "myChildcare": "My childcare",
+    "admin": "Admin",
+    "profile": "My profile",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "hello": "Hello"
+  },
+
+  "auth": {
+    "login": "Login",
+    "register": "Create an account",
+    "email": "Email",
+    "password": "Password",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "loginButton": "Log in",
+    "registerButton": "Sign up",
+    "noAccount": "No account?",
+    "hasAccount": "Already registered?",
+    "createAccount": "Create an account",
+    "loginLink": "Login",
+    "loginError": "Incorrect email or password",
+    "registerError": "Registration error"
+  },
+
+  "spaces": {
+    "title": "Available spaces",
+    "welcome": "Welcome",
+    "reserve": "Book this space",
+    "noSpaces": "No spaces available"
+  },
+
+  "reservation": {
+    "newReservation": "New reservation",
+    "myReservations": "My reservations",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "startTime": "Start time",
+    "endTime": "End time",
+    "totalPrice": "Total to pay",
+    "proceedPayment": "Proceed to payment",
+    "creating": "Creating your reservation...",
+    "noReservations": "No reservations",
+    "confirmed": "Reservation confirmed!",
+    "dateError": "Please select start and end dates",
+    "dateOrderError": "End date must be after start date"
+  },
+
+  "events": {
+    "title": "Upcoming events",
+    "noEvents": "No events at the moment"
+  },
+
+  "childcare": {
+    "title": "Childcare - Available sessions",
+    "myReservations": "My childcare reservations",
+    "viewMyReservations": "View my reservations",
+    "backToSessions": "Back to sessions",
+    "reserve": "Book",
+    "reservePlace": "Book a childcare place",
+    "numberOfChildren": "Number of children",
+    "pricePerChild": "Price per child",
+    "places": "Places",
+    "session": "Session",
+    "noSessions": "No sessions available at the moment",
+    "noReservations": "You have no reservations"
+  },
+
+  "payment": {
+    "title": "Payment",
+    "secure": "Secure payment",
+    "cardInfo": "Card information",
+    "pay": "Pay",
+    "processing": "Processing...",
+    "success": "Payment successful! Your reservation is confirmed.",
+    "error": "An error occurred. Please try again.",
+    "securedBy": "Secured by Stripe"
+  },
+
+  "profile": {
+    "title": "My profile",
+    "personalInfo": "Personal information",
+    "updateSuccess": "Profile updated successfully",
+    "changePassword": "Change password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm new password",
+    "passwordMismatch": "New passwords do not match",
+    "passwordUpdated": "Password updated",
+    "notLoggedIn": "Please log in to access your profile."
+  },
+
+  "admin": {
+    "dashboard": "Admin Dashboard",
+    "eventsManagement": "Events management",
+    "childcareManagement": "Childcare management",
+    "spacesManagement": "Spaces management",
+    "createSpace": "Create a space",
+    "createEvent": "Create an event",
+    "createSession": "New session",
+    "editSpace": "Edit space",
+    "editEvent": "Edit event",
+    "editSession": "Edit session",
+    "newSession": "New childcare session",
+    "backToDashboard": "Back to dashboard",
+    "backToList": "Back to list",
+    "confirmDelete": "Delete this item?",
+    "confirmDeleteSpace": "Delete this space?",
+    "confirmDeleteEvent": "Delete this event?",
+    "confirmDeleteSession": "Delete this session?",
+    "noSpaces": "No spaces",
+    "noEvents": "No events",
+    "noSessions": "No sessions created",
+    "name": "Name",
+    "basePrice": "Base price"
+  },
+
+  "validation": {
+    "required": "This field is required",
+    "invalidEmail": "Invalid email",
+    "startDatePast": "Start date cannot be in the past",
+    "endDatePast": "End date cannot be in the past",
+    "endBeforeStart": "End date must be after start date"
+  },
+
+  "status": {
+    "available": "Available",
+    "unavailable": "Unavailable",
+    "confirmed": "Confirmed",
+    "pending": "Pending",
+    "cancelled": "Cancelled",
+    "draft": "Draft",
+    "published": "Published",
+    "open": "Open",
+    "closed": "Closed"
+  },
+
+  "error": {
+    "404": "Page not found",
+    "generic": "An error occurred"
+  }
+}

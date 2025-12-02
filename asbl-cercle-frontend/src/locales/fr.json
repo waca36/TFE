@@ -1,0 +1,181 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "back": "Retour",
+    "yes": "Oui",
+    "no": "Non",
+    "confirm": "Confirmer",
+    "actions": "Actions",
+    "status": "Statut",
+    "price": "Prix",
+    "date": "Date",
+    "time": "Horaire",
+    "title": "Titre",
+    "description": "Description",
+    "capacity": "Capacité",
+    "type": "Type",
+    "total": "Total",
+    "persons": "personnes",
+    "hours": "heures",
+    "perHour": "/ heure",
+    "perChild": "/ enfant",
+    "children": "enfant(s)",
+    "from": "Du",
+    "to": "Au",
+    "noData": "Aucune donnée"
+  },
+
+  "nav": {
+    "spaces": "Espaces",
+    "events": "Événements",
+    "childcare": "Garderie",
+    "myReservations": "Mes réservations",
+    "myChildcare": "Mes garderies",
+    "admin": "Admin",
+    "profile": "Mon profil",
+    "login": "Connexion",
+    "register": "Inscription",
+    "logout": "Déconnexion",
+    "hello": "Bonjour"
+  },
+
+  "auth": {
+    "login": "Connexion",
+    "register": "Créer un compte",
+    "email": "Email",
+    "password": "Mot de passe",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "loginButton": "Se connecter",
+    "registerButton": "S'inscrire",
+    "noAccount": "Pas de compte ?",
+    "hasAccount": "Déjà inscrit ?",
+    "createAccount": "Créer un compte",
+    "loginLink": "Connexion",
+    "loginError": "Email ou mot de passe incorrect",
+    "registerError": "Erreur d'inscription"
+  },
+
+  "spaces": {
+    "title": "Espaces disponibles",
+    "welcome": "Bienvenue",
+    "reserve": "Réserver cet espace",
+    "noSpaces": "Aucun espace disponible"
+  },
+
+  "reservation": {
+    "newReservation": "Nouvelle réservation",
+    "myReservations": "Mes réservations",
+    "startDate": "Date de début",
+    "endDate": "Date de fin",
+    "startTime": "Heure de début",
+    "endTime": "Heure de fin",
+    "totalPrice": "Total à payer",
+    "proceedPayment": "Procéder au paiement",
+    "creating": "Création de votre réservation en cours...",
+    "noReservations": "Aucune réservation",
+    "confirmed": "Réservation confirmée !",
+    "dateError": "Veuillez choisir des dates de début et de fin",
+    "dateOrderError": "La date de fin doit être après la date de début"
+  },
+
+  "events": {
+    "title": "Événements à venir",
+    "noEvents": "Aucun événement pour l'instant"
+  },
+
+  "childcare": {
+    "title": "Garderie - Sessions disponibles",
+    "myReservations": "Mes réservations garderie",
+    "viewMyReservations": "Voir mes réservations",
+    "backToSessions": "Retour aux sessions",
+    "reserve": "Réserver",
+    "reservePlace": "Réserver une place en garderie",
+    "numberOfChildren": "Nombre d'enfants",
+    "pricePerChild": "Prix par enfant",
+    "places": "Places",
+    "session": "Session",
+    "noSessions": "Aucune session disponible pour le moment",
+    "noReservations": "Vous n'avez aucune réservation"
+  },
+
+  "payment": {
+    "title": "Paiement",
+    "secure": "Paiement sécurisé",
+    "cardInfo": "Informations de carte",
+    "pay": "Payer",
+    "processing": "Traitement...",
+    "success": "Paiement réussi ! Votre réservation est confirmée.",
+    "error": "Une erreur est survenue. Veuillez réessayer.",
+    "securedBy": "Paiement sécurisé par Stripe"
+  },
+
+  "profile": {
+    "title": "Mon profil",
+    "personalInfo": "Informations personnelles",
+    "updateSuccess": "Profil mis à jour avec succès",
+    "changePassword": "Changer le mot de passe",
+    "currentPassword": "Mot de passe actuel",
+    "newPassword": "Nouveau mot de passe",
+    "confirmPassword": "Confirmer le nouveau mot de passe",
+    "passwordMismatch": "Les nouveaux mots de passe ne correspondent pas",
+    "passwordUpdated": "Mot de passe mis à jour",
+    "notLoggedIn": "Veuillez vous connecter pour accéder à votre profil."
+  },
+
+  "admin": {
+    "dashboard": "Dashboard Admin",
+    "eventsManagement": "Gestion des événements",
+    "childcareManagement": "Gestion des garderies",
+    "spacesManagement": "Gestion des espaces",
+    "createSpace": "Créer un espace",
+    "createEvent": "Créer un événement",
+    "createSession": "Nouvelle session",
+    "editSpace": "Modifier l'espace",
+    "editEvent": "Modifier l'événement",
+    "editSession": "Modifier la session",
+    "newSession": "Nouvelle session garderie",
+    "backToDashboard": "Retour au dashboard",
+    "backToList": "Retour à la liste",
+    "confirmDelete": "Supprimer cet élément ?",
+    "confirmDeleteSpace": "Supprimer cet espace ?",
+    "confirmDeleteEvent": "Supprimer cet événement ?",
+    "confirmDeleteSession": "Supprimer cette session ?",
+    "noSpaces": "Aucun espace",
+    "noEvents": "Aucun événement",
+    "noSessions": "Aucune session créée",
+    "name": "Nom",
+    "basePrice": "Prix de base"
+  },
+
+  "validation": {
+    "required": "Ce champ est requis",
+    "invalidEmail": "Email invalide",
+    "startDatePast": "La date de début ne peut pas être dans le passé",
+    "endDatePast": "La date de fin ne peut pas être dans le passé",
+    "endBeforeStart": "La date de fin doit être après la date de début"
+  },
+
+  "status": {
+    "available": "Disponible",
+    "unavailable": "Indisponible",
+    "confirmed": "Confirmé",
+    "pending": "En attente",
+    "cancelled": "Annulé",
+    "draft": "Brouillon",
+    "published": "Publié",
+    "open": "Ouvert",
+    "closed": "Fermé"
+  },
+
+  "error": {
+    "404": "Page non trouvée",
+    "generic": "Une erreur est survenue"
+  }
+}

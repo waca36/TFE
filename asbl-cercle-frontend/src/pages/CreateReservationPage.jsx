@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getEspaces } from "../services/api";
+import { useTranslation } from "react-i18next";
 import PaymentForm from "../components/PaymentForm";
 
 const STRIPE_PUBLIC_KEY = "pk_test_51SZtvU43LA5MMUSyvqwMUBrZfuUUVrERUSNHtXE6j60tCbnIc5DTcaKJO1RlgpjgniuXjsFiIJsyM9jjZizdLxxn008fF3zfDs";
@@ -11,6 +12,7 @@ export default function CreateReservationPage() {
   const { espaceId } = useParams();
   const navigate = useNavigate();
   const { user, token } = useAuth();
+  const { t } = useTranslation();
 
   const [espace, setEspace] = useState(null);
   const [startDate, setStartDate] = useState("");
@@ -39,7 +41,6 @@ export default function CreateReservationPage() {
       .finally(() => setLoading(false));
   }, [user, token, espaceId, navigate]);
 
-  // Calculer le prix total basé sur la durée
   const calculateTotalPrice = () => {
     if (!espace || !startDate || !endDate) return espace?.basePrice || 0;
     
@@ -57,7 +58,7 @@ export default function CreateReservationPage() {
     setError("");
 
     if (!startDate || !endDate) {
-      setError("Veuillez choisir des dates de début et de fin");
+      setError(t('reservation.dateError'));
       return;
     }
 
@@ -65,7 +66,7 @@ export default function CreateReservationPage() {
     const end = new Date(`${endDate}T${endTime}`);
 
     if (end <= start) {
-      setError("La date de fin doit être après la date de début");
+      setError(t('reservation.dateOrderError'));
       return;
     }
 
@@ -100,7 +101,7 @@ export default function CreateReservationPage() {
         throw new Error(errorData.message || "Erreur lors de la création de la réservation");
       }
 
-      alert("Paiement réussi ! Votre réservation est confirmée.");
+      alert(t('payment.success'));
       navigate("/reservations");
     } catch (err) {
       setError(err.message);
@@ -115,25 +116,24 @@ export default function CreateReservationPage() {
   };
 
   if (!user || !token) return null;
-  if (loading) return <p>Chargement...</p>;
+  if (loading) return <p>{t('common.loading')}</p>;
   if (error && !espace) return <p style={{ color: "red" }}>{error}</p>;
 
-  // Afficher le formulaire de paiement
   if (showPayment) {
     return (
       <div style={styles.container}>
-        <h1 style={styles.title}>Paiement</h1>
+        <h1 style={styles.title}>{t('payment.title')}</h1>
         
         {creatingReservation ? (
           <div style={styles.loadingBox}>
-            <p>Création de votre réservation en cours...</p>
+            <p>{t('reservation.creating')}</p>
           </div>
         ) : (
           <PaymentForm
             stripePublicKey={STRIPE_PUBLIC_KEY}
             token={token}
             amount={totalPrice}
-            description={`Réservation: ${espace.name} - ${startDate} ${startTime} à ${endDate} ${endTime}`}
+            description={`${t('reservation.newReservation')}: ${espace.name} - ${startDate} ${startTime} ${t('common.to').toLowerCase()} ${endDate} ${endTime}`}
             reservationType="ESPACE"
             metadata={{
               espaceId: Number(espaceId),
@@ -148,18 +148,17 @@ export default function CreateReservationPage() {
     );
   }
 
-  // Afficher le formulaire de réservation
   return (
     <div style={styles.container}>
-      <h1 style={styles.title}>Nouvelle réservation</h1>
+      <h1 style={styles.title}>{t('reservation.newReservation')}</h1>
 
       {espace && (
         <div style={styles.espaceCard}>
           <h2 style={styles.espaceName}>{espace.name}</h2>
           <div style={styles.espaceInfo}>
-            <p><strong>Type :</strong> {espace.type}</p>
-            <p><strong>Capacité :</strong> {espace.capacity} personnes</p>
-            <p><strong>Prix :</strong> {espace.basePrice} € / heure</p>
+            <p><strong>{t('common.type')} :</strong> {espace.type}</p>
+            <p><strong>{t('common.capacity')} :</strong> {espace.capacity} {t('common.persons')}</p>
+            <p><strong>{t('common.price')} :</strong> {espace.basePrice} € {t('common.perHour')}</p>
           </div>
         </div>
       )}
@@ -167,7 +166,7 @@ export default function CreateReservationPage() {
       <form onSubmit={handleProceedToPayment} style={styles.form}>
         <div style={styles.formRow}>
           <div style={styles.formGroup}>
-            <label style={styles.label}>Date de début</label>
+            <label style={styles.label}>{t('reservation.startDate')}</label>
             <input
               type="date"
               value={startDate}
@@ -177,7 +176,7 @@ export default function CreateReservationPage() {
             />
           </div>
           <div style={styles.formGroup}>
-            <label style={styles.label}>Heure de début</label>
+            <label style={styles.label}>{t('reservation.startTime')}</label>
             <input
               type="time"
               value={startTime}
@@ -190,7 +189,7 @@ export default function CreateReservationPage() {
 
         <div style={styles.formRow}>
           <div style={styles.formGroup}>
-            <label style={styles.label}>Date de fin</label>
+            <label style={styles.label}>{t('reservation.endDate')}</label>
             <input
               type="date"
               value={endDate}
@@ -200,7 +199,7 @@ export default function CreateReservationPage() {
             />
           </div>
           <div style={styles.formGroup}>
-            <label style={styles.label}>Heure de fin</label>
+            <label style={styles.label}>{t('reservation.endTime')}</label>
             <input
               type="time"
               value={endTime}
@@ -212,7 +211,7 @@ export default function CreateReservationPage() {
         </div>
 
         <div style={styles.totalBox}>
-          <span>Total à payer :</span>
+          <span>{t('reservation.totalPrice')} :</span>
           <span style={styles.totalAmount}>{totalPrice.toFixed(2)} €</span>
         </div>
 
@@ -224,13 +223,13 @@ export default function CreateReservationPage() {
             onClick={() => navigate("/espace")}
             style={styles.cancelButton}
           >
-            Annuler
+            {t('common.cancel')}
           </button>
           <button
             type="submit"
             style={styles.submitButton}
           >
-            Procéder au paiement
+            {t('reservation.proceedPayment')}
           </button>
         </div>
       </form>

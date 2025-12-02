@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import {
-  adminGetEvents,
-  adminDeleteEvent,
-} from "../services/api";
+import { adminGetEvents, adminDeleteEvent } from "../services/api";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function AdminEventsDashboard() {
   const { user, token } = useAuth();
   const [events, setEvents] = useState([]);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!user || user.role !== "ADMIN") {
@@ -20,28 +19,36 @@ export default function AdminEventsDashboard() {
     adminGetEvents(token)
       .then(setEvents)
       .catch(console.error);
-  }, [user, token]);
+  }, [user, token, navigate]);
 
   const del = async (id) => {
-    if (!window.confirm("Supprimer cet événement ?")) return;
+    if (!window.confirm(t('admin.confirmDeleteEvent'))) return;
     await adminDeleteEvent(id, token);
     setEvents(events.filter((e) => e.id !== id));
   };
 
+  if (!user || user.role !== "ADMIN") return null;
+
   return (
     <div>
-      <h1>Gestion des événements</h1>
-      <Link to="/admin/events/new">+ Créer un événement</Link>
+      <h1>{t('admin.eventsManagement')}</h1>
+      
+      <p>
+        <Link to="/admin">← {t('admin.backToDashboard')}</Link>
+        {" | "}
+        <Link to="/admin/events/new">+ {t('admin.createEvent')}</Link>
+      </p>
+      
       <hr />
 
-      <table border="1" cellPadding="6">
+      <table border="1" cellPadding="6" style={styles.table}>
         <thead>
           <tr>
-            <th>Titre</th>
-            <th>Date début</th>
-            <th>Date fin</th>
-            <th>Statut</th>
-            <th>Actions</th>
+            <th>{t('common.title')}</th>
+            <th>{t('reservation.startDate')}</th>
+            <th>{t('reservation.endDate')}</th>
+            <th>{t('common.status')}</th>
+            <th>{t('common.actions')}</th>
           </tr>
         </thead>
 
@@ -51,20 +58,28 @@ export default function AdminEventsDashboard() {
               <td>{ev.title}</td>
               <td>{ev.startDateTime.replace("T", " ")}</td>
               <td>{ev.endDateTime.replace("T", " ")}</td>
-              <td>{ev.status}</td>
+              <td>{t(`status.${ev.status.toLowerCase()}`)}</td>
               <td>
-                <Link to={`/admin/events/${ev.id}/edit`}>Modifier</Link>
+                <Link to={`/admin/events/${ev.id}/edit`}>{t('common.edit')}</Link>
                 {" | "}
-                <button onClick={() => del(ev.id)}>Supprimer</button>
+                <button onClick={() => del(ev.id)}>{t('common.delete')}</button>
               </td>
             </tr>
           ))}
 
           {events.length === 0 && (
-            <tr><td colSpan="5">Aucun événement.</td></tr>
+            <tr><td colSpan="5">{t('admin.noEvents')}</td></tr>
           )}
         </tbody>
       </table>
     </div>
   );
 }
+
+const styles = {
+  table: {
+    borderCollapse: "collapse",
+    width: "100%",
+    background: "#fff",
+  },
+};

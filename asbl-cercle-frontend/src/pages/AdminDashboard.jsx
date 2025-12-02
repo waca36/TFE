@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import {
-  adminGetEspaces,
-  adminDeleteEspace,
-} from "../services/api";
+import { adminGetEspaces, adminDeleteEspace } from "../services/api";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function AdminDashboard() {
   const { user, token } = useAuth();
   const [espaces, setEspaces] = useState([]);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!user || user.role !== "ADMIN") {
@@ -24,7 +23,7 @@ export default function AdminDashboard() {
   }, [user, token, navigate]);
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Supprimer cet espace ?")) return;
+    if (!window.confirm(t('admin.confirmDeleteSpace'))) return;
     try {
       await adminDeleteEspace(id, token);
       setEspaces((prev) => prev.filter((e) => e.id !== id));
@@ -37,32 +36,31 @@ export default function AdminDashboard() {
 
   return (
     <div>
-      <h1>Dashboard Admin</h1>
+      <h1>{t('admin.dashboard')}</h1>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       <p>
-        <Link to="/admin/events">Gestion des événements</Link>
+        <Link to="/admin/events">{t('admin.eventsManagement')}</Link>
       </p>
 
       <p>
-        <Link to="/admin/garderie">Gestion des garderies</Link>
+        <Link to="/admin/garderie">{t('admin.childcareManagement')}</Link>
       </p>
 
-
-      <div style={{ marginBottom: "1rem" }}>
-        <Link to="/admin/espaces/new">+ Créer un espace</Link>
+      <div style={{ marginBottom: "1rem", marginTop: "1.5rem" }}>
+        <Link to="/admin/espaces/new">+ {t('admin.createSpace')}</Link>
       </div>
 
-      <table border="1" cellPadding="6">
+      <table border="1" cellPadding="6" style={styles.table}>
         <thead>
           <tr>
-            <th>Nom</th>
-            <th>Type</th>
-            <th>Capacité</th>
-            <th>Prix</th>
-            <th>Statut</th>
-            <th>Actions</th>
+            <th>{t('admin.name')}</th>
+            <th>{t('common.type')}</th>
+            <th>{t('common.capacity')}</th>
+            <th>{t('common.price')}</th>
+            <th>{t('common.status')}</th>
+            <th>{t('common.actions')}</th>
           </tr>
         </thead>
         <tbody>
@@ -71,20 +69,20 @@ export default function AdminDashboard() {
               <td>{e.name}</td>
               <td>{e.type}</td>
               <td>{e.capacity}</td>
-              <td>{e.basePrice}€</td>
-              <td>{e.status}</td>
+              <td>{e.basePrice} €</td>
+              <td>{t(`status.${e.status.toLowerCase()}`)}</td>
               <td>
-                <Link to={`/admin/espaces/${e.id}/edit`}>Modifier</Link>{" "}
+                <Link to={`/admin/espaces/${e.id}/edit`}>{t('common.edit')}</Link>{" "}
                 |{" "}
                 <button onClick={() => handleDelete(e.id)}>
-                  Supprimer
+                  {t('common.delete')}
                 </button>
               </td>
             </tr>
           ))}
           {espaces.length === 0 && (
             <tr>
-              <td colSpan="6">Aucun espace.</td>
+              <td colSpan="6">{t('admin.noSpaces')}</td>
             </tr>
           )}
         </tbody>
@@ -92,3 +90,11 @@ export default function AdminDashboard() {
     </div>
   );
 }
+
+const styles = {
+  table: {
+    borderCollapse: "collapse",
+    width: "100%",
+    background: "#fff",
+  },
+};

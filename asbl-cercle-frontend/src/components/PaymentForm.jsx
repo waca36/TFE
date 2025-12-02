@@ -6,6 +6,7 @@ import {
   useStripe,
   useElements,
 } from '@stripe/react-stripe-js';
+import { useTranslation } from 'react-i18next';
 
 const API_URL = 'http://localhost:8080/api';
 
@@ -32,6 +33,7 @@ function CheckoutForm({ amount, description, reservationType, metadata, onSucces
   const elements = useElements();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { t } = useTranslation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,7 +44,6 @@ function CheckoutForm({ amount, description, reservationType, metadata, onSucces
     setError(null);
 
     try {
-      // 1. Créer le PaymentIntent
       const response = await fetch(`${API_URL}/payments/create-payment-intent`, {
         method: 'POST',
         headers: {
@@ -50,11 +51,11 @@ function CheckoutForm({ amount, description, reservationType, metadata, onSucces
           'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
-          amount: Math.round(amount * 100), // Convertir en centimes
+          amount: Math.round(amount * 100),
           currency: 'eur',
           description,
           reservationType,
-          ...metadata, // sessionId, numberOfChildren, etc.
+          ...metadata,
         }),
       });
 
@@ -64,7 +65,6 @@ function CheckoutForm({ amount, description, reservationType, metadata, onSucces
 
       const { clientSecret } = await response.json();
 
-      // 2. Confirmer le paiement avec Stripe
       const result = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: elements.getElement(CardElement),
@@ -74,11 +74,10 @@ function CheckoutForm({ amount, description, reservationType, metadata, onSucces
       if (result.error) {
         setError(result.error.message);
       } else if (result.paymentIntent.status === 'succeeded') {
-        // 3. Retourner le paymentIntentId au parent
         onSuccess(result.paymentIntent.id);
       }
     } catch (err) {
-      setError('Une erreur est survenue. ' + err.message);
+      setError(t('payment.error') + ' ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -86,7 +85,7 @@ function CheckoutForm({ amount, description, reservationType, metadata, onSucces
 
   return (
     <form onSubmit={handleSubmit} style={styles.form}>
-      <h2 style={styles.title}>Paiement sécurisé</h2>
+      <h2 style={styles.title}>{t('payment.secure')}</h2>
       
       <div style={styles.summary}>
         <p style={styles.description}>{description}</p>
@@ -94,7 +93,7 @@ function CheckoutForm({ amount, description, reservationType, metadata, onSucces
       </div>
 
       <div style={styles.cardContainer}>
-        <label style={styles.label}>Informations de carte</label>
+        <label style={styles.label}>{t('payment.cardInfo')}</label>
         <div style={styles.cardElement}>
           <CardElement options={cardStyle} />
         </div>
@@ -110,7 +109,7 @@ function CheckoutForm({ amount, description, reservationType, metadata, onSucces
           onClick={onCancel}
           style={styles.cancelButton}
         >
-          Annuler
+          {t('common.cancel')}
         </button>
         <button
           type="submit"
@@ -121,12 +120,12 @@ function CheckoutForm({ amount, description, reservationType, metadata, onSucces
             cursor: (!stripe || loading) ? 'not-allowed' : 'pointer',
           }}
         >
-          {loading ? 'Traitement...' : `Payer ${amount.toFixed(2)} €`}
+          {loading ? t('payment.processing') : `${t('payment.pay')} ${amount.toFixed(2)} €`}
         </button>
       </div>
 
       <div style={styles.securityBadge}>
-        🔒 Paiement sécurisé par Stripe
+        🔒 {t('payment.securedBy')}
       </div>
     </form>
   );

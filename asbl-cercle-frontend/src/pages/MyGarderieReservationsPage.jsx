@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getMyGarderieReservations } from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export default function MyGarderieReservationsPage() {
   const { token } = useAuth();
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const { t } = useTranslation();
 
   useEffect(() => {
     getMyGarderieReservations(token)
@@ -16,29 +18,29 @@ export default function MyGarderieReservationsPage() {
       .finally(() => setLoading(false));
   }, [token]);
 
-  if (loading) return <p>Chargement...</p>;
+  if (loading) return <p>{t('common.loading')}</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
     <div>
-      <h1>Mes réservations garderie</h1>
+      <h1>{t('childcare.myReservations')}</h1>
 
       <p>
-        <Link to="/garderie">← Retour aux sessions</Link>
+        <Link to="/garderie">← {t('childcare.backToSessions')}</Link>
       </p>
 
       {reservations.length === 0 ? (
-        <p>Vous n'avez aucune réservation.</p>
+        <p>{t('childcare.noReservations')}</p>
       ) : (
-        <table border="1" cellPadding="10" style={{ borderCollapse: "collapse", width: "100%" }}>
+        <table border="1" cellPadding="10" style={styles.table}>
           <thead>
             <tr>
-              <th>Session</th>
-              <th>Date</th>
-              <th>Horaire</th>
-              <th>Enfants</th>
-              <th>Total</th>
-              <th>Statut</th>
+              <th>{t('childcare.session')}</th>
+              <th>{t('common.date')}</th>
+              <th>{t('common.time')}</th>
+              <th>{t('common.children')}</th>
+              <th>{t('common.total')}</th>
+              <th>{t('common.status')}</th>
             </tr>
           </thead>
           <tbody>
@@ -49,7 +51,7 @@ export default function MyGarderieReservationsPage() {
                 <td>{r.startTime} - {r.endTime}</td>
                 <td>{r.numberOfChildren}</td>
                 <td>{r.totalPrice} €</td>
-                <td>{r.status}</td>
+                <td>{t(`status.${r.status.toLowerCase()}`)}</td>
               </tr>
             ))}
           </tbody>
@@ -58,3 +60,11 @@ export default function MyGarderieReservationsPage() {
     </div>
   );
 }
+
+const styles = {
+  table: {
+    borderCollapse: "collapse",
+    width: "100%",
+    background: "#fff",
+  },
+};
