@@ -58,6 +58,7 @@ public class UserProfileController {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
+        user.setUpdatedAt(LocalDateTime.now());
 
         User saved = userRepository.save(user);
         return UserProfileResponseDto.fromEntity(saved);
@@ -81,6 +82,7 @@ public class UserProfileController {
         }
 
         user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
     }
 }

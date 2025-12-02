@@ -17,3 +17,7 @@ app:
     jwt:
       secret: "4Fk!92q@Px#71Lm$Rz%8Bn^Ty&c3aVj*WQ6tEe0Hu!(YsDp)LKfG5Sd?XMb"
       expiration: 3600000  # 1 heure en millisecondes
+
+stripe:
+  secret-key: "sk_test_51SZtvU43LA5MMUSy07hwnJ9em0Y8h5JeG7bbECWc5aWXYcbJ2LkWOnY3sQ8PrZh2TOZl9qSZurc13EdR1xT8tVLK00sgkjFIsf"
+  public-key: "pk_test_51SZtvU43LA5MMUSyvqwMUBrZfuUUVrERUSNHtXE6j60tCbnIc5DTcaKJO1RlgpjgniuXjsFiIJsyM9jjZizdLxxn008fF3zfDs"

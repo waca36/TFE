@@ -41,6 +41,7 @@ export default function Navbar() {
             <span style={{ marginRight: "1rem" }}>
               Bonjour, <b>{user.firstName}</b>
             </span>
+            <Link to="/profile" style={styles.link}>Mon profil</Link>
             <button onClick={handleLogout} style={styles.button}>
               Déconnexion
             </button>

@@ -17,6 +17,8 @@ import GarderieReservePage from "./pages/GarderieReservePage";
 import MyGarderieReservationsPage from "./pages/MyGarderieReservationsPage";
 import AdminGarderieDashboard from "./pages/AdminGarderieDashboard";
 import AdminGarderieForm from "./pages/AdminGarderieForm";
+import ProfilePage from "./pages/ProfilePage";
+
 
 
 export default function App() {
@@ -176,6 +178,14 @@ export default function App() {
         }
       />
 
+      <Route
+        path="/profile"
+        element={
+          <Layout>
+            <ProfilePage />
+          </Layout>
+        }
+      />
 
       {/* Page 404 */}
       <Route path="*" element={<div>Page non trouvée</div>} />

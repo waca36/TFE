@@ -38,6 +38,7 @@ public class User {
 
     private LocalDateTime updatedAt;
 
+
     @PrePersist
     public void prePersist() {
         createdAt = LocalDateTime.now();
@@ -83,4 +84,6 @@ public class User {
     public LocalDateTime getCreatedAt() { return createdAt; }
 
     public LocalDateTime getUpdatedAt() { return updatedAt; }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

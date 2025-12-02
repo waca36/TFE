@@ -233,3 +233,36 @@ export async function adminDeleteGarderieSession(id, token) {
   });
   if (!res.ok) throw new Error("Erreur suppression session (admin)");
 }
+
+export async function getMyProfile(token) {
+  const res = await fetch("http://localhost:8080/api/user/me", {
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error("Erreur chargement profil");
+  return res.json();
+}
+
+export async function updateMyProfile(data, token) {
+  const res = await fetch("http://localhost:8080/api/user/me", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(token),
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Erreur mise à jour profil");
+  return res.json();
+}
+
+export async function changeMyPassword(data, token) {
+  const res = await fetch("http://localhost:8080/api/user/change-password", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(token),
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Erreur changement mot de passe");
+}
