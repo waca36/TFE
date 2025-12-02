@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-
+import { useTranslation } from "react-i18next";
 
 import Layout from "./components/Layout";
 import LoginPage from "./pages/LoginPage";
@@ -19,12 +19,11 @@ import AdminGarderieDashboard from "./pages/AdminGarderieDashboard";
 import AdminGarderieForm from "./pages/AdminGarderieForm";
 import ProfilePage from "./pages/ProfilePage";
 
-
-
 export default function App() {
+  const { t } = useTranslation();
+
   return (
     <Routes>
-      
       {/* Redirection de "/" vers "/espace" */}
       <Route path="/" element={<Navigate to="/espace" replace />} />
 
@@ -69,7 +68,6 @@ export default function App() {
         }
       />
 
-
       <Route
         path="/admin/espaces/new"
         element={
@@ -96,7 +94,7 @@ export default function App() {
           </Layout>
         }
       />
-      
+
       <Route
         path="/admin/events"
         element={
@@ -188,7 +186,14 @@ export default function App() {
       />
 
       {/* Page 404 */}
-      <Route path="*" element={<div>Page non trouvée</div>} />
+      <Route
+        path="*"
+        element={
+          <Layout>
+            <div style={{ padding: "2rem" }}>{t("error.404")}</div>
+          </Layout>
+        }
+      />
     </Routes>
   );
 }
