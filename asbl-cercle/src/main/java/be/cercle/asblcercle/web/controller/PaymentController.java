@@ -23,15 +23,26 @@ public class PaymentController {
     @PostMapping("/create-payment-intent")
     public ResponseEntity<PaymentResponse> createPaymentIntent(@RequestBody PaymentRequest request) {
         try {
-            PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
+            PaymentIntentCreateParams.Builder paramsBuilder = PaymentIntentCreateParams.builder()
                     .setAmount(request.getAmount())
                     .setCurrency(request.getCurrency() != null ? request.getCurrency() : "eur")
                     .setDescription(request.getDescription())
-                    .putMetadata("reservationType", request.getReservationType())
-                    .putMetadata("reservationId", String.valueOf(request.getReservationId()))
-                    .build();
+                    .putMetadata("reservationType", request.getReservationType());
 
-            PaymentIntent paymentIntent = PaymentIntent.create(params);
+            // reservationId est optionnel maintenant (car la réservation n'existe pas encore)
+            if (request.getReservationId() != null) {
+                paramsBuilder.putMetadata("reservationId", String.valueOf(request.getReservationId()));
+            }
+
+            // Ajouter les métadonnées pour identifier la session/event
+            if (request.getSessionId() != null) {
+                paramsBuilder.putMetadata("sessionId", String.valueOf(request.getSessionId()));
+            }
+            if (request.getNumberOfChildren() != null) {
+                paramsBuilder.putMetadata("numberOfChildren", String.valueOf(request.getNumberOfChildren()));
+            }
+
+            PaymentIntent paymentIntent = PaymentIntent.create(paramsBuilder.build());
 
             return ResponseEntity.ok(new PaymentResponse(paymentIntent.getClientSecret(), publicKey));
         } catch (StripeException e) {
@@ -39,14 +50,15 @@ public class PaymentController {
         }
     }
 
-    @PostMapping("/confirm/{paymentIntentId}")
-    public ResponseEntity<Map<String, Object>> confirmPayment(@PathVariable String paymentIntentId) {
+    @GetMapping("/verify/{paymentIntentId}")
+    public ResponseEntity<Map<String, Object>> verifyPayment(@PathVariable String paymentIntentId) {
         try {
             PaymentIntent paymentIntent = PaymentIntent.retrieve(paymentIntentId);
 
             Map<String, Object> response = new HashMap<>();
             response.put("status", paymentIntent.getStatus());
             response.put("success", "succeeded".equals(paymentIntent.getStatus()));
+            response.put("paymentIntentId", paymentIntentId);
 
             return ResponseEntity.ok(response);
         } catch (StripeException e) {

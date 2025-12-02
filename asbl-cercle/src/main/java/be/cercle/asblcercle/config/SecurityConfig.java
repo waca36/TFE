@@ -41,6 +41,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/public/garderie/sessions/**").permitAll()
                         .requestMatchers("/api/public/reservations/**").authenticated()
                         .requestMatchers("/api/public/garderie/reservations/**").authenticated()
+                        .requestMatchers("/api/payments/**").authenticated()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import {
   adminCreateEvent,
-  adminGetEvents,
   adminUpdateEvent,
 } from "../services/api";
 import { useParams, useNavigate, Link } from "react-router-dom";
@@ -24,6 +23,8 @@ export default function AdminEventForm() {
     status: "DRAFT",
   });
 
+  const [error, setError] = useState("");
+
   useEffect(() => {
     if (!user || user.role !== "ADMIN") {
       navigate("/login");
@@ -43,17 +44,49 @@ export default function AdminEventForm() {
               description: ev.description,
               startDateTime: ev.startDateTime,
               endDateTime: ev.endDateTime,
-              capacity: ev.capacity,
-              price: ev.price,
+              capacity: ev.capacity || "",
+              price: ev.price || "",
               status: ev.status,
             });
           }
         });
     }
-  }, [id, isEdit, user, token]);
+  }, [id, isEdit, user, token, navigate]);
+
+  const validateDates = () => {
+    const now = new Date();
+    const startDate = new Date(event.startDateTime);
+    const endDate = new Date(event.endDateTime);
+
+    if (!event.startDateTime || !event.endDateTime) {
+      return "Veuillez remplir les dates de début et de fin";
+    }
+
+    if (startDate < now) {
+      return "La date de début ne peut pas être dans le passé";
+    }
+
+    if (endDate < now) {
+      return "La date de fin ne peut pas être dans le passé";
+    }
+
+    if (endDate <= startDate) {
+      return "La date de fin doit être après la date de début";
+    }
+
+    return null;
+  };
 
   const submit = async (e) => {
     e.preventDefault();
+    setError("");
+
+    // Validation côté client
+    const dateError = validateDates();
+    if (dateError) {
+      setError(dateError);
+      return;
+    }
 
     const payload = {
       ...event,
@@ -61,77 +94,236 @@ export default function AdminEventForm() {
       price: event.price ? Number(event.price) : null,
     };
 
-    if (isEdit) {
-      await adminUpdateEvent(id, payload, token);
-    } else {
-      await adminCreateEvent(payload, token);
+    try {
+      if (isEdit) {
+        await adminUpdateEvent(id, payload, token);
+      } else {
+        await adminCreateEvent(payload, token);
+      }
+      navigate("/admin/events");
+    } catch (err) {
+      setError(err.message || "Une erreur est survenue");
     }
-
-    navigate("/admin/events");
   };
 
   const handleChange = (e) => {
     setEvent({ ...event, [e.target.name]: e.target.value });
+    setError(""); // Effacer l'erreur quand l'utilisateur modifie
   };
 
+  // Obtenir la date/heure minimum (maintenant) pour les inputs
+  const getMinDateTime = () => {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    return now.toISOString().slice(0, 16);
+  };
+
+  if (!user || user.role !== "ADMIN") return null;
+
   return (
-    <div>
-      <h1>{isEdit ? "Modifier" : "Créer"} un événement</h1>
+    <div style={styles.container}>
+      <h1 style={styles.title}>{isEdit ? "Modifier" : "Créer"} un événement</h1>
 
       <p><Link to="/admin/events">← Retour</Link></p>
 
-      <form onSubmit={submit}>
-        <label>Titre</label><br />
-        <input name="title" value={event.title} onChange={handleChange} /><br />
+      {error && <div style={styles.error}>{error}</div>}
 
-        <label>Description</label><br />
-        <textarea
-          name="description"
-          value={event.description}
-          onChange={handleChange}
-        /><br />
+      <form onSubmit={submit} style={styles.form}>
+        <div style={styles.formGroup}>
+          <label style={styles.label}>Titre *</label>
+          <input
+            name="title"
+            value={event.title}
+            onChange={handleChange}
+            style={styles.input}
+            required
+          />
+        </div>
 
-        <label>Date début</label><br />
-        <input
-          type="datetime-local"
-          name="startDateTime"
-          value={event.startDateTime}
-          onChange={handleChange}
-        /><br />
+        <div style={styles.formGroup}>
+          <label style={styles.label}>Description *</label>
+          <textarea
+            name="description"
+            value={event.description}
+            onChange={handleChange}
+            style={styles.textarea}
+            required
+          />
+        </div>
 
-        <label>Date fin</label><br />
-        <input
-          type="datetime-local"
-          name="endDateTime"
-          value={event.endDateTime}
-          onChange={handleChange}
-        /><br />
+        <div style={styles.formRow}>
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Date de début *</label>
+            <input
+              type="datetime-local"
+              name="startDateTime"
+              value={event.startDateTime}
+              onChange={handleChange}
+              min={getMinDateTime()}
+              style={styles.input}
+              required
+            />
+          </div>
 
-        <label>Capacité (optionnel)</label><br />
-        <input
-          type="number"
-          name="capacity"
-          value={event.capacity}
-          onChange={handleChange}
-        /><br />
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Date de fin *</label>
+            <input
+              type="datetime-local"
+              name="endDateTime"
+              value={event.endDateTime}
+              onChange={handleChange}
+              min={event.startDateTime || getMinDateTime()}
+              style={styles.input}
+              required
+            />
+          </div>
+        </div>
 
-        <label>Prix (€) (optionnel)</label><br />
-        <input
-          type="number"
-          name="price"
-          value={event.price}
-          onChange={handleChange}
-        /><br />
+        <div style={styles.formRow}>
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Capacité (optionnel)</label>
+            <input
+              type="number"
+              name="capacity"
+              value={event.capacity}
+              onChange={handleChange}
+              min="1"
+              style={styles.input}
+            />
+          </div>
 
-        <label>Statut</label><br />
-        <select name="status" value={event.status} onChange={handleChange}>
-          <option value="DRAFT">DRAFT</option>
-          <option value="PUBLISHED">PUBLISHED</option>
-          <option value="CANCELLED">CANCELLED</option>
-        </select><br /><br />
+          <div style={styles.formGroup}>
+            <label style={styles.label}>Prix € (optionnel)</label>
+            <input
+              type="number"
+              name="price"
+              value={event.price}
+              onChange={handleChange}
+              min="0"
+              step="0.01"
+              style={styles.input}
+            />
+          </div>
+        </div>
 
-        <button type="submit">{isEdit ? "Enregistrer" : "Créer"}</button>
+        <div style={styles.formGroup}>
+          <label style={styles.label}>Statut *</label>
+          <select
+            name="status"
+            value={event.status}
+            onChange={handleChange}
+            style={styles.select}
+          >
+            <option value="DRAFT">DRAFT</option>
+            <option value="PUBLISHED">PUBLISHED</option>
+            <option value="CANCELLED">CANCELLED</option>
+          </select>
+        </div>
+
+        <div style={styles.buttonGroup}>
+          <button
+            type="button"
+            onClick={() => navigate("/admin/events")}
+            style={styles.cancelButton}
+          >
+            Annuler
+          </button>
+          <button type="submit" style={styles.submitButton}>
+            {isEdit ? "Enregistrer" : "Créer"}
+          </button>
+        </div>
       </form>
     </div>
   );
 }
+
+const styles = {
+  container: {
+    maxWidth: "600px",
+    margin: "0 auto",
+  },
+  title: {
+    fontSize: "1.8rem",
+    marginBottom: "1rem",
+    color: "#1f2937",
+  },
+  form: {
+    background: "#fff",
+    borderRadius: "8px",
+    padding: "1.5rem",
+    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+  },
+  formGroup: {
+    marginBottom: "1rem",
+    flex: 1,
+  },
+  formRow: {
+    display: "flex",
+    gap: "1rem",
+  },
+  label: {
+    display: "block",
+    marginBottom: "0.5rem",
+    fontWeight: "500",
+    color: "#374151",
+  },
+  input: {
+    width: "100%",
+    padding: "0.5rem",
+    border: "1px solid #d1d5db",
+    borderRadius: "6px",
+    fontSize: "1rem",
+    boxSizing: "border-box",
+  },
+  textarea: {
+    width: "100%",
+    padding: "0.5rem",
+    border: "1px solid #d1d5db",
+    borderRadius: "6px",
+    fontSize: "1rem",
+    minHeight: "100px",
+    boxSizing: "border-box",
+    resize: "vertical",
+  },
+  select: {
+    width: "100%",
+    padding: "0.5rem",
+    border: "1px solid #d1d5db",
+    borderRadius: "6px",
+    fontSize: "1rem",
+    boxSizing: "border-box",
+  },
+  error: {
+    color: "#dc2626",
+    background: "#fef2f2",
+    padding: "0.75rem",
+    borderRadius: "6px",
+    marginBottom: "1rem",
+  },
+  buttonGroup: {
+    display: "flex",
+    gap: "1rem",
+    marginTop: "1.5rem",
+  },
+  cancelButton: {
+    flex: 1,
+    padding: "0.75rem 1rem",
+    border: "1px solid #d1d5db",
+    borderRadius: "6px",
+    background: "#fff",
+    color: "#374151",
+    fontSize: "1rem",
+    cursor: "pointer",
+  },
+  submitButton: {
+    flex: 1,
+    padding: "0.75rem 1rem",
+    border: "none",
+    borderRadius: "6px",
+    background: "#2563eb",
+    color: "#fff",
+    fontSize: "1rem",
+    fontWeight: "500",
+    cursor: "pointer",
+  },
+};

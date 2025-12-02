@@ -9,7 +9,6 @@ import {
 
 const API_URL = 'http://localhost:8080/api';
 
-// Style pour le CardElement
 const cardStyle = {
   style: {
     base: {
@@ -28,7 +27,7 @@ const cardStyle = {
   },
 };
 
-function CheckoutForm({ amount, description, reservationType, reservationId, onSuccess, onCancel }) {
+function CheckoutForm({ amount, description, reservationType, metadata, onSuccess, onCancel, token }) {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -43,21 +42,25 @@ function CheckoutForm({ amount, description, reservationType, reservationId, onS
     setError(null);
 
     try {
-      // 1. Créer le PaymentIntent côté backend
+      // 1. Créer le PaymentIntent
       const response = await fetch(`${API_URL}/payments/create-payment-intent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
-          amount: amount * 100, // Convertir en centimes
+          amount: Math.round(amount * 100), // Convertir en centimes
           currency: 'eur',
           description,
           reservationType,
-          reservationId,
+          ...metadata, // sessionId, numberOfChildren, etc.
         }),
       });
+
+      if (!response.ok) {
+        throw new Error(`Erreur ${response.status}`);
+      }
 
       const { clientSecret } = await response.json();
 
@@ -71,90 +74,157 @@ function CheckoutForm({ amount, description, reservationType, reservationId, onS
       if (result.error) {
         setError(result.error.message);
       } else if (result.paymentIntent.status === 'succeeded') {
-        onSuccess(result.paymentIntent);
+        // 3. Retourner le paymentIntentId au parent
+        onSuccess(result.paymentIntent.id);
       }
     } catch (err) {
-      setError('Une erreur est survenue. Veuillez réessayer.');
+      setError('Une erreur est survenue. ' + err.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto">
-      <div className="bg-white rounded-lg shadow-lg p-6">
-        <h2 className="text-xl font-semibold mb-4">Paiement sécurisé</h2>
-        
-        {/* Résumé */}
-        <div className="bg-gray-50 rounded-lg p-4 mb-6">
-          <p className="text-sm text-gray-600">{description}</p>
-          <p className="text-2xl font-bold text-gray-900 mt-2">{amount.toFixed(2)} €</p>
-        </div>
+    <form onSubmit={handleSubmit} style={styles.form}>
+      <h2 style={styles.title}>Paiement sécurisé</h2>
+      
+      <div style={styles.summary}>
+        <p style={styles.description}>{description}</p>
+        <p style={styles.amount}>{amount.toFixed(2)} €</p>
+      </div>
 
-        {/* Carte */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Informations de carte
-          </label>
-          <div className="border border-gray-300 rounded-lg p-4 bg-white">
-            <CardElement options={cardStyle} />
-          </div>
+      <div style={styles.cardContainer}>
+        <label style={styles.label}>Informations de carte</label>
+        <div style={styles.cardElement}>
+          <CardElement options={cardStyle} />
         </div>
+      </div>
 
-        {/* Erreur */}
-        {error && (
-          <div className="bg-red-50 text-red-700 p-3 rounded-lg mb-4 text-sm">
-            {error}
-          </div>
-        )}
+      {error && (
+        <div style={styles.error}>{error}</div>
+      )}
 
-        {/* Boutons */}
-        <div className="flex gap-3">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition"
-          >
-            Annuler
-          </button>
-          <button
-            type="submit"
-            disabled={!stripe || loading}
-            className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? (
-              <span className="flex items-center justify-center">
-                <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
-                Traitement...
-              </span>
-            ) : (
-              `Payer ${amount.toFixed(2)} €`
-            )}
-          </button>
-        </div>
+      <div style={styles.buttonGroup}>
+        <button
+          type="button"
+          onClick={onCancel}
+          style={styles.cancelButton}
+        >
+          Annuler
+        </button>
+        <button
+          type="submit"
+          disabled={!stripe || loading}
+          style={{
+            ...styles.submitButton,
+            opacity: (!stripe || loading) ? 0.6 : 1,
+            cursor: (!stripe || loading) ? 'not-allowed' : 'pointer',
+          }}
+        >
+          {loading ? 'Traitement...' : `Payer ${amount.toFixed(2)} €`}
+        </button>
+      </div>
 
-        {/* Badge sécurité */}
-        <div className="flex items-center justify-center mt-4 text-xs text-gray-500">
-          <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-          </svg>
-          Paiement sécurisé par Stripe
-        </div>
+      <div style={styles.securityBadge}>
+        🔒 Paiement sécurisé par Stripe
       </div>
     </form>
   );
 }
 
-// Composant wrapper avec Stripe Provider
-export default function PaymentForm({ stripePublicKey, ...props }) {
+export default function PaymentForm({ stripePublicKey, token, ...props }) {
   const stripePromise = loadStripe(stripePublicKey);
 
   return (
     <Elements stripe={stripePromise}>
-      <CheckoutForm {...props} />
+      <CheckoutForm {...props} token={token} />
     </Elements>
   );
 }
+
+const styles = {
+  form: {
+    background: '#fff',
+    borderRadius: '8px',
+    padding: '1.5rem',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    maxWidth: '400px',
+    margin: '0 auto',
+  },
+  title: {
+    fontSize: '1.3rem',
+    marginBottom: '1rem',
+    color: '#1f2937',
+  },
+  summary: {
+    background: '#f3f4f6',
+    borderRadius: '6px',
+    padding: '1rem',
+    marginBottom: '1.5rem',
+  },
+  description: {
+    color: '#6b7280',
+    fontSize: '0.9rem',
+    margin: 0,
+  },
+  amount: {
+    fontSize: '1.5rem',
+    fontWeight: 'bold',
+    color: '#1f2937',
+    margin: '0.5rem 0 0 0',
+  },
+  cardContainer: {
+    marginBottom: '1.5rem',
+  },
+  label: {
+    display: 'block',
+    marginBottom: '0.5rem',
+    fontWeight: '500',
+    color: '#374151',
+    fontSize: '0.9rem',
+  },
+  cardElement: {
+    border: '1px solid #d1d5db',
+    borderRadius: '6px',
+    padding: '0.75rem',
+    background: '#fff',
+  },
+  error: {
+    background: '#fef2f2',
+    color: '#dc2626',
+    padding: '0.75rem',
+    borderRadius: '6px',
+    marginBottom: '1rem',
+    fontSize: '0.9rem',
+  },
+  buttonGroup: {
+    display: 'flex',
+    gap: '0.75rem',
+  },
+  cancelButton: {
+    flex: 1,
+    padding: '0.75rem',
+    border: '1px solid #d1d5db',
+    borderRadius: '6px',
+    background: '#fff',
+    color: '#374151',
+    fontSize: '1rem',
+    cursor: 'pointer',
+  },
+  submitButton: {
+    flex: 1,
+    padding: '0.75rem',
+    border: 'none',
+    borderRadius: '6px',
+    background: '#2563eb',
+    color: '#fff',
+    fontSize: '1rem',
+    fontWeight: '500',
+  },
+  securityBadge: {
+    textAlign: 'center',
+    marginTop: '1rem',
+    fontSize: '0.8rem',
+    color: '#6b7280',
+  },
+};

@@ -7,6 +7,8 @@ import be.cercle.asblcercle.repository.UserRepository;
 import be.cercle.asblcercle.web.dto.GarderieReservationRequest;
 import be.cercle.asblcercle.web.dto.GarderieReservationResponseDto;
 import be.cercle.asblcercle.web.dto.GarderieSessionResponseDto;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -46,7 +48,7 @@ public class GarderieController {
                 .toList();
     }
 
-    // USER (auth) : créer une réservation
+    // USER (auth) : créer une réservation APRES paiement validé
     @PostMapping("/reservations")
     public GarderieReservationResponseDto createReservation(
             @Valid @RequestBody GarderieReservationRequest request,
@@ -56,10 +58,23 @@ public class GarderieController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non connecté");
         }
 
+        // 1. Vérifier le paiement Stripe
+        try {
+            PaymentIntent paymentIntent = PaymentIntent.retrieve(request.getPaymentIntentId());
+
+            if (!"succeeded".equals(paymentIntent.getStatus())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Paiement non validé");
+            }
+        } catch (StripeException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erreur vérification paiement: " + e.getMessage());
+        }
+
+        // 2. Récupérer l'utilisateur
         String email = authentication.getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utilisateur introuvable"));
 
+        // 3. Récupérer la session
         GarderieSession session = sessionRepository.findById(request.getSessionId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Session introuvable"));
 
@@ -72,15 +87,15 @@ public class GarderieController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nombre d'enfants invalide");
         }
 
-        // Option simple : on ne vérifie pas ici la capacité restante (ou à implémenter plus tard)
-
         double totalPrice = session.getPricePerChild() * totalChildren;
 
+        // 4. Créer la réservation avec statut CONFIRMED
         GarderieReservation reservation = new GarderieReservation();
         reservation.setUser(user);
         reservation.setSession(session);
         reservation.setNumberOfChildren(totalChildren);
         reservation.setTotalPrice(totalPrice);
+        reservation.setPaymentIntentId(request.getPaymentIntentId());
         reservation.setStatus(GarderieReservationStatus.CONFIRMED);
 
         GarderieReservation saved = reservationRepository.save(reservation);

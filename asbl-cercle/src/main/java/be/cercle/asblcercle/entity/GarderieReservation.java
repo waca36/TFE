@@ -12,12 +12,10 @@ public class GarderieReservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // le parent (user)
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    // la session de garderie
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "session_id")
     private GarderieSession session;
@@ -32,38 +30,37 @@ public class GarderieReservation {
     @Column(nullable = false)
     private GarderieReservationStatus status = GarderieReservationStatus.CONFIRMED;
 
+    @Column(name = "payment_intent_id")
+    private String paymentIntentId;
+
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    // getters / setters
+    // Getters / Setters
 
     public Long getId() { return id; }
-
     public void setId(Long id) { this.id = id; }
 
     public User getUser() { return user; }
-
     public void setUser(User user) { this.user = user; }
 
     public GarderieSession getSession() { return session; }
-
     public void setSession(GarderieSession session) { this.session = session; }
 
     public Integer getNumberOfChildren() { return numberOfChildren; }
-
     public void setNumberOfChildren(Integer numberOfChildren) {
         this.numberOfChildren = numberOfChildren;
     }
 
     public Double getTotalPrice() { return totalPrice; }
-
     public void setTotalPrice(Double totalPrice) { this.totalPrice = totalPrice; }
 
     public GarderieReservationStatus getStatus() { return status; }
-
     public void setStatus(GarderieReservationStatus status) { this.status = status; }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
+    public String getPaymentIntentId() { return paymentIntentId; }
+    public void setPaymentIntentId(String paymentIntentId) { this.paymentIntentId = paymentIntentId; }
 
+    public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }
