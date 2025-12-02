@@ -156,3 +156,80 @@ export async function adminDeleteEvent(id, token) {
 }
 
 
+export async function getGarderieSessions() {
+  const res = await fetch(`${API_URL}/api/public/garderie/sessions`);
+  if (!res.ok) throw new Error("Erreur chargement sessions garderie");
+  return res.json();
+}
+
+export async function createGarderieReservation(payload, token) {
+  const res = await fetch(`${API_URL}/api/public/garderie/reservations`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(token),
+    },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error("Erreur réservation garderie");
+  return res.json();
+}
+
+export async function getMyGarderieReservations(token) {
+  const res = await fetch(`${API_URL}/api/public/garderie/reservations/me`, {
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error("Erreur récupération réservations garderie");
+  return res.json();
+}
+
+
+export async function adminGetGarderieSessions(token) {
+  const res = await fetch(`${API_URL}/api/admin/garderie/sessions`, {
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error("Erreur récupération sessions (admin)");
+  return res.json();
+}
+
+export async function adminGetGarderieSession(id, token) {
+  const res = await fetch(`${API_URL}/api/admin/garderie/sessions/${id}`, {
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error("Erreur récupération session (admin)");
+  return res.json();
+}
+
+export async function adminCreateGarderieSession(payload, token) {
+  const res = await fetch(`${API_URL}/api/admin/garderie/sessions`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(token),
+    },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error("Erreur création session (admin)");
+  return res.json();
+}
+
+export async function adminUpdateGarderieSession(id, payload, token) {
+  const res = await fetch(`${API_URL}/api/admin/garderie/sessions/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(token),
+    },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error("Erreur modification session (admin)");
+  return res.json();
+}
+
+export async function adminDeleteGarderieSession(id, token) {
+  const res = await fetch(`${API_URL}/api/admin/garderie/sessions/${id}`, {
+    method: "DELETE",
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error("Erreur suppression session (admin)");
+}

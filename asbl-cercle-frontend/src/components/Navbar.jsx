@@ -19,14 +19,21 @@ export default function Navbar() {
       <nav style={styles.nav}>
         <Link to="/espace" style={styles.link}>Espaces</Link>
         <Link to="/events" style={styles.link}>Événements</Link>
-        <Link to="/reservations" style={styles.link}>Mes réservations</Link>
+        <Link to="/garderie" style={styles.link}>Garderie</Link>
+
+        {user && (
+          <>
+            <Link to="/reservations" style={styles.link}>Mes réservations</Link>
+            <Link to="/garderie/my" style={styles.link}>Mes garderies</Link>
+          </>
+        )}
+
         {user?.role === "ADMIN" && (
-          <Link to="/admin" style={styles.link}>Admin</Link>
+          <>
+            <Link to="/admin" style={styles.link}>Admin</Link>
+          </>
         )}
       </nav>
-
-
-      
 
       <div>
         {user ? (
@@ -34,7 +41,6 @@ export default function Navbar() {
             <span style={{ marginRight: "1rem" }}>
               Bonjour, <b>{user.firstName}</b>
             </span>
-            
             <button onClick={handleLogout} style={styles.button}>
               Déconnexion
             </button>
@@ -43,11 +49,8 @@ export default function Navbar() {
           <>
             <Link to="/login" style={styles.link}>Connexion</Link>
             <Link to="/register" style={styles.link}>Inscription</Link>
-            
-
           </>
         )}
-        
       </div>
     </header>
   );

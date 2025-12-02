@@ -45,6 +45,10 @@ export default function AdminDashboard() {
         <Link to="/admin/events">Gestion des événements</Link>
       </p>
 
+      <p>
+        <Link to="/admin/garderie">Gestion des garderies</Link>
+      </p>
+
 
       <div style={{ marginBottom: "1rem" }}>
         <Link to="/admin/espaces/new">+ Créer un espace</Link>

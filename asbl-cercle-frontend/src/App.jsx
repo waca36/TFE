@@ -12,6 +12,11 @@ import AdminEspaceForm from "./pages/AdminEspaceForm";
 import EventsPage from "./pages/EventsPage";
 import AdminEventsDashboard from "./pages/AdminEventsDashboard";
 import AdminEventForm from "./pages/AdminEventForm";
+import GarderiePage from "./pages/GarderiePage";
+import GarderieReservePage from "./pages/GarderieReservePage";
+import MyGarderieReservationsPage from "./pages/MyGarderieReservationsPage";
+import AdminGarderieDashboard from "./pages/AdminGarderieDashboard";
+import AdminGarderieForm from "./pages/AdminGarderieForm";
 
 
 export default function App() {
@@ -117,7 +122,59 @@ export default function App() {
         }
       />
 
+      <Route
+        path="/garderie"
+        element={
+          <Layout>
+            <GarderiePage />
+          </Layout>
+        }
+      />
 
+      <Route
+        path="/garderie/reserve/:id"
+        element={
+          <Layout>
+            <GarderieReservePage />
+          </Layout>
+        }
+      />
+
+      <Route
+        path="/garderie/my"
+        element={
+          <Layout>
+            <MyGarderieReservationsPage />
+          </Layout>
+        }
+      />
+
+      <Route
+        path="/admin/garderie"
+        element={
+          <Layout>
+            <AdminGarderieDashboard />
+          </Layout>
+        }
+      />
+
+      <Route
+        path="/admin/garderie/new"
+        element={
+          <Layout>
+            <AdminGarderieForm />
+          </Layout>
+        }
+      />
+
+      <Route
+        path="/admin/garderie/edit/:id"
+        element={
+          <Layout>
+            <AdminGarderieForm />
+          </Layout>
+        }
+      />
 
 
       {/* Page 404 */}
