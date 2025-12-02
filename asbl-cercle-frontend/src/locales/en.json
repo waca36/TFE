@@ -36,6 +36,7 @@
     "events": "Events",
     "childcare": "Childcare",
     "myReservations": "My reservations",
+    "myEvents": "My events",
     "myChildcare": "My childcare",
     "admin": "Admin",
     "profile": "My profile",
@@ -87,7 +88,28 @@
 
   "events": {
     "title": "Upcoming events",
-    "noEvents": "No events at the moment"
+    "noEvents": "No events at the moment",
+    "register": "Register",
+    "loginToRegister": "Log in to register",
+    "viewMyRegistrations": "View my registrations",
+    "myRegistrations": "My event registrations",
+    "backToEvents": "Back to events",
+    "noRegistrations": "You have no registrations",
+    "registerFor": "Register for event",
+    "numberOfParticipants": "Number of participants",
+    "participant": "participant(s)",
+    "participants": "Participants",
+    "confirmRegistration": "Confirm registration",
+    "registrationSuccess": "Registration confirmed!",
+    "registering": "Registering...",
+    "registration": "Registration",
+    "cancelRegistration": "Cancel",
+    "confirmCancel": "Are you sure you want to cancel this registration?",
+    "eventPassed": "Event passed",
+    "event": "Event",
+    "free": "Free",
+    "placesAvailable": "places available",
+    "notFound": "Event not found"
   },
 
   "childcare": {

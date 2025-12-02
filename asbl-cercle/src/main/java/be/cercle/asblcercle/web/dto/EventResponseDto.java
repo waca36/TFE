@@ -13,6 +13,8 @@ public class EventResponseDto {
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
     private Integer capacity;
+    private Integer registeredCount;
+    private Integer availablePlaces;
     private Double price;
     private EventStatus status;
     private LocalDateTime createdAt;
@@ -31,12 +33,25 @@ public class EventResponseDto {
         return dto;
     }
 
+    public static EventResponseDto fromEntity(Event e, Integer registeredCount) {
+        EventResponseDto dto = fromEntity(e);
+        dto.registeredCount = registeredCount;
+        if (e.getCapacity() != null) {
+            dto.availablePlaces = e.getCapacity() - registeredCount;
+        }
+        return dto;
+    }
+
+    // Getters
+
     public Long getId() { return id; }
     public String getTitle() { return title; }
     public String getDescription() { return description; }
     public LocalDateTime getStartDateTime() { return startDateTime; }
     public LocalDateTime getEndDateTime() { return endDateTime; }
     public Integer getCapacity() { return capacity; }
+    public Integer getRegisteredCount() { return registeredCount; }
+    public Integer getAvailablePlaces() { return availablePlaces; }
     public Double getPrice() { return price; }
     public EventStatus getStatus() { return status; }
     public LocalDateTime getCreatedAt() { return createdAt; }

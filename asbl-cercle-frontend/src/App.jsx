@@ -10,6 +10,8 @@ import CreateReservationPage from "./pages/CreateReservationPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminEspaceForm from "./pages/AdminEspaceForm";
 import EventsPage from "./pages/EventsPage";
+import EventRegisterPage from "./pages/EventRegisterPage";
+import MyEventRegistrationsPage from "./pages/MyEventRegistrationsPage";
 import AdminEventsDashboard from "./pages/AdminEventsDashboard";
 import AdminEventForm from "./pages/AdminEventForm";
 import GarderiePage from "./pages/GarderiePage";
@@ -59,6 +61,73 @@ export default function App() {
         }
       />
 
+      {/* EVENTS */}
+      <Route
+        path="/events"
+        element={
+          <Layout>
+            <EventsPage />
+          </Layout>
+        }
+      />
+
+      <Route
+        path="/events/register/:id"
+        element={
+          <Layout>
+            <EventRegisterPage />
+          </Layout>
+        }
+      />
+
+      <Route
+        path="/events/my"
+        element={
+          <Layout>
+            <MyEventRegistrationsPage />
+          </Layout>
+        }
+      />
+
+      {/* GARDERIE */}
+      <Route
+        path="/garderie"
+        element={
+          <Layout>
+            <GarderiePage />
+          </Layout>
+        }
+      />
+
+      <Route
+        path="/garderie/reserve/:id"
+        element={
+          <Layout>
+            <GarderieReservePage />
+          </Layout>
+        }
+      />
+
+      <Route
+        path="/garderie/my"
+        element={
+          <Layout>
+            <MyGarderieReservationsPage />
+          </Layout>
+        }
+      />
+
+      {/* PROFILE */}
+      <Route
+        path="/profile"
+        element={
+          <Layout>
+            <ProfilePage />
+          </Layout>
+        }
+      />
+
+      {/* ADMIN */}
       <Route
         path="/admin"
         element={
@@ -82,15 +151,6 @@ export default function App() {
         element={
           <Layout>
             <AdminEspaceForm />
-          </Layout>
-        }
-      />
-
-      <Route
-        path="/events"
-        element={
-          <Layout>
-            <EventsPage />
           </Layout>
         }
       />
@@ -123,33 +183,6 @@ export default function App() {
       />
 
       <Route
-        path="/garderie"
-        element={
-          <Layout>
-            <GarderiePage />
-          </Layout>
-        }
-      />
-
-      <Route
-        path="/garderie/reserve/:id"
-        element={
-          <Layout>
-            <GarderieReservePage />
-          </Layout>
-        }
-      />
-
-      <Route
-        path="/garderie/my"
-        element={
-          <Layout>
-            <MyGarderieReservationsPage />
-          </Layout>
-        }
-      />
-
-      <Route
         path="/admin/garderie"
         element={
           <Layout>
@@ -172,15 +205,6 @@ export default function App() {
         element={
           <Layout>
             <AdminGarderieForm />
-          </Layout>
-        }
-      />
-
-      <Route
-        path="/profile"
-        element={
-          <Layout>
-            <ProfilePage />
           </Layout>
         }
       />

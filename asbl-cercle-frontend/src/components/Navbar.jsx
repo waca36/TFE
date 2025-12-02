@@ -27,6 +27,7 @@ export default function Navbar() {
         {user && (
           <>
             <Link to="/reservations" style={styles.link}>{t('nav.myReservations')}</Link>
+            <Link to="/events/my" style={styles.link}>{t('nav.myEvents')}</Link>
             <Link to="/garderie/my" style={styles.link}>{t('nav.myChildcare')}</Link>
           </>
         )}

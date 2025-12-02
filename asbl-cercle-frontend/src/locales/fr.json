@@ -36,6 +36,7 @@
     "events": "Événements",
     "childcare": "Garderie",
     "myReservations": "Mes réservations",
+    "myEvents": "Mes événements",
     "myChildcare": "Mes garderies",
     "admin": "Admin",
     "profile": "Mon profil",
@@ -87,7 +88,28 @@
 
   "events": {
     "title": "Événements à venir",
-    "noEvents": "Aucun événement pour l'instant"
+    "noEvents": "Aucun événement pour l'instant",
+    "register": "S'inscrire",
+    "loginToRegister": "Connectez-vous pour vous inscrire",
+    "viewMyRegistrations": "Voir mes inscriptions",
+    "myRegistrations": "Mes inscriptions aux événements",
+    "backToEvents": "Retour aux événements",
+    "noRegistrations": "Vous n'avez aucune inscription",
+    "registerFor": "Inscription à l'événement",
+    "numberOfParticipants": "Nombre de participants",
+    "participant": "participant(s)",
+    "participants": "Participants",
+    "confirmRegistration": "Confirmer l'inscription",
+    "registrationSuccess": "Inscription confirmée !",
+    "registering": "Inscription en cours...",
+    "registration": "Inscription",
+    "cancelRegistration": "Annuler",
+    "confirmCancel": "Êtes-vous sûr de vouloir annuler cette inscription ?",
+    "eventPassed": "Événement passé",
+    "event": "Événement",
+    "free": "Gratuit",
+    "placesAvailable": "places disponibles",
+    "notFound": "Événement introuvable"
   },
 
   "childcare": {
