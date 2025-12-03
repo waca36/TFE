@@ -40,9 +40,9 @@ public class OrganizerEventController {
     @PostMapping
     public EventResponseDto createEvent(@Valid @RequestBody EventRequestDto dto, Authentication authentication) {
         User organizer = getAuthenticatedUser(authentication);
-        
-        // Vérifier que l'utilisateur est bien ORGANISATEUR ou ADMIN
-        if (!organizer.getRole().name().equals("ORGANISATEUR") && !organizer.getRole().name().equals("ADMIN")) {
+
+        // Vérifier que l'utilisateur est bien ORGANIZER ou ADMIN
+        if (!organizer.getRole().name().equals("ORGANIZER") && !organizer.getRole().name().equals("ADMIN")) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Seuls les organisateurs peuvent créer des événements");
         }
 
@@ -63,7 +63,7 @@ public class OrganizerEventController {
         event.setCapacity(dto.getCapacity());
         event.setPrice(dto.getPrice());
         event.setCreatedBy(organizer);
-        
+
         // Si admin, l'événement est directement publié
         if (organizer.getRole().name().equals("ADMIN")) {
             event.setStatus(EventStatus.PUBLISHED);
@@ -81,7 +81,7 @@ public class OrganizerEventController {
     @GetMapping("/my")
     public List<EventResponseDto> getMyEvents(Authentication authentication) {
         User organizer = getAuthenticatedUser(authentication);
-        
+
         return eventRepository.findByCreatedByIdOrderByCreatedAtDesc(organizer.getId()).stream()
                 .map(e -> {
                     int registered = registrationRepository.countTotalParticipantsByEventId(e.getId());
@@ -94,14 +94,14 @@ public class OrganizerEventController {
     @GetMapping("/my/{id}")
     public EventResponseDto getMyEvent(@PathVariable Long id, Authentication authentication) {
         User organizer = getAuthenticatedUser(authentication);
-        
+
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Événement introuvable"));
-        
+
         if (!event.getCreatedBy().getId().equals(organizer.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Vous n'êtes pas le créateur de cet événement");
         }
-        
+
         int registered = registrationRepository.countTotalParticipantsByEventId(event.getId());
         return EventResponseDto.fromEntity(event, registered);
     }
@@ -110,14 +110,14 @@ public class OrganizerEventController {
     @PutMapping("/my/{id}")
     public EventResponseDto updateMyEvent(@PathVariable Long id, @Valid @RequestBody EventRequestDto dto, Authentication authentication) {
         User organizer = getAuthenticatedUser(authentication);
-        
+
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Événement introuvable"));
-        
+
         if (!event.getCreatedBy().getId().equals(organizer.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Vous n'êtes pas le créateur de cet événement");
         }
-        
+
         // On ne peut modifier que si en attente ou rejeté
         if (event.getStatus() != EventStatus.PENDING_APPROVAL && event.getStatus() != EventStatus.REJECTED) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Impossible de modifier un événement déjà publié ou annulé");
@@ -130,7 +130,7 @@ public class OrganizerEventController {
         event.setLocation(dto.getLocation());
         event.setCapacity(dto.getCapacity());
         event.setPrice(dto.getPrice());
-        
+
         // Si c'était rejeté, on repasse en attente
         if (event.getStatus() == EventStatus.REJECTED) {
             event.setStatus(EventStatus.PENDING_APPROVAL);
@@ -145,14 +145,14 @@ public class OrganizerEventController {
     @DeleteMapping("/my/{id}")
     public void cancelMyEvent(@PathVariable Long id, Authentication authentication) {
         User organizer = getAuthenticatedUser(authentication);
-        
+
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Événement introuvable"));
-        
+
         if (!event.getCreatedBy().getId().equals(organizer.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Vous n'êtes pas le créateur de cet événement");
         }
-        
+
         event.setStatus(EventStatus.CANCELLED);
         eventRepository.save(event);
     }
