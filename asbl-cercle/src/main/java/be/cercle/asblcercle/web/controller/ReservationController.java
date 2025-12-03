@@ -67,7 +67,19 @@ public class ReservationController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Espace non disponible");
         }
 
-        // 4. Créer la réservation avec statut CONFIRMED
+        // 4. Vérifier qu'il n'y a pas de chevauchement avec une autre réservation
+        boolean hasOverlap = reservationRepository.existsOverlappingReservation(
+                request.getEspaceId(),
+                request.getStartDateTime(),
+                request.getEndDateTime()
+        );
+
+        if (hasOverlap) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, 
+                "Cet espace est déjà réservé pour cette période. Veuillez choisir un autre créneau.");
+        }
+
+        // 5. Créer la réservation avec statut CONFIRMED
         Reservation reservation = new Reservation();
         reservation.setUser(user);
         reservation.setEspace(espace);
@@ -97,7 +109,6 @@ public class ReservationController {
                 .collect(Collectors.toList());
     }
 
-    // Garder l'ancien endpoint pour compatibilité (optionnel)
     @GetMapping("/user/{userId}")
     public List<ReservationResponseDto> getByUser(@PathVariable Long userId, Authentication authentication) {
         if (authentication == null) {
@@ -111,5 +122,49 @@ public class ReservationController {
         return reservations.stream()
                 .map(ReservationResponseDto::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    // Endpoint pour vérifier la disponibilité d'un créneau
+    @GetMapping("/check-availability")
+    public boolean checkAvailability(
+            @RequestParam Long espaceId,
+            @RequestParam String startDateTime,
+            @RequestParam String endDateTime
+    ) {
+        return !reservationRepository.existsOverlappingReservation(
+                espaceId,
+                java.time.LocalDateTime.parse(startDateTime),
+                java.time.LocalDateTime.parse(endDateTime)
+        );
+    }
+
+    // Annuler une réservation
+    @DeleteMapping("/{id}/cancel")
+    public void cancelReservation(@PathVariable Long id, Authentication authentication) {
+        if (authentication == null || authentication.getName() == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non connecté");
+        }
+
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utilisateur introuvable"));
+
+        Reservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Réservation introuvable"));
+
+        if (!reservation.getUser().getId().equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Vous ne pouvez pas annuler cette réservation");
+        }
+
+        if (reservation.getStartDateTime().isBefore(java.time.LocalDateTime.now())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La réservation est déjà passée");
+        }
+
+        if (reservation.getStatus() == ReservationStatus.CANCELLED) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cette réservation est déjà annulée");
+        }
+
+        reservation.setStatus(ReservationStatus.CANCELLED);
+        reservationRepository.save(reservation);
     }
 }

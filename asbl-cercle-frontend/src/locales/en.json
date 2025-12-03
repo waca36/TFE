@@ -67,7 +67,8 @@
     "title": "Available spaces",
     "welcome": "Welcome",
     "reserve": "Book this space",
-    "noSpaces": "No spaces available"
+    "noSpaces": "No spaces available",
+    "space": "Space"
   },
 
   "reservation": {
@@ -83,7 +84,10 @@
     "noReservations": "No reservations",
     "confirmed": "Reservation confirmed!",
     "dateError": "Please select start and end dates",
-    "dateOrderError": "End date must be after start date"
+    "dateOrderError": "End date must be after start date",
+    "cancel": "Cancel",
+    "confirmCancel": "Are you sure you want to cancel this reservation?",
+    "passed": "Passed"
   },
 
   "events": {
@@ -124,7 +128,11 @@
     "places": "Places",
     "session": "Session",
     "noSessions": "No sessions available at the moment",
-    "noReservations": "You have no reservations"
+    "noReservations": "You have no reservations",
+    "full": "Full",
+    "cancelReservation": "Cancel",
+    "confirmCancel": "Are you sure you want to cancel this reservation?",
+    "sessionPassed": "Session passed"
   },
 
   "payment": {

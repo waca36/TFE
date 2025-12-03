@@ -67,6 +67,17 @@ export async function createReservation(payload, token) {
   return res.json();
 }
 
+export async function cancelReservation(id, token) {
+  const res = await fetch(`${API_URL}/api/public/reservations/${id}/cancel`, {
+    method: "DELETE",
+    headers: authHeaders(token),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || "Erreur lors de l'annulation");
+  }
+}
+
 // ==================== EVENTS ====================
 
 export async function getPublicEvents() {
@@ -124,6 +135,17 @@ export async function getMyGarderieReservations(token) {
   });
   if (!res.ok) throw new Error("Impossible de récupérer les réservations");
   return res.json();
+}
+
+export async function cancelGarderieReservation(id, token) {
+  const res = await fetch(`${API_URL}/api/public/garderie/reservations/${id}/cancel`, {
+    method: "DELETE",
+    headers: authHeaders(token),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || "Erreur lors de l'annulation");
+  }
 }
 
 // ==================== PROFILE ====================

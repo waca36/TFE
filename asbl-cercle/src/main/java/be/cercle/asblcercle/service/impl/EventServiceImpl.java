@@ -2,6 +2,7 @@ package be.cercle.asblcercle.service.impl;
 
 import be.cercle.asblcercle.entity.Event;
 import be.cercle.asblcercle.entity.EventStatus;
+import be.cercle.asblcercle.repository.EventRegistrationRepository;
 import be.cercle.asblcercle.repository.EventRepository;
 import be.cercle.asblcercle.service.EventService;
 import be.cercle.asblcercle.web.dto.EventRequest;
@@ -19,9 +20,12 @@ import java.util.List;
 public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
+    private final EventRegistrationRepository registrationRepository;
 
-    public EventServiceImpl(EventRepository eventRepository) {
+    public EventServiceImpl(EventRepository eventRepository,
+                            EventRegistrationRepository registrationRepository) {
         this.eventRepository = eventRepository;
+        this.registrationRepository = registrationRepository;
     }
 
     @Override
@@ -32,7 +36,10 @@ public class EventServiceImpl implements EventService {
                         LocalDateTime.now()
                 );
         return events.stream()
-                .map(EventResponseDto::fromEntity)
+                .map(e -> {
+                    Integer registeredCount = registrationRepository.countTotalParticipantsByEventId(e.getId());
+                    return EventResponseDto.fromEntity(e, registeredCount);
+                })
                 .toList();
     }
 
@@ -43,7 +50,7 @@ public class EventServiceImpl implements EventService {
         Event e = new Event();
         applyRequestToEntity(request, e);
         Event saved = eventRepository.save(e);
-        return EventResponseDto.fromEntity(saved);
+        return EventResponseDto.fromEntity(saved, 0);
     }
 
     @Override
@@ -55,7 +62,8 @@ public class EventServiceImpl implements EventService {
 
         applyRequestToEntity(request, e);
         Event saved = eventRepository.save(e);
-        return EventResponseDto.fromEntity(saved);
+        Integer registeredCount = registrationRepository.countTotalParticipantsByEventId(saved.getId());
+        return EventResponseDto.fromEntity(saved, registeredCount);
     }
 
     @Override
@@ -70,35 +78,35 @@ public class EventServiceImpl implements EventService {
     public List<EventResponseDto> getAllEventsForAdmin() {
         return eventRepository.findAll()
                 .stream()
-                .map(EventResponseDto::fromEntity)
+                .map(e -> {
+                    Integer registeredCount = registrationRepository.countTotalParticipantsByEventId(e.getId());
+                    return EventResponseDto.fromEntity(e, registeredCount);
+                })
                 .toList();
     }
 
     private void validateEventDates(EventRequest request) {
         LocalDateTime now = LocalDateTime.now();
 
-        // Vérifier que la date de début n'est pas dans le passé
         if (request.getStartDateTime().isBefore(now)) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "La date de début ne peut pas être dans le passé"
+                HttpStatus.BAD_REQUEST, 
+                "La date de début ne peut pas être dans le passé"
             );
         }
 
-        // Vérifier que la date de fin n'est pas dans le passé
         if (request.getEndDateTime().isBefore(now)) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "La date de fin ne peut pas être dans le passé"
+                HttpStatus.BAD_REQUEST, 
+                "La date de fin ne peut pas être dans le passé"
             );
         }
 
-        // Vérifier que la date de fin est après la date de début
-        if (request.getEndDateTime().isBefore(request.getStartDateTime()) ||
-                request.getEndDateTime().isEqual(request.getStartDateTime())) {
+        if (request.getEndDateTime().isBefore(request.getStartDateTime()) || 
+            request.getEndDateTime().isEqual(request.getStartDateTime())) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "La date de fin doit être après la date de début"
+                HttpStatus.BAD_REQUEST, 
+                "La date de fin doit être après la date de début"
             );
         }
     }

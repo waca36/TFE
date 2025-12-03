@@ -16,6 +16,8 @@ public class GarderieSessionResponseDto {
     private LocalTime startTime;
     private LocalTime endTime;
     private Integer capacity;
+    private Integer registeredCount;
+    private Integer availablePlaces;
     private Double pricePerChild;
     private GarderieSessionStatus status;
     private LocalDateTime createdAt;
@@ -35,6 +37,15 @@ public class GarderieSessionResponseDto {
         return dto;
     }
 
+    public static GarderieSessionResponseDto fromEntity(GarderieSession s, Integer registeredCount) {
+        GarderieSessionResponseDto dto = fromEntity(s);
+        dto.registeredCount = registeredCount;
+        dto.availablePlaces = s.getCapacity() - registeredCount;
+        return dto;
+    }
+
+    // Getters
+
     public Long getId() { return id; }
     public String getTitle() { return title; }
     public String getDescription() { return description; }
@@ -42,6 +53,8 @@ public class GarderieSessionResponseDto {
     public LocalTime getStartTime() { return startTime; }
     public LocalTime getEndTime() { return endTime; }
     public Integer getCapacity() { return capacity; }
+    public Integer getRegisteredCount() { return registeredCount; }
+    public Integer getAvailablePlaces() { return availablePlaces; }
     public Double getPricePerChild() { return pricePerChild; }
     public GarderieSessionStatus getStatus() { return status; }
     public LocalDateTime getCreatedAt() { return createdAt; }

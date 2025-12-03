@@ -1,1 +1,5 @@
 faire en sorte que le compte diminue apres une reservation partout
+
+ameliorer les messages d'erreurs ex : chevauchement de reservation d'espaces mets juste : 
+"Erreur lors de la création de la réservation" devrait indiquer clairement l'erreur
+

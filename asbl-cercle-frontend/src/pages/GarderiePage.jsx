@@ -46,22 +46,38 @@ export default function GarderiePage() {
             </tr>
           </thead>
           <tbody>
-            {sessions.map((s) => (
-              <tr key={s.id}>
-                <td>{s.title}</td>
-                <td>{s.sessionDate}</td>
-                <td>{s.startTime} - {s.endTime}</td>
-                <td>{s.pricePerChild} €</td>
-                <td>{s.capacity}</td>
-                <td>
-                  {user ? (
-                    <Link to={`/garderie/reserve/${s.id}`}>{t('childcare.reserve')}</Link>
-                  ) : (
-                    <Link to="/login">{t('nav.login')}</Link>
-                  )}
-                </td>
-              </tr>
-            ))}
+            {sessions.map((s) => {
+              const isFull = s.availablePlaces !== undefined && s.availablePlaces <= 0;
+              
+              return (
+                <tr key={s.id}>
+                  <td>{s.title}</td>
+                  <td>{s.sessionDate}</td>
+                  <td>{s.startTime} - {s.endTime}</td>
+                  <td>{s.pricePerChild} €</td>
+                  <td>
+                    {s.availablePlaces !== undefined ? (
+                      <span style={{ color: isFull ? '#dc2626' : '#059669', fontWeight: '500' }}>
+                        {s.availablePlaces} / {s.capacity}
+                      </span>
+                    ) : (
+                      s.capacity
+                    )}
+                  </td>
+                  <td>
+                    {user ? (
+                      isFull ? (
+                        <span style={{ color: '#9ca3af' }}>{t('childcare.full')}</span>
+                      ) : (
+                        <Link to={`/garderie/reserve/${s.id}`}>{t('childcare.reserve')}</Link>
+                      )
+                    ) : (
+                      <Link to="/login">{t('nav.login')}</Link>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       )}

@@ -35,7 +35,7 @@ public class GarderieController {
         this.userRepository = userRepository;
     }
 
-    // PUBLIC : voir les sessions ouvertes
+    // PUBLIC : voir les sessions ouvertes avec places restantes
     @GetMapping("/sessions")
     public List<GarderieSessionResponseDto> listOpenSessions() {
         List<GarderieSession> sessions =
@@ -44,7 +44,10 @@ public class GarderieController {
                         LocalDate.now()
                 );
         return sessions.stream()
-                .map(GarderieSessionResponseDto::fromEntity)
+                .map(s -> {
+                    Integer registeredCount = reservationRepository.countTotalChildrenBySessionId(s.getId());
+                    return GarderieSessionResponseDto.fromEntity(s, registeredCount);
+                })
                 .toList();
     }
 
@@ -87,9 +90,17 @@ public class GarderieController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nombre d'enfants invalide");
         }
 
+        // 4. Vérifier la capacité restante
+        Integer currentChildren = reservationRepository.countTotalChildrenBySessionId(session.getId());
+        if (currentChildren + totalChildren > session.getCapacity()) {
+            int remaining = session.getCapacity() - currentChildren;
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, 
+                "Capacité insuffisante. Places restantes : " + remaining);
+        }
+
         double totalPrice = session.getPricePerChild() * totalChildren;
 
-        // 4. Créer la réservation avec statut CONFIRMED
+        // 5. Créer la réservation avec statut CONFIRMED
         GarderieReservation reservation = new GarderieReservation();
         reservation.setUser(user);
         reservation.setSession(session);
@@ -119,5 +130,36 @@ public class GarderieController {
         return reservations.stream()
                 .map(GarderieReservationResponseDto::fromEntity)
                 .toList();
+    }
+
+    // USER (auth) : annuler une réservation garderie
+    @DeleteMapping("/reservations/{id}/cancel")
+    public void cancelReservation(@PathVariable Long id, Authentication authentication) {
+        if (authentication == null || authentication.getName() == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non connecté");
+        }
+
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utilisateur introuvable"));
+
+        GarderieReservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Réservation introuvable"));
+
+        if (!reservation.getUser().getId().equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Vous ne pouvez pas annuler cette réservation");
+        }
+
+        // Vérifier que la session n'est pas déjà passée
+        if (reservation.getSession().getSessionDate().isBefore(java.time.LocalDate.now())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La session est déjà passée");
+        }
+
+        if (reservation.getStatus() == GarderieReservationStatus.CANCELLED) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cette réservation est déjà annulée");
+        }
+
+        reservation.setStatus(GarderieReservationStatus.CANCELLED);
+        reservationRepository.save(reservation);
     }
 }
