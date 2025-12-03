@@ -1,21 +1,20 @@
 package be.cercle.asblcercle.entity;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "event")
+@Table(name = "events")
 public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 150)
+    @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false, length = 500)
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @Column(nullable = false)
@@ -24,72 +23,77 @@ public class Event {
     @Column(nullable = false)
     private LocalDateTime endDateTime;
 
-    @Column(nullable = true)
+    private String location;
+
+    @Column(nullable = false)
     private Integer capacity;
 
-    @Column(nullable = true)
     private Double price;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private EventStatus status = EventStatus.DRAFT;
+    private EventStatus status = EventStatus.PENDING_APPROVAL;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by")
+    private User createdBy;
 
-    // Getters / Setters
+    private LocalDateTime createdAt;
 
-    public Long getId() {
-        return id;
+    private LocalDateTime approvedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "approved_by")
+    private User approvedBy;
+
+    private String rejectionReason;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
     }
 
+    // Getters et Setters
+
+    public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
-    public String getTitle() {
-        return title;
-    }
-
+    public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
 
-    public String getDescription() {
-        return description;
-    }
-
+    public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public LocalDateTime getStartDateTime() {
-        return startDateTime;
-    }
-
+    public LocalDateTime getStartDateTime() { return startDateTime; }
     public void setStartDateTime(LocalDateTime startDateTime) { this.startDateTime = startDateTime; }
 
-    public LocalDateTime getEndDateTime() {
-        return endDateTime;
-    }
-
+    public LocalDateTime getEndDateTime() { return endDateTime; }
     public void setEndDateTime(LocalDateTime endDateTime) { this.endDateTime = endDateTime; }
 
-    public Integer getCapacity() {
-        return capacity;
-    }
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
 
+    public Integer getCapacity() { return capacity; }
     public void setCapacity(Integer capacity) { this.capacity = capacity; }
 
-    public Double getPrice() {
-        return price;
-    }
-
+    public Double getPrice() { return price; }
     public void setPrice(Double price) { this.price = price; }
 
-    public EventStatus getStatus() {
-        return status;
-    }
-
+    public EventStatus getStatus() { return status; }
     public void setStatus(EventStatus status) { this.status = status; }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+    public User getCreatedBy() { return createdBy; }
+    public void setCreatedBy(User createdBy) { this.createdBy = createdBy; }
 
+    public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getApprovedAt() { return approvedAt; }
+    public void setApprovedAt(LocalDateTime approvedAt) { this.approvedAt = approvedAt; }
+
+    public User getApprovedBy() { return approvedBy; }
+    public void setApprovedBy(User approvedBy) { this.approvedBy = approvedBy; }
+
+    public String getRejectionReason() { return rejectionReason; }
+    public void setRejectionReason(String rejectionReason) { this.rejectionReason = rejectionReason; }
 }

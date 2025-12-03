@@ -9,17 +9,21 @@ import MyReservationsPage from "./pages/MyReservationsPage";
 import CreateReservationPage from "./pages/CreateReservationPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminEspaceForm from "./pages/AdminEspaceForm";
+import AdminReservationsPage from "./pages/AdminReservationsPage";
 import EventsPage from "./pages/EventsPage";
 import EventRegisterPage from "./pages/EventRegisterPage";
 import MyEventRegistrationsPage from "./pages/MyEventRegistrationsPage";
 import AdminEventsDashboard from "./pages/AdminEventsDashboard";
 import AdminEventForm from "./pages/AdminEventForm";
+import AdminPendingEventsPage from "./pages/AdminPendingEventsPage";
 import GarderiePage from "./pages/GarderiePage";
 import GarderieReservePage from "./pages/GarderieReservePage";
 import MyGarderieReservationsPage from "./pages/MyGarderieReservationsPage";
 import AdminGarderieDashboard from "./pages/AdminGarderieDashboard";
 import AdminGarderieForm from "./pages/AdminGarderieForm";
 import ProfilePage from "./pages/ProfilePage";
+import OrganizerEventsPage from "./pages/OrganizerEventsPage";
+import OrganizerEventForm from "./pages/OrganizerEventForm";
 
 export default function App() {
   const { t } = useTranslation();
@@ -127,12 +131,49 @@ export default function App() {
         }
       />
 
+      {/* ORGANIZER - Gestion événements */}
+      <Route
+        path="/organizer/events"
+        element={
+          <Layout>
+            <OrganizerEventsPage />
+          </Layout>
+        }
+      />
+
+      <Route
+        path="/organizer/events/new"
+        element={
+          <Layout>
+            <OrganizerEventForm />
+          </Layout>
+        }
+      />
+
+      <Route
+        path="/organizer/events/edit/:id"
+        element={
+          <Layout>
+            <OrganizerEventForm />
+          </Layout>
+        }
+      />
+
       {/* ADMIN */}
       <Route
         path="/admin"
         element={
           <Layout>
             <AdminDashboard />
+          </Layout>
+        }
+      />
+
+      <Route
+        path="/admin/reservations"
+        element={
+          <Layout>
+            <AdminReservationsPage />
           </Layout>
         }
       />
@@ -160,6 +201,15 @@ export default function App() {
         element={
           <Layout>
             <AdminEventsDashboard />
+          </Layout>
+        }
+      />
+
+      <Route
+        path="/admin/events/pending"
+        element={
+          <Layout>
+            <AdminPendingEventsPage />
           </Layout>
         }
       />

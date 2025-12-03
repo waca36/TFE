@@ -1,9 +1,7 @@
 const API_URL = "http://localhost:8080";
 
 export function authHeaders(token) {
-  return token
-    ? { Authorization: `Bearer ${token}` }
-    : {};
+  return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
 // ==================== AUTH ====================
@@ -329,4 +327,129 @@ export async function adminDeleteGarderieSession(id, token) {
     headers: authHeaders(token),
   });
   if (!res.ok) throw new Error("Erreur suppression session (admin)");
+}
+
+// ==================== ADMIN RESERVATIONS (VUE GLOBALE) ====================
+
+export async function adminGetAllReservations(token) {
+  const res = await fetch(`${API_URL}/api/admin/reservations/all`, {
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error("Erreur récupération réservations (admin)");
+  return res.json();
+}
+
+export async function adminGetAllSpaceReservations(token) {
+  const res = await fetch(`${API_URL}/api/admin/reservations/spaces`, {
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error("Erreur récupération réservations espaces (admin)");
+  return res.json();
+}
+
+export async function adminGetAllEventRegistrations(token) {
+  const res = await fetch(`${API_URL}/api/admin/reservations/events`, {
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error("Erreur récupération inscriptions événements (admin)");
+  return res.json();
+}
+
+export async function adminGetAllGarderieReservations(token) {
+  const res = await fetch(`${API_URL}/api/admin/reservations/childcare`, {
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error("Erreur récupération réservations garderie (admin)");
+  return res.json();
+}
+
+// ==================== ADMIN STATS ====================
+
+export async function adminGetStats(token) {
+  const res = await fetch(`${API_URL}/api/admin/stats`, {
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error("Erreur récupération statistiques");
+  return res.json();
+}
+
+// ==================== ORGANIZER EVENTS ====================
+
+export async function organizerCreateEvent(data, token) {
+  const res = await fetch(`${API_URL}/api/organizer/events`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(token),
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || "Erreur création événement");
+  }
+  return res.json();
+}
+
+export async function organizerGetMyEvents(token) {
+  const res = await fetch(`${API_URL}/api/organizer/events/my`, {
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error("Erreur récupération événements");
+  return res.json();
+}
+
+export async function organizerGetMyEvent(id, token) {
+  const res = await fetch(`${API_URL}/api/organizer/events/my/${id}`, {
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error("Événement introuvable");
+  return res.json();
+}
+
+export async function organizerUpdateMyEvent(id, data, token) {
+  const res = await fetch(`${API_URL}/api/organizer/events/my/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(token),
+    },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || "Erreur modification événement");
+  }
+  return res.json();
+}
+
+export async function organizerCancelMyEvent(id, token) {
+  const res = await fetch(`${API_URL}/api/organizer/events/my/${id}`, {
+    method: "DELETE",
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error("Erreur annulation événement");
+}
+
+// ==================== ADMIN EVENTS (avec approbation) ====================
+
+export async function adminGetPendingEvents(token) {
+  const res = await fetch(`${API_URL}/api/admin/events/pending`, {
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error("Erreur récupération événements en attente");
+  return res.json();
+}
+
+export async function adminApproveEvent(id, approved, rejectionReason, token) {
+  const res = await fetch(`${API_URL}/api/admin/events/${id}/approve`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(token),
+    },
+    body: JSON.stringify({ approved, rejectionReason }),
+  });
+  if (!res.ok) throw new Error("Erreur approbation événement");
+  return res.json();
 }

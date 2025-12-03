@@ -1,51 +1,56 @@
 package be.cercle.asblcercle.web.controller;
 
-import be.cercle.asblcercle.service.EventService;
-import be.cercle.asblcercle.web.dto.EventRequest;
+import be.cercle.asblcercle.entity.Event;
+import be.cercle.asblcercle.entity.EventStatus;
+import be.cercle.asblcercle.repository.EventRepository;
+import be.cercle.asblcercle.repository.EventRegistrationRepository;
 import be.cercle.asblcercle.web.dto.EventResponseDto;
-import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/public/events")
 @CrossOrigin(origins = "*")
 public class EventController {
 
-    private final EventService eventService;
+    private final EventRepository eventRepository;
+    private final EventRegistrationRepository registrationRepository;
 
-    public EventController(EventService eventService) {
-        this.eventService = eventService;
+    public EventController(EventRepository eventRepository, EventRegistrationRepository registrationRepository) {
+        this.eventRepository = eventRepository;
+        this.registrationRepository = registrationRepository;
     }
 
-    // PUBLIC : liste des événements publiés et à venir
-    @GetMapping("/api/public/events")
-    public List<EventResponseDto> getPublicEvents() {
-        return eventService.getPublicEvents();
+    // Liste des événements publiés et futurs (public)
+    @GetMapping
+    public List<EventResponseDto> getPublishedEvents() {
+        return eventRepository.findByStatusAndStartDateTimeAfterOrderByStartDateTimeAsc(
+                EventStatus.PUBLISHED, 
+                LocalDateTime.now()
+        ).stream()
+        .map(e -> {
+            int registered = registrationRepository.countTotalParticipantsByEventId(e.getId());
+            return EventResponseDto.fromEntity(e, registered);
+        })
+        .toList();
     }
 
-    // ADMIN : liste complète
-    @GetMapping("/api/admin/events")
-    public List<EventResponseDto> getAllForAdmin() {
-        return eventService.getAllEventsForAdmin();
-    }
-
-    // ADMIN : créer
-    @PostMapping("/api/admin/events")
-    public EventResponseDto create(@Valid @RequestBody EventRequest request) {
-        return eventService.createEvent(request);
-    } // @TODO regler les events pas possible de mettre une date de fin avant la date de debut etc
-
-    // ADMIN : modifier
-    @PutMapping("/api/admin/events/{id}")
-    public EventResponseDto update(@PathVariable Long id,
-                                   @Valid @RequestBody EventRequest request) {
-        return eventService.updateEvent(id, request);
-    }
-
-    // ADMIN : supprimer
-    @DeleteMapping("/api/admin/events/{id}")
-    public void delete(@PathVariable Long id) {
-        eventService.deleteEvent(id);
+    // Détail d'un événement publié
+    @GetMapping("/{id}")
+    public EventResponseDto getEvent(@PathVariable Long id) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Événement introuvable"));
+        
+        // Seuls les événements publiés sont accessibles au public
+        if (event.getStatus() != EventStatus.PUBLISHED) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Événement introuvable");
+        }
+        
+        int registered = registrationRepository.countTotalParticipantsByEventId(event.getId());
+        return EventResponseDto.fromEntity(event, registered);
     }
 }
