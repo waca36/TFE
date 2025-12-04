@@ -4,6 +4,7 @@ import be.cercle.asblcercle.entity.*;
 import be.cercle.asblcercle.repository.EspaceRepository;
 import be.cercle.asblcercle.repository.ReservationRepository;
 import be.cercle.asblcercle.repository.UserRepository;
+import be.cercle.asblcercle.web.dto.CalendarReservationDto;
 import be.cercle.asblcercle.web.dto.CreateReservationRequest;
 import be.cercle.asblcercle.web.dto.ReservationResponseDto;
 import com.stripe.exception.StripeException;
@@ -14,6 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -136,6 +139,31 @@ public class ReservationController {
                 java.time.LocalDateTime.parse(startDateTime),
                 java.time.LocalDateTime.parse(endDateTime)
         );
+    }
+
+    // Récupérer les réservations d'un espace pour un mois donné (pour le calendrier)
+    @GetMapping("/espace/{espaceId}/calendar")
+    public List<CalendarReservationDto> getReservationsForCalendar(
+            @PathVariable Long espaceId,
+            @RequestParam int year,
+            @RequestParam int month
+    ) {
+        // Vérifier que l'espace existe
+        espaceRepository.findById(espaceId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Espace introuvable"));
+
+        // Calculer le début et la fin du mois
+        YearMonth yearMonth = YearMonth.of(year, month);
+        LocalDateTime startOfMonth = yearMonth.atDay(1).atStartOfDay();
+        LocalDateTime endOfMonth = yearMonth.atEndOfMonth().atTime(23, 59, 59);
+
+        List<Reservation> reservations = reservationRepository.findByEspaceAndPeriod(
+                espaceId, startOfMonth, endOfMonth
+        );
+
+        return reservations.stream()
+                .map(CalendarReservationDto::fromEntity)
+                .collect(Collectors.toList());
     }
 
     // Annuler une réservation

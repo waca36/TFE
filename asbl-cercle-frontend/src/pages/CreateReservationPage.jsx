@@ -4,6 +4,8 @@ import { useAuth } from "../context/AuthContext";
 import { getEspaces } from "../services/api";
 import { useTranslation } from "react-i18next";
 import PaymentForm from "../components/PaymentForm";
+import ReservationCalendar from "../components/ReservationCalendar";
+import DayTimeSlots from "../components/DayTimeSlots";
 
 const STRIPE_PUBLIC_KEY = "pk_test_51SZtvU43LA5MMUSyvqwMUBrZfuUUVrERUSNHtXE6j60tCbnIc5DTcaKJO1RlgpjgniuXjsFiIJsyM9jjZizdLxxn008fF3zfDs";
 const API_URL = "http://localhost:8080";
@@ -15,10 +17,9 @@ export default function CreateReservationPage() {
   const { t } = useTranslation();
 
   const [espace, setEspace] = useState(null);
-  const [startDate, setStartDate] = useState("");
-  const [startTime, setStartTime] = useState("10:00");
-  const [endDate, setEndDate] = useState("");
-  const [endTime, setEndTime] = useState("12:00");
+  const [selectedDate, setSelectedDate] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -42,28 +43,60 @@ export default function CreateReservationPage() {
   }, [user, token, espaceId, navigate]);
 
   const calculateTotalPrice = () => {
-    if (!espace || !startDate || !endDate) return espace?.basePrice || 0;
-    
-    const start = new Date(`${startDate}T${startTime}`);
-    const end = new Date(`${endDate}T${endTime}`);
+    if (!espace || !selectedDate || !startTime || !endTime) return espace?.basePrice || 0;
+
+    const start = new Date(`${selectedDate}T${startTime}`);
+    const end = new Date(`${selectedDate}T${endTime}`);
     const hours = Math.max(1, (end - start) / (1000 * 60 * 60));
-    
+
     return espace.basePrice * hours;
   };
 
   const totalPrice = calculateTotalPrice();
 
+  const handleDateSelect = (date) => {
+    setSelectedDate(date);
+    setStartTime("");
+    setEndTime("");
+  };
+
+  const handleTimeSlotClick = (time) => {
+    if (!startTime) {
+      setStartTime(time);
+      setEndTime("");
+    } else if (!endTime) {
+      const startHour = parseInt(startTime.split(":")[0]);
+      const clickedHour = parseInt(time.split(":")[0]);
+
+      if (clickedHour > startHour) {
+        const endHour = clickedHour + 1;
+        setEndTime(`${String(endHour).padStart(2, "0")}:00`);
+      } else {
+        setStartTime(time);
+        setEndTime("");
+      }
+    } else {
+      setStartTime(time);
+      setEndTime("");
+    }
+  };
+
   const handleProceedToPayment = (e) => {
     e.preventDefault();
     setError("");
 
-    if (!startDate || !endDate) {
-      setError(t('reservation.dateError'));
+    if (!selectedDate) {
+      setError(t('calendar.selectDayFirst'));
       return;
     }
 
-    const start = new Date(`${startDate}T${startTime}`);
-    const end = new Date(`${endDate}T${endTime}`);
+    if (!startTime || !endTime) {
+      setError(t('calendar.selectTimeSlots'));
+      return;
+    }
+
+    const start = new Date(`${selectedDate}T${startTime}`);
+    const end = new Date(`${selectedDate}T${endTime}`);
 
     if (end <= start) {
       setError(t('reservation.dateOrderError'));
@@ -77,8 +110,8 @@ export default function CreateReservationPage() {
     setCreatingReservation(true);
     setError("");
 
-    const startDateTime = `${startDate}T${startTime}:00`;
-    const endDateTime = `${endDate}T${endTime}:00`;
+    const startDateTime = `${selectedDate}T${startTime}:00`;
+    const endDateTime = `${selectedDate}T${endTime}:00`;
 
     try {
       const response = await fetch(`${API_URL}/api/public/reservations`, {
@@ -115,6 +148,11 @@ export default function CreateReservationPage() {
     setShowPayment(false);
   };
 
+  const handleReset = () => {
+    setStartTime("");
+    setEndTime("");
+  };
+
   if (!user || !token) return null;
   if (loading) return <p>{t('common.loading')}</p>;
   if (error && !espace) return <p style={{ color: "red" }}>{error}</p>;
@@ -123,7 +161,7 @@ export default function CreateReservationPage() {
     return (
       <div style={styles.container}>
         <h1 style={styles.title}>{t('payment.title')}</h1>
-        
+
         {creatingReservation ? (
           <div style={styles.loadingBox}>
             <p>{t('reservation.creating')}</p>
@@ -133,7 +171,7 @@ export default function CreateReservationPage() {
             stripePublicKey={STRIPE_PUBLIC_KEY}
             token={token}
             amount={totalPrice}
-            description={`${t('reservation.newReservation')}: ${espace.name} - ${startDate} ${startTime} ${t('common.to').toLowerCase()} ${endDate} ${endTime}`}
+            description={`${t('reservation.newReservation')}: ${espace.name} - ${selectedDate} ${startTime} ${t('common.to').toLowerCase()} ${endTime}`}
             reservationType="ESPACE"
             metadata={{
               espaceId: Number(espaceId),
@@ -163,83 +201,77 @@ export default function CreateReservationPage() {
         </div>
       )}
 
-      <form onSubmit={handleProceedToPayment} style={styles.form}>
-        <div style={styles.formRow}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>{t('reservation.startDate')}</label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              style={styles.input}
-              required
-            />
+      <div style={styles.calendarSection}>
+        <h3 style={styles.sectionTitle}>{t('calendar.selectDate')}</h3>
+        <ReservationCalendar
+          espaceId={Number(espaceId)}
+          onSelectDate={handleDateSelect}
+          selectedDate={selectedDate}
+        />
+      </div>
+
+      {selectedDate && (
+        <div style={styles.timeSlotsSection}>
+          <h3 style={styles.sectionTitle}>{t('calendar.selectTime')}</h3>
+          <DayTimeSlots
+            espaceId={Number(espaceId)}
+            selectedDate={selectedDate}
+            onSelectTimeSlot={handleTimeSlotClick}
+            selectedStartTime={startTime}
+            selectedEndTime={endTime}
+          />
+        </div>
+      )}
+
+      {startTime && endTime && (
+        <div style={styles.summaryCard}>
+          <h3 style={styles.summaryTitle}>{t('calendar.reservationSummary')}</h3>
+          <div style={styles.summaryDetails}>
+            <p><strong>{t('common.date')} :</strong> {selectedDate}</p>
+            <p><strong>{t('common.time')} :</strong> {startTime} - {endTime}</p>
           </div>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>{t('reservation.startTime')}</label>
-            <input
-              type="time"
-              value={startTime}
-              onChange={(e) => setStartTime(e.target.value)}
-              style={styles.input}
-              required
-            />
+          <div style={styles.totalBox}>
+            <span>{t('reservation.totalPrice')} :</span>
+            <span style={styles.totalAmount}>{totalPrice.toFixed(2)} €</span>
+          </div>
+
+          {error && <p style={styles.error}>{error}</p>}
+
+          <div style={styles.buttonGroup}>
+            <button
+              type="button"
+              onClick={handleReset}
+              style={styles.resetButton}
+            >
+              {t('calendar.resetSelection')}
+            </button>
+            <button
+              type="button"
+              onClick={handleProceedToPayment}
+              style={styles.submitButton}
+            >
+              {t('reservation.proceedPayment')}
+            </button>
           </div>
         </div>
+      )}
 
-        <div style={styles.formRow}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>{t('reservation.endDate')}</label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              style={styles.input}
-              required
-            />
-          </div>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>{t('reservation.endTime')}</label>
-            <input
-              type="time"
-              value={endTime}
-              onChange={(e) => setEndTime(e.target.value)}
-              style={styles.input}
-              required
-            />
-          </div>
-        </div>
+      {error && !startTime && <p style={styles.error}>{error}</p>}
 
-        <div style={styles.totalBox}>
-          <span>{t('reservation.totalPrice')} :</span>
-          <span style={styles.totalAmount}>{totalPrice.toFixed(2)} €</span>
-        </div>
-
-        {error && <p style={styles.error}>{error}</p>}
-
-        <div style={styles.buttonGroup}>
-          <button
-            type="button"
-            onClick={() => navigate("/espace")}
-            style={styles.cancelButton}
-          >
-            {t('common.cancel')}
-          </button>
-          <button
-            type="submit"
-            style={styles.submitButton}
-          >
-            {t('reservation.proceedPayment')}
-          </button>
-        </div>
-      </form>
+      <button
+        type="button"
+        onClick={() => navigate("/espace")}
+        style={styles.cancelButton}
+      >
+        {t('common.back')}
+      </button>
     </div>
   );
 }
 
 const styles = {
   container: {
-    maxWidth: "600px",
+    maxWidth: "900px",
     margin: "0 auto",
   },
   title: {
@@ -264,33 +296,37 @@ const styles = {
     gap: "0.5rem",
     color: "#4b5563",
   },
-  form: {
+  calendarSection: {
+    marginBottom: "1.5rem",
+  },
+  timeSlotsSection: {
+    marginBottom: "1.5rem",
+  },
+  sectionTitle: {
+    fontSize: "1.1rem",
+    fontWeight: "600",
+    color: "#374151",
+    marginBottom: "0.75rem",
+  },
+  summaryCard: {
     background: "#fff",
     borderRadius: "8px",
     padding: "1.5rem",
+    marginBottom: "1.5rem",
     boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+    border: "2px solid #2563eb",
   },
-  formRow: {
-    display: "flex",
-    gap: "1rem",
+  summaryTitle: {
+    fontSize: "1.1rem",
+    fontWeight: "600",
+    color: "#1f2937",
     marginBottom: "1rem",
   },
-  formGroup: {
-    flex: 1,
-  },
-  label: {
-    display: "block",
-    marginBottom: "0.5rem",
-    fontWeight: "500",
-    color: "#374151",
-  },
-  input: {
-    width: "100%",
-    padding: "0.5rem",
-    border: "1px solid #d1d5db",
-    borderRadius: "6px",
-    fontSize: "1rem",
-    boxSizing: "border-box",
+  summaryDetails: {
+    display: "grid",
+    gap: "0.5rem",
+    color: "#4b5563",
+    marginBottom: "1rem",
   },
   totalBox: {
     display: "flex",
@@ -299,8 +335,7 @@ const styles = {
     background: "#f3f4f6",
     padding: "1rem",
     borderRadius: "6px",
-    marginBottom: "1.5rem",
-    marginTop: "1rem",
+    marginBottom: "1rem",
   },
   totalAmount: {
     fontSize: "1.5rem",
@@ -325,9 +360,18 @@ const styles = {
     display: "flex",
     gap: "1rem",
   },
-  cancelButton: {
+  resetButton: {
     flex: 1,
     padding: "0.75rem 1rem",
+    border: "1px solid #d1d5db",
+    borderRadius: "6px",
+    background: "#fff",
+    color: "#374151",
+    fontSize: "1rem",
+    cursor: "pointer",
+  },
+  cancelButton: {
+    padding: "0.75rem 1.5rem",
     border: "1px solid #d1d5db",
     borderRadius: "6px",
     background: "#fff",

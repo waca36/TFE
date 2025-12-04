@@ -1,0 +1,24 @@
+package be.cercle.asblcercle.web.dto;
+
+import be.cercle.asblcercle.entity.Reservation;
+
+import java.time.LocalDateTime;
+
+public class CalendarReservationDto {
+
+    private Long id;
+    private LocalDateTime startDateTime;
+    private LocalDateTime endDateTime;
+
+    public static CalendarReservationDto fromEntity(Reservation reservation) {
+        CalendarReservationDto dto = new CalendarReservationDto();
+        dto.id = reservation.getId();
+        dto.startDateTime = reservation.getStartDateTime();
+        dto.endDateTime = reservation.getEndDateTime();
+        return dto;
+    }
+
+    public Long getId() { return id; }
+    public LocalDateTime getStartDateTime() { return startDateTime; }
+    public LocalDateTime getEndDateTime() { return endDateTime; }
+}

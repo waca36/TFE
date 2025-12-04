@@ -36,6 +36,12 @@ export async function getEspaces() {
 
 // ==================== RESERVATIONS ESPACES ====================
 
+export async function getEspaceReservationsForCalendar(espaceId, year, month) {
+  const res = await fetch(`${API_URL}/api/public/reservations/espace/${espaceId}/calendar?year=${year}&month=${month}`);
+  if (!res.ok) throw new Error("Erreur lors du chargement des réservations");
+  return res.json();
+}
+
 export async function getReservationsByUser(id, token) {
   const res = await fetch(`${API_URL}/api/public/reservations/user/${id}`, {
     headers: authHeaders(token),

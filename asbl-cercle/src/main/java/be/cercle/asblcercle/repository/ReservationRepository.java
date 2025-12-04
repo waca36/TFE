@@ -40,4 +40,17 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("startDateTime") LocalDateTime startDateTime,
             @Param("endDateTime") LocalDateTime endDateTime
     );
+
+    // Retourne toutes les réservations confirmées d'un espace pour une période (pour le calendrier)
+    @Query("SELECT r FROM Reservation r " +
+           "WHERE r.espace.id = :espaceId " +
+           "AND r.status = 'CONFIRMED' " +
+           "AND r.startDateTime < :endDateTime " +
+           "AND r.endDateTime > :startDateTime " +
+           "ORDER BY r.startDateTime")
+    List<Reservation> findByEspaceAndPeriod(
+            @Param("espaceId") Long espaceId,
+            @Param("startDateTime") LocalDateTime startDateTime,
+            @Param("endDateTime") LocalDateTime endDateTime
+    );
 }

@@ -4,3 +4,5 @@ ameliorer les messages d'erreurs ex : chevauchement de reservation d'espaces met
 "Erreur lors de la création de la réservation" devrait indiquer clairement l'erreur
 
 reservation grande salle doit necessiter une confirmation de l'admin
+
+heure d'ouverture = 7h-22h
