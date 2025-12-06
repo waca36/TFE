@@ -15,8 +15,9 @@ public class Espace {
     @Column(nullable = false, length = 120)
     private String name;
 
-    @Column(length = 50)
-    private String type; // ex: SALLE, TERRAIN, LOCAL
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private EspaceType type = EspaceType.SALLE;
 
     private Integer capacity;
 
@@ -37,9 +38,9 @@ public class Espace {
 
     public void setName(String name) { this.name = name; }
 
-    public String getType() { return type; }
+    public EspaceType getType() { return type; }
 
-    public void setType(String type) { this.type = type; }
+    public void setType(EspaceType type) { this.type = type; }
 
     public Integer getCapacity() { return capacity; }
 

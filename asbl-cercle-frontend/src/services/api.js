@@ -82,6 +82,40 @@ export async function cancelReservation(id, token) {
   }
 }
 
+// Demande de réservation d'auditoire (sans paiement, en attente d'approbation)
+export async function requestAuditoriumReservation(payload, token) {
+  const res = await fetch(`${API_URL}/api/public/reservations/auditorium`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(token),
+    },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || "Erreur lors de la demande de réservation");
+  }
+  return res.json();
+}
+
+// Payer une réservation approuvée
+export async function payApprovedReservation(id, paymentIntentId, token) {
+  const res = await fetch(`${API_URL}/api/public/reservations/${id}/pay`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(token),
+    },
+    body: JSON.stringify({ paymentIntentId }),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || "Erreur lors du paiement de la réservation");
+  }
+  return res.json();
+}
+
 // ==================== EVENTS ====================
 
 export async function getPublicEvents() {
@@ -376,6 +410,32 @@ export async function adminGetStats(token) {
     headers: authHeaders(token),
   });
   if (!res.ok) throw new Error("Erreur récupération statistiques");
+  return res.json();
+}
+
+// ==================== ADMIN PENDING RESERVATIONS (AUDITOIRES) ====================
+
+export async function adminGetPendingReservations(token) {
+  const res = await fetch(`${API_URL}/api/admin/reservations/pending`, {
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error("Erreur récupération réservations en attente");
+  return res.json();
+}
+
+export async function adminApproveReservation(id, approved, rejectionReason, token) {
+  const res = await fetch(`${API_URL}/api/admin/reservations/${id}/approve`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(token),
+    },
+    body: JSON.stringify({ approved, rejectionReason }),
+  });
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || "Erreur approbation réservation");
+  }
   return res.json();
 }
 

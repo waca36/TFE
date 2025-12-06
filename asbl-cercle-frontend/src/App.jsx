@@ -16,6 +16,7 @@ import MyEventRegistrationsPage from "./pages/MyEventRegistrationsPage";
 import AdminEventsDashboard from "./pages/AdminEventsDashboard";
 import AdminEventForm from "./pages/AdminEventForm";
 import AdminPendingEventsPage from "./pages/AdminPendingEventsPage";
+import AdminPendingReservationsPage from "./pages/AdminPendingReservationsPage";
 import GarderiePage from "./pages/GarderiePage";
 import GarderieReservePage from "./pages/GarderieReservePage";
 import MyGarderieReservationsPage from "./pages/MyGarderieReservationsPage";
@@ -210,6 +211,15 @@ export default function App() {
         element={
           <Layout>
             <AdminPendingEventsPage />
+          </Layout>
+        }
+      />
+
+      <Route
+        path="/admin/reservations/pending"
+        element={
+          <Layout>
+            <AdminPendingReservationsPage />
           </Layout>
         }
       />

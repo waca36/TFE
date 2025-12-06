@@ -35,6 +35,18 @@ public class Reservation {
     @Column(name = "payment_intent_id")
     private String paymentIntentId;
 
+    @Column(length = 1000)
+    private String justification;
+
+    @Column(length = 500)
+    private String rejectionReason;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "approved_by")
+    private User approvedBy;
+
+    private LocalDateTime approvedAt;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
@@ -68,6 +80,18 @@ public class Reservation {
 
     public String getPaymentIntentId() { return paymentIntentId; }
     public void setPaymentIntentId(String paymentIntentId) { this.paymentIntentId = paymentIntentId; }
+
+    public String getJustification() { return justification; }
+    public void setJustification(String justification) { this.justification = justification; }
+
+    public String getRejectionReason() { return rejectionReason; }
+    public void setRejectionReason(String rejectionReason) { this.rejectionReason = rejectionReason; }
+
+    public User getApprovedBy() { return approvedBy; }
+    public void setApprovedBy(User approvedBy) { this.approvedBy = approvedBy; }
+
+    public LocalDateTime getApprovedAt() { return approvedAt; }
+    public void setApprovedAt(LocalDateTime approvedAt) { this.approvedAt = approvedAt; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
 }

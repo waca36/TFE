@@ -18,7 +18,7 @@ export default function AdminEspaceForm() {
 
   const [form, setForm] = useState({
     name: "",
-    type: "",
+    type: "SALLE",
     capacity: 0,
     basePrice: 0,
     status: "AVAILABLE",
@@ -99,12 +99,21 @@ export default function AdminEspaceForm() {
 
         <div style={styles.formGroup}>
           <label style={styles.label}>{t('common.type')} :</label>
-          <input
+          <select
             name="type"
             value={form.type}
             onChange={handleChange}
-            style={styles.input}
-          />
+            style={styles.select}
+            required
+          >
+            <option value="SALLE">{t('spaceType.salle')}</option>
+            <option value="AUDITOIRE">{t('spaceType.auditoire')}</option>
+          </select>
+          {form.type === "AUDITOIRE" && (
+            <p style={styles.infoText}>
+              {t('spaces.auditoriumRequiresApproval')}
+            </p>
+          )}
         </div>
 
         <div style={styles.formRow}>
@@ -209,6 +218,12 @@ const styles = {
     borderRadius: "6px",
     fontSize: "1rem",
     boxSizing: "border-box",
+  },
+  infoText: {
+    marginTop: "0.5rem",
+    fontSize: "0.875rem",
+    color: "#f59e0b",
+    fontStyle: "italic",
   },
   error: {
     color: "#dc2626",

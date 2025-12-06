@@ -4,8 +4,10 @@ import be.cercle.asblcercle.entity.*;
 import be.cercle.asblcercle.repository.EspaceRepository;
 import be.cercle.asblcercle.repository.ReservationRepository;
 import be.cercle.asblcercle.repository.UserRepository;
+import be.cercle.asblcercle.web.dto.AuditoriumReservationRequest;
 import be.cercle.asblcercle.web.dto.CalendarReservationDto;
 import be.cercle.asblcercle.web.dto.CreateReservationRequest;
+import be.cercle.asblcercle.web.dto.PayReservationRequest;
 import be.cercle.asblcercle.web.dto.ReservationResponseDto;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
@@ -37,6 +39,7 @@ public class ReservationController {
         this.espaceRepository = espaceRepository;
     }
 
+    // Endpoint pour réserver une SALLE (avec paiement immédiat)
     @PostMapping
     public ReservationResponseDto create(
             @Valid @RequestBody CreateReservationRequest request,
@@ -46,10 +49,19 @@ public class ReservationController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non connecté");
         }
 
-        // 1. Vérifier le paiement Stripe
+        // Récupérer l'espace
+        Espace espace = espaceRepository.findById(request.getEspaceId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Espace introuvable"));
+
+        // Vérifier que ce n'est PAS un auditoire (les auditoires passent par /auditorium)
+        if (espace.getType() == EspaceType.AUDITOIRE) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                "Les auditoires doivent être réservés via l'endpoint /auditorium");
+        }
+
+        // Vérifier le paiement Stripe
         try {
             PaymentIntent paymentIntent = PaymentIntent.retrieve(request.getPaymentIntentId());
-
             if (!"succeeded".equals(paymentIntent.getStatus())) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Paiement non validé");
             }
@@ -57,20 +69,16 @@ public class ReservationController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erreur vérification paiement: " + e.getMessage());
         }
 
-        // 2. Récupérer l'utilisateur connecté
+        // Récupérer l'utilisateur connecté
         String email = authentication.getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utilisateur introuvable"));
-
-        // 3. Récupérer l'espace
-        Espace espace = espaceRepository.findById(request.getEspaceId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Espace introuvable"));
 
         if (espace.getStatus() != EspaceStatus.AVAILABLE) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Espace non disponible");
         }
 
-        // 4. Vérifier qu'il n'y a pas de chevauchement avec une autre réservation
+        // Vérifier qu'il n'y a pas de chevauchement
         boolean hasOverlap = reservationRepository.existsOverlappingReservation(
                 request.getEspaceId(),
                 request.getStartDateTime(),
@@ -78,17 +86,120 @@ public class ReservationController {
         );
 
         if (hasOverlap) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, 
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
                 "Cet espace est déjà réservé pour cette période. Veuillez choisir un autre créneau.");
         }
 
-        // 5. Créer la réservation avec statut CONFIRMED
+        // Créer la réservation CONFIRMÉE
         Reservation reservation = new Reservation();
         reservation.setUser(user);
         reservation.setEspace(espace);
         reservation.setStartDateTime(request.getStartDateTime());
         reservation.setEndDateTime(request.getEndDateTime());
         reservation.setTotalPrice(request.getTotalPrice());
+        reservation.setPaymentIntentId(request.getPaymentIntentId());
+        reservation.setStatus(ReservationStatus.CONFIRMED);
+
+        Reservation saved = reservationRepository.save(reservation);
+        return ReservationResponseDto.fromEntity(saved);
+    }
+
+    // Endpoint pour demander la réservation d'un AUDITOIRE (sans paiement, en attente d'approbation)
+    @PostMapping("/auditorium")
+    public ReservationResponseDto requestAuditoriumReservation(
+            @Valid @RequestBody AuditoriumReservationRequest request,
+            Authentication authentication
+    ) {
+        if (authentication == null || authentication.getName() == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non connecté");
+        }
+
+        // Récupérer l'espace
+        Espace espace = espaceRepository.findById(request.getEspaceId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Espace introuvable"));
+
+        // Vérifier que c'est bien un auditoire
+        if (espace.getType() != EspaceType.AUDITOIRE) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                "Cet espace n'est pas un auditoire. Utilisez l'endpoint standard pour les salles.");
+        }
+
+        // Récupérer l'utilisateur connecté
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utilisateur introuvable"));
+
+        if (espace.getStatus() != EspaceStatus.AVAILABLE) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Espace non disponible");
+        }
+
+        // Vérifier qu'il n'y a pas de chevauchement
+        boolean hasOverlap = reservationRepository.existsOverlappingReservation(
+                request.getEspaceId(),
+                request.getStartDateTime(),
+                request.getEndDateTime()
+        );
+
+        if (hasOverlap) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                "Cet espace est déjà réservé pour cette période. Veuillez choisir un autre créneau.");
+        }
+
+        // Créer la demande de réservation EN ATTENTE D'APPROBATION (sans paiement)
+        Reservation reservation = new Reservation();
+        reservation.setUser(user);
+        reservation.setEspace(espace);
+        reservation.setStartDateTime(request.getStartDateTime());
+        reservation.setEndDateTime(request.getEndDateTime());
+        reservation.setTotalPrice(request.getTotalPrice());
+        reservation.setJustification(request.getJustification());
+        reservation.setStatus(ReservationStatus.PENDING_APPROVAL);
+        // Pas de paymentIntentId car le paiement sera fait après approbation
+
+        Reservation saved = reservationRepository.save(reservation);
+        return ReservationResponseDto.fromEntity(saved);
+    }
+
+    // Endpoint pour payer une réservation APPROUVÉE
+    @PostMapping("/{id}/pay")
+    public ReservationResponseDto payApprovedReservation(
+            @PathVariable Long id,
+            @Valid @RequestBody PayReservationRequest request,
+            Authentication authentication
+    ) {
+        if (authentication == null || authentication.getName() == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non connecté");
+        }
+
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utilisateur introuvable"));
+
+        Reservation reservation = reservationRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Réservation introuvable"));
+
+        // Vérifier que c'est bien la réservation de l'utilisateur
+        if (!reservation.getUser().getId().equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Vous ne pouvez pas payer cette réservation");
+        }
+
+        // Vérifier que la réservation est bien APPROVED (en attente de paiement)
+        if (reservation.getStatus() != ReservationStatus.APPROVED) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                "Cette réservation n'est pas en attente de paiement. Statut actuel: " + reservation.getStatus());
+        }
+
+        // Vérifier le paiement Stripe
+        try {
+            PaymentIntent paymentIntent = PaymentIntent.retrieve(request.getPaymentIntentId());
+            if (!"succeeded".equals(paymentIntent.getStatus())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Paiement non validé");
+            }
+        } catch (StripeException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erreur vérification paiement: " + e.getMessage());
+        }
+
+        // Confirmer la réservation
         reservation.setPaymentIntentId(request.getPaymentIntentId());
         reservation.setStatus(ReservationStatus.CONFIRMED);
 

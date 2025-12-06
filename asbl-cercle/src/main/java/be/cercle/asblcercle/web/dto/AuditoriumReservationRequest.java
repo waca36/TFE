@@ -1,12 +1,11 @@
 package be.cercle.asblcercle.web.dto;
 
-import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
-public class CreateReservationRequest {
+public class AuditoriumReservationRequest {
 
     @NotNull
     private Long espaceId;
@@ -20,10 +19,7 @@ public class CreateReservationRequest {
     @NotNull
     private Double totalPrice;
 
-    @NotBlank
-    private String paymentIntentId;
-
-    // Justification pour les réservations d'auditoire (optionnel pour les salles)
+    @NotBlank(message = "Une justification est requise pour réserver un auditoire")
     private String justification;
 
     // Getters / setters
@@ -39,9 +35,6 @@ public class CreateReservationRequest {
 
     public Double getTotalPrice() { return totalPrice; }
     public void setTotalPrice(Double totalPrice) { this.totalPrice = totalPrice; }
-
-    public String getPaymentIntentId() { return paymentIntentId; }
-    public void setPaymentIntentId(String paymentIntentId) { this.paymentIntentId = paymentIntentId; }
 
     public String getJustification() { return justification; }
     public void setJustification(String justification) { this.justification = justification; }

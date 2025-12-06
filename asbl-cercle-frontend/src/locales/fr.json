@@ -75,7 +75,13 @@
     "welcome": "Bienvenue",
     "reserve": "Réserver cet espace",
     "noSpaces": "Aucun espace disponible",
-    "space": "Espace"
+    "space": "Espace",
+    "auditoriumRequiresApproval": "Les réservations d'auditoire nécessitent une justification et doivent être approuvées par un administrateur."
+  },
+
+  "spaceType": {
+    "salle": "Salle",
+    "auditoire": "Auditoire"
   },
 
   "reservation": {
@@ -94,7 +100,20 @@
     "dateOrderError": "La date de fin doit être après la date de début",
     "cancel": "Annuler",
     "confirmCancel": "Êtes-vous sûr de vouloir annuler cette réservation ?",
-    "passed": "Passée"
+    "passed": "Passée",
+    "justification": "Justification",
+    "justificationLabel": "Justification de la réservation",
+    "justificationPlaceholder": "Expliquez pourquoi vous souhaitez réserver cet auditoire et pour quelle occasion...",
+    "justificationRequired": "Une justification est requise pour réserver un auditoire",
+    "auditoriumWarning": "Attention : Les réservations d'auditoire doivent être justifiées et seront soumises à validation par un administrateur.",
+    "pendingApprovalMessage": "Votre demande de réservation a été soumise et sera examinée par un administrateur.",
+    "createdAt": "Demandée le",
+    "submitRequest": "Soumettre la demande",
+    "awaitingPayment": "En attente de paiement",
+    "awaitingPaymentDesc": "Ces réservations ont été approuvées par un administrateur et attendent votre paiement pour être confirmées.",
+    "payNow": "Payer maintenant",
+    "payReservation": "Payer la réservation",
+    "allReservations": "Toutes les réservations"
   },
 
   "calendar": {
@@ -282,7 +301,13 @@
     "totalEvents": "Événements",
     "totalSessions": "Sessions garderie",
     "totalRevenue": "Revenus totaux",
-    "confirmDeleteEvent": "Êtes-vous sûr de vouloir supprimer cet événement ?"
+    "confirmDeleteEvent": "Êtes-vous sûr de vouloir supprimer cet événement ?",
+    "pendingReservations": "Réservations en attente",
+    "noPendingReservations": "Aucune réservation d'auditoire en attente",
+    "auditoriumReservationsPending": "réservation(s) d'auditoire en attente d'approbation",
+    "rejectReservation": "Refuser la réservation",
+    "rejectReservationMessage": "Veuillez indiquer la raison du refus de cette réservation d'auditoire.",
+    "confirmReject": "Confirmer le refus"
   },
 
   "validation": {
@@ -304,6 +329,7 @@
     "open": "Ouvert",
     "closed": "Fermé",
     "pending_approval": "En attente d'approbation",
+    "approved": "Approuvé",
     "rejected": "Refusé"
   },
 

@@ -2,12 +2,13 @@ package be.cercle.asblcercle.web.dto;
 
 import be.cercle.asblcercle.entity.Espace;
 import be.cercle.asblcercle.entity.EspaceStatus;
+import be.cercle.asblcercle.entity.EspaceType;
 
 public class EspaceResponseDto {
 
     private Long id;
     private String name;
-    private String type;
+    private EspaceType type;
     private Integer capacity;
     private Double basePrice;
     private EspaceStatus status;
@@ -25,7 +26,7 @@ public class EspaceResponseDto {
 
     public Long getId() { return id; }
     public String getName() { return name; }
-    public String getType() { return type; }
+    public EspaceType getType() { return type; }
     public Integer getCapacity() { return capacity; }
     public Double getBasePrice() { return basePrice; }
     public EspaceStatus getStatus() { return status; }

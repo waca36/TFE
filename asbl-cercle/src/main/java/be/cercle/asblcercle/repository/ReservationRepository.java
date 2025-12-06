@@ -53,4 +53,10 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("startDateTime") LocalDateTime startDateTime,
             @Param("endDateTime") LocalDateTime endDateTime
     );
+
+    // Retourne les réservations en attente d'approbation (pour les auditoires)
+    @Query("SELECT r FROM Reservation r " +
+           "WHERE r.status = 'PENDING_APPROVAL' " +
+           "ORDER BY r.createdAt DESC")
+    List<Reservation> findPendingApproval();
 }

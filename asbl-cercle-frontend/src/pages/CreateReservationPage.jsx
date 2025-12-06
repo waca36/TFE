@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { getEspaces } from "../services/api";
+import { getEspaces, requestAuditoriumReservation } from "../services/api";
 import { useTranslation } from "react-i18next";
 import PaymentForm from "../components/PaymentForm";
 import ReservationCalendar from "../components/ReservationCalendar";
@@ -25,6 +25,7 @@ export default function CreateReservationPage() {
 
   const [showPayment, setShowPayment] = useState(false);
   const [creatingReservation, setCreatingReservation] = useState(false);
+  const [justification, setJustification] = useState("");
 
   useEffect(() => {
     if (!user || !token) {
@@ -81,7 +82,11 @@ export default function CreateReservationPage() {
     }
   };
 
-  const handleProceedToPayment = (e) => {
+  const isAuditoire = espace?.type === "AUDITOIRE";
+
+  // Pour les SALLES: on passe au paiement
+  // Pour les AUDITOIRES: on soumet la demande sans paiement
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -103,9 +108,47 @@ export default function CreateReservationPage() {
       return;
     }
 
-    setShowPayment(true);
+    if (isAuditoire && !justification.trim()) {
+      setError(t('reservation.justificationRequired'));
+      return;
+    }
+
+    if (isAuditoire) {
+      // Pour les auditoires: soumettre la demande sans paiement
+      await handleAuditoriumRequest();
+    } else {
+      // Pour les salles: passer au paiement
+      setShowPayment(true);
+    }
   };
 
+  // Soumettre une demande de réservation d'auditoire (sans paiement)
+  const handleAuditoriumRequest = async () => {
+    setCreatingReservation(true);
+    setError("");
+
+    const startDateTime = `${selectedDate}T${startTime}:00`;
+    const endDateTime = `${selectedDate}T${endTime}:00`;
+
+    try {
+      await requestAuditoriumReservation({
+        espaceId: Number(espaceId),
+        startDateTime,
+        endDateTime,
+        totalPrice: totalPrice,
+        justification: justification,
+      }, token);
+
+      alert(t('reservation.pendingApprovalMessage'));
+      navigate("/reservations");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setCreatingReservation(false);
+    }
+  };
+
+  // Paiement réussi pour une SALLE
   const handlePaymentSuccess = async (paymentIntentId) => {
     setCreatingReservation(true);
     setError("");
@@ -194,10 +237,15 @@ export default function CreateReservationPage() {
         <div style={styles.espaceCard}>
           <h2 style={styles.espaceName}>{espace.name}</h2>
           <div style={styles.espaceInfo}>
-            <p><strong>{t('common.type')} :</strong> {espace.type}</p>
+            <p><strong>{t('common.type')} :</strong> {t(`spaceType.${espace.type.toLowerCase()}`)}</p>
             <p><strong>{t('common.capacity')} :</strong> {espace.capacity} {t('common.persons')}</p>
             <p><strong>{t('common.price')} :</strong> {espace.basePrice} € {t('common.perHour')}</p>
           </div>
+          {isAuditoire && (
+            <div style={styles.warningBox}>
+              <p>{t('reservation.auditoriumWarning')}</p>
+            </div>
+          )}
         </div>
       )}
 
@@ -230,6 +278,23 @@ export default function CreateReservationPage() {
             <p><strong>{t('common.date')} :</strong> {selectedDate}</p>
             <p><strong>{t('common.time')} :</strong> {startTime} - {endTime}</p>
           </div>
+
+          {isAuditoire && (
+            <div style={styles.justificationSection}>
+              <label style={styles.justificationLabel}>
+                {t('reservation.justificationLabel')} <span style={styles.required}>*</span>
+              </label>
+              <textarea
+                value={justification}
+                onChange={(e) => setJustification(e.target.value)}
+                placeholder={t('reservation.justificationPlaceholder')}
+                style={styles.justificationTextarea}
+                rows={4}
+                required
+              />
+            </div>
+          )}
+
           <div style={styles.totalBox}>
             <span>{t('reservation.totalPrice')} :</span>
             <span style={styles.totalAmount}>{totalPrice.toFixed(2)} €</span>
@@ -242,15 +307,22 @@ export default function CreateReservationPage() {
               type="button"
               onClick={handleReset}
               style={styles.resetButton}
+              disabled={creatingReservation}
             >
               {t('calendar.resetSelection')}
             </button>
             <button
               type="button"
-              onClick={handleProceedToPayment}
-              style={styles.submitButton}
+              onClick={handleSubmit}
+              style={isAuditoire ? styles.submitButtonAuditoire : styles.submitButton}
+              disabled={creatingReservation}
             >
-              {t('reservation.proceedPayment')}
+              {creatingReservation
+                ? t('common.loading')
+                : isAuditoire
+                  ? t('reservation.submitRequest')
+                  : t('reservation.proceedPayment')
+              }
             </button>
           </div>
         </div>
@@ -296,6 +368,15 @@ const styles = {
     gap: "0.5rem",
     color: "#4b5563",
   },
+  warningBox: {
+    marginTop: "1rem",
+    padding: "0.75rem",
+    background: "#fef3c7",
+    border: "1px solid #f59e0b",
+    borderRadius: "6px",
+    color: "#92400e",
+    fontSize: "0.9rem",
+  },
   calendarSection: {
     marginBottom: "1.5rem",
   },
@@ -327,6 +408,27 @@ const styles = {
     gap: "0.5rem",
     color: "#4b5563",
     marginBottom: "1rem",
+  },
+  justificationSection: {
+    marginBottom: "1rem",
+  },
+  justificationLabel: {
+    display: "block",
+    marginBottom: "0.5rem",
+    fontWeight: "500",
+    color: "#374151",
+  },
+  required: {
+    color: "#dc2626",
+  },
+  justificationTextarea: {
+    width: "100%",
+    padding: "0.75rem",
+    border: "1px solid #d1d5db",
+    borderRadius: "6px",
+    fontSize: "1rem",
+    boxSizing: "border-box",
+    resize: "vertical",
   },
   totalBox: {
     display: "flex",
@@ -385,6 +487,17 @@ const styles = {
     border: "none",
     borderRadius: "6px",
     background: "#2563eb",
+    color: "#fff",
+    fontSize: "1rem",
+    fontWeight: "500",
+    cursor: "pointer",
+  },
+  submitButtonAuditoire: {
+    flex: 1,
+    padding: "0.75rem 1rem",
+    border: "none",
+    borderRadius: "6px",
+    background: "#f59e0b",
     color: "#fff",
     fontSize: "1rem",
     fontWeight: "500",

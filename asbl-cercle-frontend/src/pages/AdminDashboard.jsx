@@ -10,6 +10,7 @@ import {
   adminGetAllEventRegistrations,
   adminGetAllGarderieReservations,
   adminGetPendingEvents,
+  adminGetPendingReservations,
   adminApproveEvent,
   adminDeleteEvent,
 } from "../services/api";
@@ -29,6 +30,7 @@ export default function AdminDashboard() {
   const [espaces, setEspaces] = useState([]);
   const [events, setEvents] = useState([]);
   const [pendingEvents, setPendingEvents] = useState([]);
+  const [pendingReservations, setPendingReservations] = useState([]);
   const [garderieSessions, setGarderieSessions] = useState([]);
   const [spaceReservations, setSpaceReservations] = useState([]);
   const [eventRegistrations, setEventRegistrations] = useState([]);
@@ -54,6 +56,7 @@ export default function AdminDashboard() {
         espacesData,
         eventsData,
         pendingData,
+        pendingResData,
         garderieData,
         spaceResData,
         eventResData,
@@ -63,6 +66,7 @@ export default function AdminDashboard() {
         adminGetEspaces(token),
         adminGetEvents(token),
         adminGetPendingEvents(token),
+        adminGetPendingReservations(token),
         adminGetGarderieSessions(token),
         adminGetAllSpaceReservations(token),
         adminGetAllEventRegistrations(token),
@@ -73,6 +77,7 @@ export default function AdminDashboard() {
       setEspaces(espacesData);
       setEvents(eventsData);
       setPendingEvents(pendingData);
+      setPendingReservations(pendingResData);
       setGarderieSessions(garderieData);
       setSpaceReservations(spaceResData);
       setEventRegistrations(eventResData);
@@ -187,6 +192,19 @@ export default function AdminDashboard() {
         </div>
       )}
 
+      {/* Alerte réservations d'auditoire en attente */}
+      {pendingReservations.length > 0 && (
+        <Link to="/admin/reservations/pending" style={{ textDecoration: "none" }}>
+          <div style={{...styles.alertBox, background: "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)", marginBottom: "1rem"}}>
+            <span style={styles.alertIcon}>🏛️</span>
+            <span>
+              <strong>{pendingReservations.length}</strong> {t("admin.auditoriumReservationsPending")}
+            </span>
+            <span style={styles.alertAction}>{t("common.view")} →</span>
+          </div>
+        </Link>
+      )}
+
       {/* Tabs */}
       <div style={styles.tabsContainer}>
         {tabs.map((tab) => (
@@ -265,6 +283,11 @@ export default function AdminDashboard() {
               <Link to="/admin/reservations" style={styles.quickAction}>
                 📋 {t("admin.viewAllReservations")}
               </Link>
+              {pendingReservations.length > 0 && (
+                <Link to="/admin/reservations/pending" style={{...styles.quickAction, background: "#fef3c7", color: "#92400e"}}>
+                  🏛️ {t("admin.pendingReservations")} ({pendingReservations.length})
+                </Link>
+              )}
             </div>
           </div>
         )}
