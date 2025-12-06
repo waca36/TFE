@@ -147,7 +147,9 @@
     "selectTimeSlots": "Please select a start and end time",
     "reservationSummary": "Reservation summary",
     "resetSelection": "Reset",
-    "openingHours": "Opening hours: 7am - 10pm"
+    "openingHours": "Opening hours: 7am - 10pm",
+    "start": "Start",
+    "end": "End"
   },
 
   "events": {

@@ -63,6 +63,7 @@ export default function CreateReservationPage() {
 
   const handleTimeSlotClick = (time) => {
     if (!startTime) {
+      // Premier clic: définit l'heure de début
       setStartTime(time);
       setEndTime("");
     } else if (!endTime) {
@@ -70,13 +71,15 @@ export default function CreateReservationPage() {
       const clickedHour = parseInt(time.split(":")[0]);
 
       if (clickedHour > startHour) {
-        const endHour = clickedHour + 1;
-        setEndTime(`${String(endHour).padStart(2, "0")}:00`);
+        // Deuxième clic sur une heure après le début: définit l'heure de fin
+        setEndTime(time);
       } else {
+        // Clic sur une heure avant ou égale au début: recommence
         setStartTime(time);
         setEndTime("");
       }
     } else {
+      // Déjà début et fin sélectionnés: recommence
       setStartTime(time);
       setEndTime("");
     }

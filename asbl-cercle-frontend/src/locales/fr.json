@@ -147,7 +147,9 @@
     "selectTimeSlots": "Veuillez sélectionner une heure de début et de fin",
     "reservationSummary": "Récapitulatif de votre réservation",
     "resetSelection": "Réinitialiser",
-    "openingHours": "Heures d'ouverture : 7h - 22h"
+    "openingHours": "Heures d'ouverture : 7h - 22h",
+    "start": "Début",
+    "end": "Fin"
   },
 
   "events": {

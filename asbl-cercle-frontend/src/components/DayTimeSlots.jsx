@@ -48,13 +48,25 @@ export default function DayTimeSlots({
     onSelectTimeSlot(timeStr);
   };
 
+  const isStartSelected = (hour) => {
+    if (!selectedStartTime) return false;
+    const startHour = parseInt(selectedStartTime.split(":")[0]);
+    return hour === startHour;
+  };
+
+  const isEndSelected = (hour) => {
+    if (!selectedEndTime) return false;
+    const endHour = parseInt(selectedEndTime.split(":")[0]);
+    return hour === endHour;
+  };
+
   const isInSelectedRange = (hour) => {
     if (!selectedStartTime || !selectedEndTime) return false;
 
     const startHour = parseInt(selectedStartTime.split(":")[0]);
     const endHour = parseInt(selectedEndTime.split(":")[0]);
 
-    return hour >= startHour && hour < endHour;
+    return hour > startHour && hour < endHour;
   };
 
   const formatDate = (dateStr) => {
@@ -76,11 +88,12 @@ export default function DayTimeSlots({
   }
 
   // Heures d'ouverture : 7h à 22h
+  // On affiche les heures de 7h à 22h (inclus) pour pouvoir sélectionner une fin à 22h
   const OPENING_HOUR = 7;
   const CLOSING_HOUR = 22;
 
   const hours = [];
-  for (let h = OPENING_HOUR; h < CLOSING_HOUR; h++) {
+  for (let h = OPENING_HOUR; h <= CLOSING_HOUR; h++) {
     hours.push(h);
   }
 
@@ -94,11 +107,15 @@ export default function DayTimeSlots({
       <div style={styles.slotsContainer}>
         {hours.map((hour) => {
           const status = getHourStatus(hour);
-          const isSelected = isInSelectedRange(hour);
+          const isStart = isStartSelected(hour);
+          const isEnd = isEndSelected(hour);
+          const isInRange = isInSelectedRange(hour);
 
-          let bgColor = "#22c55e";
-          if (status === "reserved") bgColor = "#ef4444";
-          if (isSelected) bgColor = "#2563eb";
+          let bgColor = "#22c55e"; // disponible
+          if (status === "reserved") bgColor = "#ef4444"; // réservé
+          if (isInRange) bgColor = "#93c5fd"; // entre début et fin (bleu clair)
+          if (isStart) bgColor = "#2563eb"; // début sélectionné (bleu)
+          if (isEnd) bgColor = "#1d4ed8"; // fin sélectionnée (bleu foncé)
 
           return (
             <div
@@ -112,10 +129,16 @@ export default function DayTimeSlots({
               }}
             >
               <span style={styles.hourLabel}>
-                {String(hour).padStart(2, "0")}:00 - {String(hour + 1).padStart(2, "0")}:00
+                {String(hour).padStart(2, "0")}h
               </span>
               {status === "reserved" && (
                 <span style={styles.reservedLabel}>{t("calendar.reserved")}</span>
+              )}
+              {isStart && !isEnd && (
+                <span style={styles.selectionLabel}>{t("calendar.start")}</span>
+              )}
+              {isEnd && !isStart && (
+                <span style={styles.selectionLabel}>{t("calendar.end")}</span>
               )}
             </div>
           );
@@ -194,6 +217,12 @@ const styles = {
     color: "#fff",
     fontSize: "0.7rem",
     opacity: 0.9,
+  },
+  selectionLabel: {
+    color: "#fff",
+    fontSize: "0.7rem",
+    opacity: 0.9,
+    fontWeight: "500",
   },
   legend: {
     display: "flex",
