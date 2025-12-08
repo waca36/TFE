@@ -1,0 +1,195 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.2fr 0.9fr;
+  gap: 1.75rem;
+  align-items: stretch;
+  flex-wrap: wrap;
+}
+
+.heroText {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 2rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.8rem;
+  margin: 0;
+  color: var(--taupe-dark);
+  font-weight: 700;
+}
+
+.title {
+  font-family: "The Seasons", "Poppins", serif;
+  font-weight: 400;
+  font-size: 2rem;
+  margin: 0.6rem 0 0.9rem;
+  color: var(--blue-dark);
+}
+
+.lead {
+  font-size: 1rem;
+  color: var(--taupe-dark);
+  margin: 0 0 1.3rem 0;
+  line-height: 1.7;
+}
+
+.actions {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.1rem;
+}
+
+.cta {
+  background: var(--orange);
+  color: #fff;
+  padding: 0.75rem 1.15rem;
+  border-radius: 10px;
+  border: 1px solid var(--orange);
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 12px 24px rgba(194, 117, 70, 0.28);
+}
+
+.secondary {
+  background: #fff;
+  color: var(--blue-dark);
+  padding: 0.72rem 1.1rem;
+  border-radius: 10px;
+  border: 1px solid var(--blue-dark);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.pill {
+  background: var(--surface-muted);
+  color: var(--blue-dark);
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.heroCard {
+  background: linear-gradient(180deg, #ffffff, rgba(164, 161, 151, 0.08));
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.6rem;
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.heroCardHeader {
+  margin-bottom: 0.5rem;
+}
+
+.heroCardTitle {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.3rem;
+  color: var(--blue-dark);
+  font-family: "The Seasons", "Poppins", serif;
+  font-weight: 400;
+}
+
+.heroCardText {
+  margin: 0;
+  color: var(--taupe-dark);
+  line-height: 1.6;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.listItem {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.bullet {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--orange);
+  margin-top: 6px;
+}
+
+.listTitle {
+  color: var(--blue-dark);
+  font-weight: 700;
+  font-size: 0.98rem;
+}
+
+.listText {
+  margin: 0.25rem 0 0 0;
+  color: var(--taupe-dark);
+  line-height: 1.5;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.cardTag {
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  background: rgba(30, 52, 85, 0.08);
+  color: var(--blue-dark);
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  margin-bottom: 0.65rem;
+}
+
+.cardTitle {
+  margin: 0 0 0.45rem 0;
+  font-size: 1.1rem;
+  color: var(--blue-dark);
+}
+
+.cardText {
+  margin: 0 0 0.8rem 0;
+  color: var(--taupe-dark);
+  line-height: 1.6;
+}
+
+.link {
+  color: var(--orange);
+  font-weight: 700;
+  text-decoration: none;
+}

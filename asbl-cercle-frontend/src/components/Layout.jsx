@@ -1,21 +1,13 @@
 import Navbar from "./Navbar";
+import styles from "./Layout.module.css";
 
 export default function Layout({ children }) {
   return (
-    <div style={styles.page}>
+    <div className={styles.page}>
       <Navbar />
-      <main style={styles.main}>{children}</main>
+      <main className={styles.main}>
+        <div className={styles.shell}>{children}</div>
+      </main>
     </div>
   );
 }
-
-const styles = {
-  page: {
-    minHeight: "100vh",
-    background: "#f3f4f6",
-    fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, sans-serif",
-  },
-  main: {
-    padding: "2rem",
-  },
-};

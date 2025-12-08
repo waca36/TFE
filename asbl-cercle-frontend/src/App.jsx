@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 import Layout from "./components/Layout";
@@ -25,14 +25,22 @@ import AdminGarderieForm from "./pages/AdminGarderieForm";
 import ProfilePage from "./pages/ProfilePage";
 import OrganizerEventsPage from "./pages/OrganizerEventsPage";
 import OrganizerEventForm from "./pages/OrganizerEventForm";
+import HomePage from "./pages/HomePage";
 
 export default function App() {
   const { t } = useTranslation();
 
   return (
     <Routes>
-      {/* Redirection de "/" vers "/espace" */}
-      <Route path="/" element={<Navigate to="/espace" replace />} />
+      {/* Page d'accueil */}
+      <Route
+        path="/"
+        element={
+          <Layout>
+            <HomePage />
+          </Layout>
+        }
+      />
 
       {/* Pages SANS Layout */}
       <Route path="/login" element={<LoginPage />} />

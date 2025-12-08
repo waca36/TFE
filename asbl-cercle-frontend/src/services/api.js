@@ -4,6 +4,50 @@ export function authHeaders(token) {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
+async function handleResponse(res, defaultMessage) {
+  if (res.ok) {
+    try {
+      return await res.json();
+    } catch {
+      return null;
+    }
+  }
+
+  let message = defaultMessage;
+  // Essayer JSON puis texte simple
+  try {
+    const data = await res.json();
+    if (data?.message) message = data.message;
+    else if (data?.error) message = data.error;
+    else if (typeof data === "string") message = data;
+  } catch {
+    try {
+      const text = await res.text();
+      if (text) message = text;
+    } catch {
+      // ignore parse errors
+    }
+  }
+
+  const lowerDefault = (defaultMessage || "").toLowerCase();
+  const isReservation = lowerDefault.includes("réservation") || lowerDefault.includes("reservation");
+
+  if (!message || message === defaultMessage) {
+    if (res.status === 409 && isReservation) {
+      message = "Cet espace est déjà réservé sur ce créneau. Merci de choisir un autre horaire.";
+    } else if (res.status === 403 && isReservation) {
+      message = "Accès refusé pour cette réservation : vérifiez le créneau ou reconnectez-vous.";
+    } else if (res.status === 400 && isReservation) {
+      message = "Réservation refusée : horaires ou paiement invalides pour ce créneau.";
+    }
+  }
+
+  if (res.status && res.status !== 200) {
+    message = `${message} (code ${res.status})`;
+  }
+  throw new Error(message);
+}
+
 // ==================== AUTH ====================
 
 export async function loginRequest(email, password) {
@@ -46,16 +90,14 @@ export async function getReservationsByUser(id, token) {
   const res = await fetch(`${API_URL}/api/public/reservations/user/${id}`, {
     headers: authHeaders(token),
   });
-  if (!res.ok) throw new Error("Impossible de récupérer les réservations");
-  return res.json();
+  return handleResponse(res, "Impossible de récupérer les réservations");
 }
 
 export async function getMyReservations(token) {
   const res = await fetch(`${API_URL}/api/public/reservations/me`, {
     headers: authHeaders(token),
   });
-  if (!res.ok) throw new Error("Impossible de récupérer les réservations");
-  return res.json();
+  return handleResponse(res, "Impossible de récupérer les réservations");
 }
 
 export async function createReservation(payload, token) {
@@ -67,8 +109,7 @@ export async function createReservation(payload, token) {
     },
     body: JSON.stringify(payload),
   });
-  if (!res.ok) throw new Error("Erreur lors de la création de la réservation");
-  return res.json();
+  return handleResponse(res, "Erreur lors de la création de la réservation");
 }
 
 export async function cancelReservation(id, token) {
@@ -76,10 +117,7 @@ export async function cancelReservation(id, token) {
     method: "DELETE",
     headers: authHeaders(token),
   });
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.message || "Erreur lors de l'annulation");
-  }
+  return handleResponse(res, "Erreur lors de l'annulation");
 }
 
 // Demande de réservation d'auditoire (sans paiement, en attente d'approbation)
@@ -92,11 +130,7 @@ export async function requestAuditoriumReservation(payload, token) {
     },
     body: JSON.stringify(payload),
   });
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.message || "Erreur lors de la demande de réservation");
-  }
-  return res.json();
+  return handleResponse(res, "Erreur lors de la demande de réservation");
 }
 
 // Payer une réservation approuvée
@@ -109,11 +143,7 @@ export async function payApprovedReservation(id, paymentIntentId, token) {
     },
     body: JSON.stringify({ paymentIntentId }),
   });
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.message || "Erreur lors du paiement de la réservation");
-  }
-  return res.json();
+  return handleResponse(res, "Erreur lors du paiement de la réservation");
 }
 
 // ==================== EVENTS ====================
@@ -133,11 +163,7 @@ export async function registerToEvent(payload, token) {
     },
     body: JSON.stringify(payload),
   });
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.message || "Erreur lors de l'inscription");
-  }
-  return res.json();
+  return handleResponse(res, "Erreur lors de l'inscription");
 }
 
 export async function getMyEventRegistrations(token) {
@@ -153,10 +179,7 @@ export async function cancelEventRegistration(id, token) {
     method: "DELETE",
     headers: authHeaders(token),
   });
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.message || "Erreur lors de l'annulation");
-  }
+  return handleResponse(res, "Erreur lors de l'annulation");
 }
 
 // ==================== GARDERIE ====================
@@ -180,10 +203,7 @@ export async function cancelGarderieReservation(id, token) {
     method: "DELETE",
     headers: authHeaders(token),
   });
-  if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.message || "Erreur lors de l'annulation");
-  }
+  return handleResponse(res, "Erreur lors de l'annulation");
 }
 
 // ==================== PROFILE ====================
@@ -517,5 +537,41 @@ export async function adminApproveEvent(id, approved, rejectionReason, token) {
     body: JSON.stringify({ approved, rejectionReason }),
   });
   if (!res.ok) throw new Error("Erreur approbation événement");
+  return res.json();
+}
+
+// ==================== ADMIN USERS ====================
+
+export async function adminGetUsers(token) {
+  const res = await fetch(`${API_URL}/api/admin/users`, {
+    headers: authHeaders(token),
+  });
+  if (!res.ok) throw new Error("Erreur récupération utilisateurs");
+  return res.json();
+}
+
+export async function adminUpdateUserRole(id, role, token) {
+  const res = await fetch(`${API_URL}/api/admin/users/${id}/role`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(token),
+    },
+    body: JSON.stringify({ role }),
+  });
+  if (!res.ok) throw new Error("Erreur modification rôle utilisateur");
+  return res.json();
+}
+
+export async function adminUpdateUserStatus(id, status, token) {
+  const res = await fetch(`${API_URL}/api/admin/users/${id}/status`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders(token),
+    },
+    body: JSON.stringify({ status }),
+  });
+  if (!res.ok) throw new Error("Erreur modification statut utilisateur");
   return res.json();
 }

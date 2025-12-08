@@ -38,7 +38,7 @@ public class SecurityConfig {
                         // Routes publiques
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/public/**").permitAll()
-                        .requestMatchers("/api/payment/**").permitAll()
+                        .requestMatchers("/api/payment/**", "/api/payments/**").permitAll()
 
                         // Routes organisateur (ORGANIZER ou ADMIN)
                         .requestMatchers("/api/organizer/**").hasAnyRole("ORGANIZER", "ADMIN")
@@ -60,7 +60,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:3000"));
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "http://127.0.0.1:5173",
+                "http://localhost:3000",
+                "http://127.0.0.1:3000"
+        ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

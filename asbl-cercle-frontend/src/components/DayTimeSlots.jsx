@@ -1,6 +1,10 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { getEspaceReservationsForCalendar } from "../services/api";
+import styles from "./DayTimeSlots.module.css";
+
+const OPENING_HOUR = 7;
+const CLOSING_HOUR = 22;
 
 export default function DayTimeSlots({
   espaceId,
@@ -29,7 +33,7 @@ export default function DayTimeSlots({
 
   const getHourStatus = (hour) => {
     const hourStart = new Date(`${selectedDate}T${String(hour).padStart(2, "0")}:00:00`);
-    const hourEnd = new Date(`${selectedDate}T${String(hour).padStart(2, "0")}:59:59`);
+    const hourEnd = new Date(`${selectedDate}T${String(hour + 1).padStart(2, "0")}:00:00`);
 
     const isReserved = reservations.some((r) => {
       const start = new Date(r.startDateTime);
@@ -40,9 +44,17 @@ export default function DayTimeSlots({
     return isReserved ? "reserved" : "available";
   };
 
+  const isPastHour = (hour) => {
+    if (!selectedDate) return false;
+    const now = new Date();
+    const slotEnd = new Date(`${selectedDate}T${String(hour + 1).padStart(2, "0")}:00:00`);
+    const isSameDay = slotEnd.toDateString() === now.toDateString();
+    return isSameDay && slotEnd <= now;
+  };
+
   const handleHourClick = (hour) => {
     const status = getHourStatus(hour);
-    if (status === "reserved") return;
+    if (status === "reserved" || isPastHour(hour)) return;
 
     const timeStr = `${String(hour).padStart(2, "0")}:00`;
     onSelectTimeSlot(timeStr);
@@ -81,168 +93,61 @@ export default function DayTimeSlots({
 
   if (!selectedDate) {
     return (
-      <div style={styles.container}>
-        <p style={styles.placeholder}>{t("calendar.selectDayFirst")}</p>
+      <div className={styles.container}>
+        <p className={styles.placeholder}>{t("calendar.selectDayFirst")}</p>
       </div>
     );
   }
 
-  // Heures d'ouverture : 7h à 22h
-  // On affiche les heures de 7h à 22h (inclus) pour pouvoir sélectionner une fin à 22h
-  const OPENING_HOUR = 7;
-  const CLOSING_HOUR = 22;
-
-  const hours = [];
-  for (let h = OPENING_HOUR; h <= CLOSING_HOUR; h++) {
-    hours.push(h);
-  }
-
   return (
-    <div style={styles.container}>
-      <h3 style={styles.title}>{formatDate(selectedDate)}</h3>
-      <p style={styles.openingHours}>{t("calendar.openingHours")}</p>
+    <div className={styles.container}>
+      <h3 className={styles.title}>{formatDate(selectedDate)}</h3>
+      <p className={styles.openingHours}>{t("calendar.openingHours")}</p>
 
-      {loading && <p style={styles.loading}>{t("common.loading")}</p>}
+      {loading && <p className={styles.loading}>{t("common.loading")}</p>}
 
-      <div style={styles.slotsContainer}>
-        {hours.map((hour) => {
+      <div className={styles.slotsContainer}>
+        {Array.from({ length: CLOSING_HOUR - OPENING_HOUR + 1 }, (_, i) => OPENING_HOUR + i).map((hour) => {
           const status = getHourStatus(hour);
-          const isStart = isStartSelected(hour);
-          const isEnd = isEndSelected(hour);
-          const isInRange = isInSelectedRange(hour);
+          const isSelected = isStartSelected(hour) || isEndSelected(hour);
+          const past = isPastHour(hour);
 
-          let bgColor = "#22c55e"; // disponible
-          if (status === "reserved") bgColor = "#ef4444"; // réservé
-          if (isInRange) bgColor = "#93c5fd"; // entre début et fin (bleu clair)
-          if (isStart) bgColor = "#2563eb"; // début sélectionné (bleu)
-          if (isEnd) bgColor = "#1d4ed8"; // fin sélectionnée (bleu foncé)
+          const slotClass = [
+            styles.slot,
+            status === "reserved" ? styles.reserved : styles.available,
+            isSelected ? styles.selected : "",
+            isInSelectedRange(hour) ? styles.inRange : "",
+            past ? styles.past : "",
+          ]
+            .filter(Boolean)
+            .join(" ");
 
           return (
-            <div
-              key={hour}
-              onClick={() => handleHourClick(hour)}
-              style={{
-                ...styles.slot,
-                backgroundColor: bgColor,
-                cursor: status === "reserved" ? "not-allowed" : "pointer",
-                opacity: status === "reserved" ? 0.8 : 1,
-              }}
-            >
-              <span style={styles.hourLabel}>
-                {String(hour).padStart(2, "0")}h
-              </span>
-              {status === "reserved" && (
-                <span style={styles.reservedLabel}>{t("calendar.reserved")}</span>
-              )}
-              {isStart && !isEnd && (
-                <span style={styles.selectionLabel}>{t("calendar.start")}</span>
-              )}
-              {isEnd && !isStart && (
-                <span style={styles.selectionLabel}>{t("calendar.end")}</span>
-              )}
+            <div key={hour} className={slotClass} onClick={() => handleHourClick(hour)} aria-disabled={past}>
+              <span className={styles.hourLabel}>{String(hour).padStart(2, "0")}:00</span>
+              {past && <span className={styles.reservedLabel}>Indisponible</span>}
+              {status === "reserved" && <span className={styles.reservedLabel}>{t("calendar.reserved")}</span>}
+              {isStartSelected(hour) && <span className={styles.selectionLabel}>{t("calendar.start")}</span>}
+              {isEndSelected(hour) && <span className={styles.selectionLabel}>{t("calendar.end")}</span>}
             </div>
           );
         })}
       </div>
 
-      <div style={styles.legend}>
-        <div style={styles.legendItem}>
-          <span style={{ ...styles.legendColor, backgroundColor: "#22c55e" }}></span>
-          {t("calendar.available")}
+      <div className={styles.legend}>
+        <div className={styles.legendItem}>
+          <span className={`${styles.legendColor} ${styles.legendAvailable}`}></span>
+          <span>{t("calendar.available")}</span>
         </div>
-        <div style={styles.legendItem}>
-          <span style={{ ...styles.legendColor, backgroundColor: "#ef4444" }}></span>
-          {t("calendar.reserved")}
+        <div className={styles.legendItem}>
+          <span className={`${styles.legendColor} ${styles.legendReserved}`}></span>
+          <span>{t("calendar.reserved")}</span>
         </div>
-        <div style={styles.legendItem}>
-          <span style={{ ...styles.legendColor, backgroundColor: "#2563eb" }}></span>
-          {t("calendar.selected")}
+        <div className={styles.legendItem}>
+          <span className={`${styles.legendColor} ${styles.legendSelected}`}></span>
+          <span>{t("calendar.selected")}</span>
         </div>
       </div>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    background: "#fff",
-    borderRadius: "8px",
-    padding: "1rem",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-  },
-  title: {
-    fontSize: "1.1rem",
-    fontWeight: "600",
-    color: "#1f2937",
-    marginBottom: "0.25rem",
-    textTransform: "capitalize",
-  },
-  openingHours: {
-    fontSize: "0.85rem",
-    color: "#6b7280",
-    marginBottom: "1rem",
-  },
-  placeholder: {
-    color: "#6b7280",
-    textAlign: "center",
-    padding: "2rem",
-  },
-  loading: {
-    textAlign: "center",
-    color: "#6b7280",
-    padding: "1rem",
-  },
-  slotsContainer: {
-    display: "grid",
-    gridTemplateColumns: "repeat(4, 1fr)",
-    gap: "8px",
-    maxHeight: "400px",
-    overflowY: "auto",
-  },
-  slot: {
-    padding: "0.75rem 0.5rem",
-    borderRadius: "6px",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    gap: "4px",
-    transition: "transform 0.1s",
-  },
-  hourLabel: {
-    color: "#fff",
-    fontSize: "0.85rem",
-    fontWeight: "500",
-  },
-  reservedLabel: {
-    color: "#fff",
-    fontSize: "0.7rem",
-    opacity: 0.9,
-  },
-  selectionLabel: {
-    color: "#fff",
-    fontSize: "0.7rem",
-    opacity: 0.9,
-    fontWeight: "500",
-  },
-  legend: {
-    display: "flex",
-    justifyContent: "center",
-    gap: "1.5rem",
-    marginTop: "1rem",
-    paddingTop: "1rem",
-    borderTop: "1px solid #e5e7eb",
-  },
-  legendItem: {
-    display: "flex",
-    alignItems: "center",
-    gap: "0.5rem",
-    fontSize: "0.85rem",
-    color: "#4b5563",
-  },
-  legendColor: {
-    width: "16px",
-    height: "16px",
-    borderRadius: "4px",
-    display: "inline-block",
-  },
-};

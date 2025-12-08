@@ -15,6 +15,7 @@ public class UserResponseDto {
     private Role role;
     private UserStatus status;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public static UserResponseDto fromEntity(User user) {
         UserResponseDto dto = new UserResponseDto();
@@ -25,10 +26,11 @@ public class UserResponseDto {
         dto.role = user.getRole();
         dto.status = user.getStatus();
         dto.createdAt = user.getCreatedAt();
+        dto.updatedAt = user.getUpdatedAt();
         return dto;
     }
 
-    // Getters uniquement (pas besoin de setters pour la réponse)
+    // Getters
     public Long getId() { return id; }
     public String getFirstName() { return firstName; }
     public String getLastName() { return lastName; }
@@ -36,4 +38,15 @@ public class UserResponseDto {
     public Role getRole() { return role; }
     public UserStatus getStatus() { return status; }
     public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+
+    // Setters
+    public void setId(Long id) { this.id = id; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
+    public void setEmail(String email) { this.email = email; }
+    public void setRole(Role role) { this.role = role; }
+    public void setStatus(UserStatus status) { this.status = status; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

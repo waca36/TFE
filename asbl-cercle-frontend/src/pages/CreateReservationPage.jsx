@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { getEspaces, requestAuditoriumReservation } from "../services/api";
+import { getEspaces, requestAuditoriumReservation, createReservation } from "../services/api";
 import { useTranslation } from "react-i18next";
 import PaymentForm from "../components/PaymentForm";
 import ReservationCalendar from "../components/ReservationCalendar";
 import DayTimeSlots from "../components/DayTimeSlots";
 
 const STRIPE_PUBLIC_KEY = "pk_test_51SZtvU43LA5MMUSyvqwMUBrZfuUUVrERUSNHtXE6j60tCbnIc5DTcaKJO1RlgpjgniuXjsFiIJsyM9jjZizdLxxn008fF3zfDs";
-const API_URL = "http://localhost:8080";
 
 export default function CreateReservationPage() {
   const { espaceId } = useParams();
@@ -63,7 +62,6 @@ export default function CreateReservationPage() {
 
   const handleTimeSlotClick = (time) => {
     if (!startTime) {
-      // Premier clic: définit l'heure de début
       setStartTime(time);
       setEndTime("");
     } else if (!endTime) {
@@ -71,15 +69,12 @@ export default function CreateReservationPage() {
       const clickedHour = parseInt(time.split(":")[0]);
 
       if (clickedHour > startHour) {
-        // Deuxième clic sur une heure après le début: définit l'heure de fin
         setEndTime(time);
       } else {
-        // Clic sur une heure avant ou égale au début: recommence
         setStartTime(time);
         setEndTime("");
       }
     } else {
-      // Déjà début et fin sélectionnés: recommence
       setStartTime(time);
       setEndTime("");
     }
@@ -87,19 +82,17 @@ export default function CreateReservationPage() {
 
   const isAuditoire = espace?.type === "AUDITOIRE";
 
-  // Pour les SALLES: on passe au paiement
-  // Pour les AUDITOIRES: on soumet la demande sans paiement
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     if (!selectedDate) {
-      setError(t('calendar.selectDayFirst'));
+      setError(t("calendar.selectDayFirst"));
       return;
     }
 
     if (!startTime || !endTime) {
-      setError(t('calendar.selectTimeSlots'));
+      setError(t("calendar.selectTimeSlots"));
       return;
     }
 
@@ -107,25 +100,22 @@ export default function CreateReservationPage() {
     const end = new Date(`${selectedDate}T${endTime}`);
 
     if (end <= start) {
-      setError(t('reservation.dateOrderError'));
+      setError(t("reservation.dateOrderError"));
       return;
     }
 
     if (isAuditoire && !justification.trim()) {
-      setError(t('reservation.justificationRequired'));
+      setError(t("reservation.justificationRequired"));
       return;
     }
 
     if (isAuditoire) {
-      // Pour les auditoires: soumettre la demande sans paiement
       await handleAuditoriumRequest();
     } else {
-      // Pour les salles: passer au paiement
       setShowPayment(true);
     }
   };
 
-  // Soumettre une demande de réservation d'auditoire (sans paiement)
   const handleAuditoriumRequest = async () => {
     setCreatingReservation(true);
     setError("");
@@ -134,15 +124,18 @@ export default function CreateReservationPage() {
     const endDateTime = `${selectedDate}T${endTime}:00`;
 
     try {
-      await requestAuditoriumReservation({
-        espaceId: Number(espaceId),
-        startDateTime,
-        endDateTime,
-        totalPrice: totalPrice,
-        justification: justification,
-      }, token);
+      await requestAuditoriumReservation(
+        {
+          espaceId: Number(espaceId),
+          startDateTime,
+          endDateTime,
+          totalPrice: totalPrice,
+          justification: justification,
+        },
+        token
+      );
 
-      alert(t('reservation.pendingApprovalMessage'));
+      alert(t("reservation.pendingApprovalMessage"));
       navigate("/reservations");
     } catch (err) {
       setError(err.message);
@@ -151,7 +144,6 @@ export default function CreateReservationPage() {
     }
   };
 
-  // Paiement réussi pour une SALLE
   const handlePaymentSuccess = async (paymentIntentId) => {
     setCreatingReservation(true);
     setError("");
@@ -160,27 +152,18 @@ export default function CreateReservationPage() {
     const endDateTime = `${selectedDate}T${endTime}:00`;
 
     try {
-      const response = await fetch(`${API_URL}/api/public/reservations`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({
+      await createReservation(
+        {
           espaceId: Number(espaceId),
           startDateTime,
           endDateTime,
           totalPrice: totalPrice,
           paymentIntentId: paymentIntentId,
-        }),
-      });
+        },
+        token
+      );
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Erreur lors de la création de la réservation");
-      }
-
-      alert(t('payment.success'));
+      alert(t("payment.success"));
       navigate("/reservations");
     } catch (err) {
       setError(err.message);
@@ -200,24 +183,24 @@ export default function CreateReservationPage() {
   };
 
   if (!user || !token) return null;
-  if (loading) return <p>{t('common.loading')}</p>;
+  if (loading) return <p>{t("common.loading")}</p>;
   if (error && !espace) return <p style={{ color: "red" }}>{error}</p>;
 
   if (showPayment) {
     return (
       <div style={styles.container}>
-        <h1 style={styles.title}>{t('payment.title')}</h1>
+        <h1 style={styles.title}>{t("payment.title")}</h1>
 
         {creatingReservation ? (
           <div style={styles.loadingBox}>
-            <p>{t('reservation.creating')}</p>
+            <p>{t("reservation.creating")}</p>
           </div>
         ) : (
           <PaymentForm
             stripePublicKey={STRIPE_PUBLIC_KEY}
             token={token}
             amount={totalPrice}
-            description={`${t('reservation.newReservation')}: ${espace.name} - ${selectedDate} ${startTime} ${t('common.to').toLowerCase()} ${endTime}`}
+            description={`${t("reservation.newReservation")}: ${espace.name} - ${selectedDate} ${startTime} ${t("common.to").toLowerCase()} ${endTime}`}
             reservationType="ESPACE"
             metadata={{
               espaceId: Number(espaceId),
@@ -234,36 +217,38 @@ export default function CreateReservationPage() {
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.title}>{t('reservation.newReservation')}</h1>
+      <h1 style={styles.title}>{t("reservation.newReservation")}</h1>
 
       {espace && (
         <div style={styles.espaceCard}>
           <h2 style={styles.espaceName}>{espace.name}</h2>
           <div style={styles.espaceInfo}>
-            <p><strong>{t('common.type')} :</strong> {t(`spaceType.${espace.type.toLowerCase()}`)}</p>
-            <p><strong>{t('common.capacity')} :</strong> {espace.capacity} {t('common.persons')}</p>
-            <p><strong>{t('common.price')} :</strong> {espace.basePrice} € {t('common.perHour')}</p>
+            <p>
+              <strong>{t("common.type")} :</strong> {t(`spaceType.${espace.type.toLowerCase()}`)}
+            </p>
+            <p>
+              <strong>{t("common.capacity")} :</strong> {espace.capacity} {t("common.persons")}
+            </p>
+            <p>
+              <strong>{t("common.price")} :</strong> {espace.basePrice} € {t("common.perHour")}
+            </p>
           </div>
           {isAuditoire && (
             <div style={styles.warningBox}>
-              <p>{t('reservation.auditoriumWarning')}</p>
+              <p>{t("reservation.auditoriumWarning")}</p>
             </div>
           )}
         </div>
       )}
 
       <div style={styles.calendarSection}>
-        <h3 style={styles.sectionTitle}>{t('calendar.selectDate')}</h3>
-        <ReservationCalendar
-          espaceId={Number(espaceId)}
-          onSelectDate={handleDateSelect}
-          selectedDate={selectedDate}
-        />
+        <h3 style={styles.sectionTitle}>{t("calendar.selectDate")}</h3>
+        <ReservationCalendar espaceId={Number(espaceId)} onSelectDate={handleDateSelect} selectedDate={selectedDate} />
       </div>
 
       {selectedDate && (
         <div style={styles.timeSlotsSection}>
-          <h3 style={styles.sectionTitle}>{t('calendar.selectTime')}</h3>
+          <h3 style={styles.sectionTitle}>{t("calendar.selectTime")}</h3>
           <DayTimeSlots
             espaceId={Number(espaceId)}
             selectedDate={selectedDate}
@@ -276,21 +261,25 @@ export default function CreateReservationPage() {
 
       {startTime && endTime && (
         <div style={styles.summaryCard}>
-          <h3 style={styles.summaryTitle}>{t('calendar.reservationSummary')}</h3>
+          <h3 style={styles.summaryTitle}>{t("calendar.reservationSummary")}</h3>
           <div style={styles.summaryDetails}>
-            <p><strong>{t('common.date')} :</strong> {selectedDate}</p>
-            <p><strong>{t('common.time')} :</strong> {startTime} - {endTime}</p>
+            <p>
+              <strong>{t("common.date")} :</strong> {selectedDate}
+            </p>
+            <p>
+              <strong>{t("common.time")} :</strong> {startTime} - {endTime}
+            </p>
           </div>
 
           {isAuditoire && (
             <div style={styles.justificationSection}>
               <label style={styles.justificationLabel}>
-                {t('reservation.justificationLabel')} <span style={styles.required}>*</span>
+                {t("reservation.justificationLabel")} <span style={styles.required}>*</span>
               </label>
               <textarea
                 value={justification}
                 onChange={(e) => setJustification(e.target.value)}
-                placeholder={t('reservation.justificationPlaceholder')}
+                placeholder={t("reservation.justificationPlaceholder")}
                 style={styles.justificationTextarea}
                 rows={4}
                 required
@@ -299,20 +288,15 @@ export default function CreateReservationPage() {
           )}
 
           <div style={styles.totalBox}>
-            <span>{t('reservation.totalPrice')} :</span>
+            <span>{t("reservation.totalPrice")} :</span>
             <span style={styles.totalAmount}>{totalPrice.toFixed(2)} €</span>
           </div>
 
           {error && <p style={styles.error}>{error}</p>}
 
           <div style={styles.buttonGroup}>
-            <button
-              type="button"
-              onClick={handleReset}
-              style={styles.resetButton}
-              disabled={creatingReservation}
-            >
-              {t('calendar.resetSelection')}
+            <button type="button" onClick={handleReset} style={styles.resetButton} disabled={creatingReservation}>
+              {t("calendar.resetSelection")}
             </button>
             <button
               type="button"
@@ -321,11 +305,10 @@ export default function CreateReservationPage() {
               disabled={creatingReservation}
             >
               {creatingReservation
-                ? t('common.loading')
+                ? t("common.loading")
                 : isAuditoire
-                  ? t('reservation.submitRequest')
-                  : t('reservation.proceedPayment')
-              }
+                ? t("reservation.submitRequest")
+                : t("reservation.proceedPayment")}
             </button>
           </div>
         </div>
@@ -333,12 +316,8 @@ export default function CreateReservationPage() {
 
       {error && !startTime && <p style={styles.error}>{error}</p>}
 
-      <button
-        type="button"
-        onClick={() => navigate("/espace")}
-        style={styles.cancelButton}
-      >
-        {t('common.back')}
+      <button type="button" onClick={() => navigate("/espace")} style={styles.cancelButton}>
+        {t("common.back")}
       </button>
     </div>
   );

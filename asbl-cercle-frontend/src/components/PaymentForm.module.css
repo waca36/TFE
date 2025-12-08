@@ -1,0 +1,138 @@
+.form {
+  background: linear-gradient(180deg, #ffffff, rgba(244, 241, 236, 0.95));
+  border-radius: 20px;
+  padding: 1.75rem;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border);
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.formHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  margin: 0;
+  color: var(--taupe-dark);
+  font-weight: 700;
+}
+
+.title {
+  font-size: 1.35rem;
+  margin: 0.25rem 0 0;
+  color: var(--blue-dark);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.7rem;
+  border-radius: 10px;
+  background: rgba(30, 52, 85, 0.12);
+  color: var(--blue-dark);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.summary {
+  background: rgba(164, 161, 151, 0.12);
+  border-radius: 14px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border);
+}
+
+.description {
+  color: var(--taupe-dark);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.amount {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: var(--orange);
+  margin: 0.35rem 0 0;
+}
+
+.cardContainer {
+  margin-bottom: 1.5rem;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--blue-dark);
+  font-size: 0.95rem;
+}
+
+.cardElement {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.9rem;
+  background: #fff;
+  box-shadow: 0 10px 35px rgba(15, 23, 42, 0.06) inset;
+}
+
+.error {
+  background: #fef2f2;
+  color: #dc2626;
+  padding: 0.85rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  border: 1px solid #fecdd3;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.cancelButton {
+  flex: 1;
+  padding: 0.85rem;
+  border: 1px solid var(--blue-dark);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--blue-dark);
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.submitButton {
+  flex: 1;
+  padding: 0.85rem;
+  border: none;
+  border-radius: 10px;
+  background: var(--orange);
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 700;
+  box-shadow: 0 12px 26px rgba(194, 117, 70, 0.3);
+  cursor: pointer;
+}
+
+.submitButton:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.securityBadge {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: var(--taupe-dark);
+  font-weight: 600;
+}

@@ -1,9 +1,10 @@
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
+import styles from "./LanguageSwitcher.module.css";
 
 const languages = [
-  { code: 'fr', label: 'FR' },
-  { code: 'en', label: 'EN' },
-  { code: 'nl', label: 'NL' },
+  { code: "fr", label: "FR" },
+  { code: "en", label: "EN" },
+  { code: "nl", label: "NL" },
 ];
 
 export default function LanguageSwitcher() {
@@ -11,9 +12,9 @@ export default function LanguageSwitcher() {
 
   const getCurrentLang = () => {
     const lang = i18n.language;
-    if (lang?.startsWith('fr')) return 'fr';
-    if (lang?.startsWith('nl')) return 'nl';
-    return 'en';
+    if (lang?.startsWith("fr")) return "fr";
+    if (lang?.startsWith("nl")) return "nl";
+    return "en";
   };
 
   const handleChange = (e) => {
@@ -21,11 +22,7 @@ export default function LanguageSwitcher() {
   };
 
   return (
-    <select
-      value={getCurrentLang()}
-      onChange={handleChange}
-      style={styles.select}
-    >
+    <select value={getCurrentLang()} onChange={handleChange} className={styles.select}>
       {languages.map((lang) => (
         <option key={lang.code} value={lang.code}>
           {lang.label}
@@ -34,16 +31,3 @@ export default function LanguageSwitcher() {
     </select>
   );
 }
-
-const styles = {
-  select: {
-    padding: "0.3rem 0.5rem",
-    borderRadius: "4px",
-    border: "1px solid #9ca3af",
-    fontSize: "0.85rem",
-    cursor: "pointer",
-    backgroundColor: "#374151",
-    color: "#f9fafb",
-    fontWeight: "500",
-  },
-};
