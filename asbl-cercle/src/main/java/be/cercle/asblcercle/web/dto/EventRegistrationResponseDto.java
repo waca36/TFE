@@ -31,8 +31,6 @@ public class EventRegistrationResponseDto {
         return dto;
     }
 
-    // Getters
-
     public Long getId() { return id; }
     public Long getEventId() { return eventId; }
     public String getEventTitle() { return eventTitle; }

@@ -1,0 +1,137 @@
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #1f2937;
+}
+
+.info {
+  color: #1f2937;
+}
+
+.eventCard {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.eventTitle {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #374151;
+}
+
+.eventInfo {
+  display: grid;
+  gap: 0.5rem;
+  color: #4b5563;
+}
+
+.form {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.input {
+  width: 120px;
+  padding: 0.5rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.checkbox {
+  margin-right: 0.5rem;
+}
+
+.childcareBlock {
+  margin-top: 0.5rem;
+}
+
+.helper {
+  margin-top: 0.25rem;
+  color: #4b5563;
+}
+
+.totalBox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f3f4f6;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+}
+
+.totalAmount {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+.error {
+  color: #dc2626;
+  background: #fef2f2;
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.loadingBox {
+  background: #fff;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 1rem;
+}
+
+.cancelButton {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  color: #374151;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.submitButton {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.page404 {
+  padding: 2rem;
+}

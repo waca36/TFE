@@ -23,10 +23,7 @@ public class CreateReservationRequest {
     @NotBlank
     private String paymentIntentId;
 
-    // Justification pour les réservations d'auditoire (optionnel pour les salles)
     private String justification;
-
-    // Getters / setters
 
     public Long getEspaceId() { return espaceId; }
     public void setEspaceId(Long espaceId) { this.espaceId = espaceId; }

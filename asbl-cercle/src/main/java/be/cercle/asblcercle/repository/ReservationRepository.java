@@ -16,8 +16,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     List<Reservation> findByEspace(Espace espace);
 
-    // Vérifie s'il existe une réservation qui chevauche la période demandée pour un espace donné
-    // Chevauchement : (start1 < end2) AND (end1 > start2)
     @Query("SELECT COUNT(r) > 0 FROM Reservation r " +
            "WHERE r.espace.id = :espaceId " +
            "AND r.status != 'CANCELLED' " +
@@ -29,7 +27,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("endDateTime") LocalDateTime endDateTime
     );
 
-    // Retourne les réservations qui chevauchent une période pour un espace
     @Query("SELECT r FROM Reservation r " +
            "WHERE r.espace.id = :espaceId " +
            "AND r.status != 'CANCELLED' " +
@@ -41,7 +38,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("endDateTime") LocalDateTime endDateTime
     );
 
-    // Retourne toutes les réservations confirmées d'un espace pour une période (pour le calendrier)
     @Query("SELECT r FROM Reservation r " +
            "WHERE r.espace.id = :espaceId " +
            "AND r.status = 'CONFIRMED' " +
@@ -54,7 +50,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("endDateTime") LocalDateTime endDateTime
     );
 
-    // Retourne les réservations en attente d'approbation (pour les auditoires)
     @Query("SELECT r FROM Reservation r " +
            "WHERE r.status = 'PENDING_APPROVAL' " +
            "ORDER BY r.createdAt DESC")

@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import PaymentForm from "../components/PaymentForm";
 import ReservationCalendar from "../components/ReservationCalendar";
 import DayTimeSlots from "../components/DayTimeSlots";
+import styles from "./CreateReservationPage.module.css";
 
 const STRIPE_PUBLIC_KEY = "pk_test_51SZtvU43LA5MMUSyvqwMUBrZfuUUVrERUSNHtXE6j60tCbnIc5DTcaKJO1RlgpjgniuXjsFiIJsyM9jjZizdLxxn008fF3zfDs";
 
@@ -129,8 +130,8 @@ export default function CreateReservationPage() {
           espaceId: Number(espaceId),
           startDateTime,
           endDateTime,
-          totalPrice: totalPrice,
-          justification: justification,
+          totalPrice,
+          justification,
         },
         token
       );
@@ -157,8 +158,8 @@ export default function CreateReservationPage() {
           espaceId: Number(espaceId),
           startDateTime,
           endDateTime,
-          totalPrice: totalPrice,
-          paymentIntentId: paymentIntentId,
+          totalPrice,
+          paymentIntentId,
         },
         token
       );
@@ -183,16 +184,16 @@ export default function CreateReservationPage() {
   };
 
   if (!user || !token) return null;
-  if (loading) return <p>{t("common.loading")}</p>;
-  if (error && !espace) return <p style={{ color: "red" }}>{error}</p>;
+  if (loading) return <p className={styles.info}>{t("common.loading")}</p>;
+  if (error && !espace) return <p className={styles.error}>{error}</p>;
 
   if (showPayment) {
     return (
-      <div style={styles.container}>
-        <h1 style={styles.title}>{t("payment.title")}</h1>
+      <div className={styles.container}>
+        <h1 className={styles.title}>{t("payment.title")}</h1>
 
         {creatingReservation ? (
-          <div style={styles.loadingBox}>
+          <div className={styles.loadingBox}>
             <p>{t("reservation.creating")}</p>
           </div>
         ) : (
@@ -210,45 +211,46 @@ export default function CreateReservationPage() {
           />
         )}
 
-        {error && <p style={styles.error}>{error}</p>}
+        {error && <p className={styles.error}>{error}</p>}
       </div>
     );
   }
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>{t("reservation.newReservation")}</h1>
+    <div className={styles.container}>
+      <h1 className={styles.title}>{t("reservation.newReservation")}</h1>
 
       {espace && (
-        <div style={styles.espaceCard}>
-          <h2 style={styles.espaceName}>{espace.name}</h2>
-          <div style={styles.espaceInfo}>
+        <div className={styles.espaceCard}>
+          <h2 className={styles.espaceName}>{espace.name}</h2>
+          <div className={styles.espaceInfo}>
             <p>
-              <strong>{t("common.type")} :</strong> {t(`spaceType.${espace.type.toLowerCase()}`)}
+              <strong>{t("spaces.type")} :</strong> {espace.type}
             </p>
             <p>
               <strong>{t("common.capacity")} :</strong> {espace.capacity} {t("common.persons")}
             </p>
             <p>
-              <strong>{t("common.price")} :</strong> {espace.basePrice} € {t("common.perHour")}
+              <strong>{t("spaces.basePrice")} :</strong> {espace.basePrice} €
             </p>
           </div>
-          {isAuditoire && (
-            <div style={styles.warningBox}>
-              <p>{t("reservation.auditoriumWarning")}</p>
+
+          {espace.type === "AUDITOIRE" && (
+            <div className={styles.warningBox}>
+              {t("reservation.auditoriumWarning")}
             </div>
           )}
         </div>
       )}
 
-      <div style={styles.calendarSection}>
-        <h3 style={styles.sectionTitle}>{t("calendar.selectDate")}</h3>
+      <div className={styles.calendarSection}>
+        <h3 className={styles.sectionTitle}>{t("calendar.selectDay")}</h3>
         <ReservationCalendar espaceId={Number(espaceId)} onSelectDate={handleDateSelect} selectedDate={selectedDate} />
       </div>
 
       {selectedDate && (
-        <div style={styles.timeSlotsSection}>
-          <h3 style={styles.sectionTitle}>{t("calendar.selectTime")}</h3>
+        <div className={styles.timeSlotsSection}>
+          <h3 className={styles.sectionTitle}>{t("calendar.selectTime")}</h3>
           <DayTimeSlots
             espaceId={Number(espaceId)}
             selectedDate={selectedDate}
@@ -260,9 +262,9 @@ export default function CreateReservationPage() {
       )}
 
       {startTime && endTime && (
-        <div style={styles.summaryCard}>
-          <h3 style={styles.summaryTitle}>{t("calendar.reservationSummary")}</h3>
-          <div style={styles.summaryDetails}>
+        <div className={styles.summaryCard}>
+          <h3 className={styles.summaryTitle}>{t("calendar.reservationSummary")}</h3>
+          <div className={styles.summaryDetails}>
             <p>
               <strong>{t("common.date")} :</strong> {selectedDate}
             </p>
@@ -272,36 +274,36 @@ export default function CreateReservationPage() {
           </div>
 
           {isAuditoire && (
-            <div style={styles.justificationSection}>
-              <label style={styles.justificationLabel}>
-                {t("reservation.justificationLabel")} <span style={styles.required}>*</span>
+            <div className={styles.justificationSection}>
+              <label className={styles.justificationLabel}>
+                {t("reservation.justificationLabel")} <span className={styles.required}>*</span>
               </label>
               <textarea
                 value={justification}
                 onChange={(e) => setJustification(e.target.value)}
                 placeholder={t("reservation.justificationPlaceholder")}
-                style={styles.justificationTextarea}
+                className={styles.justificationTextarea}
                 rows={4}
                 required
               />
             </div>
           )}
 
-          <div style={styles.totalBox}>
+          <div className={styles.totalBox}>
             <span>{t("reservation.totalPrice")} :</span>
-            <span style={styles.totalAmount}>{totalPrice.toFixed(2)} €</span>
+            <span className={styles.totalAmount}>{totalPrice.toFixed(2)} €</span>
           </div>
 
-          {error && <p style={styles.error}>{error}</p>}
+          {error && <p className={styles.error}>{error}</p>}
 
-          <div style={styles.buttonGroup}>
-            <button type="button" onClick={handleReset} style={styles.resetButton} disabled={creatingReservation}>
+          <div className={styles.buttonGroup}>
+            <button type="button" onClick={handleReset} className={styles.resetButton} disabled={creatingReservation}>
               {t("calendar.resetSelection")}
             </button>
             <button
               type="button"
               onClick={handleSubmit}
-              style={isAuditoire ? styles.submitButtonAuditoire : styles.submitButton}
+              className={isAuditoire ? styles.submitButtonAuditoire : styles.submitButton}
               disabled={creatingReservation}
             >
               {creatingReservation
@@ -314,175 +316,11 @@ export default function CreateReservationPage() {
         </div>
       )}
 
-      {error && !startTime && <p style={styles.error}>{error}</p>}
+      {error && !startTime && <p className={styles.error}>{error}</p>}
 
-      <button type="button" onClick={() => navigate("/espace")} style={styles.cancelButton}>
+      <button type="button" onClick={() => navigate("/espace")} className={styles.cancelButton}>
         {t("common.back")}
       </button>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    maxWidth: "900px",
-    margin: "0 auto",
-  },
-  title: {
-    fontSize: "1.8rem",
-    marginBottom: "1.5rem",
-    color: "#1f2937",
-  },
-  espaceCard: {
-    background: "#fff",
-    borderRadius: "8px",
-    padding: "1.5rem",
-    marginBottom: "1.5rem",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-  },
-  espaceName: {
-    fontSize: "1.3rem",
-    marginBottom: "1rem",
-    color: "#374151",
-  },
-  espaceInfo: {
-    display: "grid",
-    gap: "0.5rem",
-    color: "#4b5563",
-  },
-  warningBox: {
-    marginTop: "1rem",
-    padding: "0.75rem",
-    background: "#fef3c7",
-    border: "1px solid #f59e0b",
-    borderRadius: "6px",
-    color: "#92400e",
-    fontSize: "0.9rem",
-  },
-  calendarSection: {
-    marginBottom: "1.5rem",
-  },
-  timeSlotsSection: {
-    marginBottom: "1.5rem",
-  },
-  sectionTitle: {
-    fontSize: "1.1rem",
-    fontWeight: "600",
-    color: "#374151",
-    marginBottom: "0.75rem",
-  },
-  summaryCard: {
-    background: "#fff",
-    borderRadius: "8px",
-    padding: "1.5rem",
-    marginBottom: "1.5rem",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-    border: "2px solid #2563eb",
-  },
-  summaryTitle: {
-    fontSize: "1.1rem",
-    fontWeight: "600",
-    color: "#1f2937",
-    marginBottom: "1rem",
-  },
-  summaryDetails: {
-    display: "grid",
-    gap: "0.5rem",
-    color: "#4b5563",
-    marginBottom: "1rem",
-  },
-  justificationSection: {
-    marginBottom: "1rem",
-  },
-  justificationLabel: {
-    display: "block",
-    marginBottom: "0.5rem",
-    fontWeight: "500",
-    color: "#374151",
-  },
-  required: {
-    color: "#dc2626",
-  },
-  justificationTextarea: {
-    width: "100%",
-    padding: "0.75rem",
-    border: "1px solid #d1d5db",
-    borderRadius: "6px",
-    fontSize: "1rem",
-    boxSizing: "border-box",
-    resize: "vertical",
-  },
-  totalBox: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    background: "#f3f4f6",
-    padding: "1rem",
-    borderRadius: "6px",
-    marginBottom: "1rem",
-  },
-  totalAmount: {
-    fontSize: "1.5rem",
-    fontWeight: "bold",
-    color: "#1f2937",
-  },
-  error: {
-    color: "#dc2626",
-    background: "#fef2f2",
-    padding: "0.75rem",
-    borderRadius: "6px",
-    marginBottom: "1rem",
-  },
-  loadingBox: {
-    background: "#fff",
-    borderRadius: "8px",
-    padding: "2rem",
-    textAlign: "center",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-  },
-  buttonGroup: {
-    display: "flex",
-    gap: "1rem",
-  },
-  resetButton: {
-    flex: 1,
-    padding: "0.75rem 1rem",
-    border: "1px solid #d1d5db",
-    borderRadius: "6px",
-    background: "#fff",
-    color: "#374151",
-    fontSize: "1rem",
-    cursor: "pointer",
-  },
-  cancelButton: {
-    padding: "0.75rem 1.5rem",
-    border: "1px solid #d1d5db",
-    borderRadius: "6px",
-    background: "#fff",
-    color: "#374151",
-    fontSize: "1rem",
-    cursor: "pointer",
-  },
-  submitButton: {
-    flex: 1,
-    padding: "0.75rem 1rem",
-    border: "none",
-    borderRadius: "6px",
-    background: "#2563eb",
-    color: "#fff",
-    fontSize: "1rem",
-    fontWeight: "500",
-    cursor: "pointer",
-  },
-  submitButtonAuditoire: {
-    flex: 1,
-    padding: "0.75rem 1rem",
-    border: "none",
-    borderRadius: "6px",
-    background: "#f59e0b",
-    color: "#fff",
-    fontSize: "1rem",
-    fontWeight: "500",
-    cursor: "pointer",
-  },
-};

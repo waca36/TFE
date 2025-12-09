@@ -30,7 +30,7 @@ public class GarderieSession {
     private LocalTime endTime;
 
     @Column(nullable = false)
-    private Integer capacity; // nombre max d'enfants
+    private Integer capacity;
 
     @Column(nullable = false)
     private Double pricePerChild;
@@ -42,7 +42,12 @@ public class GarderieSession {
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    // getters / setters
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_id", unique = true)
+    private Event event;
+
+    private Integer minAge;
+    private Integer maxAge;
 
     public Long getId() { return id; }
 
@@ -83,4 +88,16 @@ public class GarderieSession {
     public LocalDateTime getCreatedAt() { return createdAt; }
 
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public Event getEvent() { return event; }
+
+    public void setEvent(Event event) { this.event = event; }
+
+    public Integer getMinAge() { return minAge; }
+
+    public void setMinAge(Integer minAge) { this.minAge = minAge; }
+
+    public Integer getMaxAge() { return maxAge; }
+
+    public void setMaxAge(Integer maxAge) { this.maxAge = maxAge; }
 }

@@ -3,6 +3,10 @@ package be.cercle.asblcercle.entity;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+import be.cercle.asblcercle.entity.Espace;
+import be.cercle.asblcercle.entity.GarderieSession;
+import be.cercle.asblcercle.entity.EventLocationType;
+
 @Entity
 @Table(name = "event")
 public class Event {
@@ -24,6 +28,16 @@ public class Event {
     private LocalDateTime endDateTime;
 
     private String location;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EventLocationType locationType = EventLocationType.EXTERNAL;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "space_id")
+    private Espace space;
+
+    private String externalAddress;
 
     @Column(nullable = false)
     private Integer capacity;
@@ -48,12 +62,16 @@ public class Event {
 
     private String rejectionReason;
 
+    @Column(nullable = false)
+    private boolean garderieRequired = false;
+
+    @OneToOne(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private GarderieSession garderieSession;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }
-
-    // Getters et Setters
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -72,6 +90,15 @@ public class Event {
 
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
+
+    public EventLocationType getLocationType() { return locationType; }
+    public void setLocationType(EventLocationType locationType) { this.locationType = locationType; }
+
+    public Espace getSpace() { return space; }
+    public void setSpace(Espace space) { this.space = space; }
+
+    public String getExternalAddress() { return externalAddress; }
+    public void setExternalAddress(String externalAddress) { this.externalAddress = externalAddress; }
 
     public Integer getCapacity() { return capacity; }
     public void setCapacity(Integer capacity) { this.capacity = capacity; }
@@ -96,4 +123,10 @@ public class Event {
 
     public String getRejectionReason() { return rejectionReason; }
     public void setRejectionReason(String rejectionReason) { this.rejectionReason = rejectionReason; }
+
+    public boolean isGarderieRequired() { return garderieRequired; }
+    public void setGarderieRequired(boolean garderieRequired) { this.garderieRequired = garderieRequired; }
+
+    public GarderieSession getGarderieSession() { return garderieSession; }
+    public void setGarderieSession(GarderieSession garderieSession) { this.garderieSession = garderieSession; }
 }

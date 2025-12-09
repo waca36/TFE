@@ -14,8 +14,6 @@ public class EventRegistrationRequest {
 
     private String paymentIntentId;
 
-    // Getters / Setters
-
     public Long getEventId() { return eventId; }
     public void setEventId(Long eventId) { this.eventId = eventId; }
 

@@ -6,6 +6,7 @@ import be.cercle.asblcercle.entity.User;
 import be.cercle.asblcercle.repository.EventRepository;
 import be.cercle.asblcercle.repository.EventRegistrationRepository;
 import be.cercle.asblcercle.repository.UserRepository;
+import be.cercle.asblcercle.service.EventPlanningService;
 import be.cercle.asblcercle.web.dto.EventApprovalDto;
 import be.cercle.asblcercle.web.dto.EventRequestDto;
 import be.cercle.asblcercle.web.dto.EventResponseDto;
@@ -26,18 +27,20 @@ public class AdminEventController {
     private final EventRepository eventRepository;
     private final EventRegistrationRepository registrationRepository;
     private final UserRepository userRepository;
+    private final EventPlanningService eventPlanningService;
 
     public AdminEventController(
             EventRepository eventRepository,
             EventRegistrationRepository registrationRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            EventPlanningService eventPlanningService
     ) {
         this.eventRepository = eventRepository;
         this.registrationRepository = registrationRepository;
         this.userRepository = userRepository;
+        this.eventPlanningService = eventPlanningService;
     }
 
-    // Tous les événements (admin)
     @GetMapping
     public List<EventResponseDto> getAllEvents() {
         return eventRepository.findAllByOrderByCreatedAtDesc().stream()
@@ -48,7 +51,6 @@ public class AdminEventController {
                 .toList();
     }
 
-    // Événements en attente d'approbation
     @GetMapping("/pending")
     public List<EventResponseDto> getPendingEvents() {
         return eventRepository.findByStatusOrderByCreatedAtDesc(EventStatus.PENDING_APPROVAL).stream()
@@ -59,7 +61,6 @@ public class AdminEventController {
                 .toList();
     }
 
-    // Détail d'un événement
     @GetMapping("/{id}")
     public EventResponseDto getEvent(@PathVariable Long id) {
         Event event = eventRepository.findById(id)
@@ -68,23 +69,16 @@ public class AdminEventController {
         return EventResponseDto.fromEntity(event, registered);
     }
 
-    // Créer un événement (directement PUBLISHED pour admin)
     @PostMapping
     public EventResponseDto createEvent(@Valid @RequestBody EventRequestDto dto, Authentication authentication) {
         User admin = getAuthenticatedAdmin(authentication);
 
-        if (dto.getStartDateTime().isBefore(LocalDateTime.now())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La date de début ne peut pas être dans le passé");
-        }
-
         Event event = new Event();
-        event.setTitle(dto.getTitle());
-        event.setDescription(dto.getDescription());
-        event.setStartDateTime(dto.getStartDateTime());
-        event.setEndDateTime(dto.getEndDateTime());
-        event.setLocation(dto.getLocation());
-        event.setCapacity(dto.getCapacity());
-        event.setPrice(dto.getPrice());
+        eventPlanningService.applyAndValidate(
+                event,
+                EventPlanningService.EventData.from(dto, EventStatus.PUBLISHED),
+                null
+        );
         event.setStatus(EventStatus.PUBLISHED);
         event.setCreatedBy(admin);
         event.setApprovedAt(LocalDateTime.now());
@@ -94,26 +88,22 @@ public class AdminEventController {
         return EventResponseDto.fromEntity(saved);
     }
 
-    // Modifier un événement
     @PutMapping("/{id}")
     public EventResponseDto updateEvent(@PathVariable Long id, @Valid @RequestBody EventRequestDto dto) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Événement introuvable"));
 
-        event.setTitle(dto.getTitle());
-        event.setDescription(dto.getDescription());
-        event.setStartDateTime(dto.getStartDateTime());
-        event.setEndDateTime(dto.getEndDateTime());
-        event.setLocation(dto.getLocation());
-        event.setCapacity(dto.getCapacity());
-        event.setPrice(dto.getPrice());
+        eventPlanningService.applyAndValidate(
+                event,
+                EventPlanningService.EventData.from(dto, event.getStatus()),
+                event.getId()
+        );
 
         Event saved = eventRepository.save(event);
         int registered = registrationRepository.countTotalParticipantsByEventId(saved.getId());
         return EventResponseDto.fromEntity(saved, registered);
     }
 
-    // Approuver ou rejeter un événement
     @PostMapping("/{id}/approve")
     public EventResponseDto approveOrRejectEvent(
             @PathVariable Long id,
@@ -144,7 +134,6 @@ public class AdminEventController {
         return EventResponseDto.fromEntity(saved, registered);
     }
 
-    // Changer le statut d'un événement
     @PatchMapping("/{id}/status")
     public EventResponseDto updateStatus(@PathVariable Long id, @RequestParam String status, Authentication authentication) {
         User admin = getAuthenticatedAdmin(authentication);
@@ -169,7 +158,6 @@ public class AdminEventController {
         return EventResponseDto.fromEntity(saved, registered);
     }
 
-    // Supprimer un événement
     @DeleteMapping("/{id}")
     public void deleteEvent(@PathVariable Long id) {
         if (!eventRepository.existsById(id)) {

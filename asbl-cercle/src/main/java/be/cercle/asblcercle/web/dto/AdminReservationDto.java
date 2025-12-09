@@ -16,12 +16,10 @@ public class AdminReservationDto {
     private ReservationType type;
     private String typeName;
 
-    // Info utilisateur
     private Long userId;
     private String userFullName;
     private String userEmail;
 
-    // Info réservation
     private String itemName;
     private String dateInfo;
     private Integer quantity;
@@ -29,11 +27,8 @@ public class AdminReservationDto {
     private String status;
     private LocalDateTime createdAt;
 
-    // Paiement
     private String paymentIntentId;
     private boolean isPaid;
-
-    // Factory methods
 
     public static AdminReservationDto fromEspaceReservation(Reservation r) {
         AdminReservationDto dto = new AdminReservationDto();
@@ -110,8 +105,6 @@ public class AdminReservationDto {
         return dt.toLocalDate().toString() + " " +
                 String.format("%02d:%02d", dt.getHour(), dt.getMinute());
     }
-
-    // Getters
 
     public Long getId() { return id; }
     public ReservationType getType() { return type; }

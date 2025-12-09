@@ -44,13 +44,11 @@ public class AdminStatsController {
     public Map<String, Object> getStats() {
         Map<String, Object> stats = new HashMap<>();
 
-        // Totaux
         stats.put("totalUsers", userRepository.count());
         stats.put("totalEspaces", espaceRepository.count());
         stats.put("totalEvents", eventRepository.count());
         stats.put("totalGarderieSessions", garderieSessionRepository.count());
 
-        // Réservations espaces
         long confirmedSpaceRes = reservationRepository.findAll().stream()
                 .filter(r -> r.getStatus() == ReservationStatus.CONFIRMED)
                 .count();
@@ -66,7 +64,6 @@ public class AdminStatsController {
         stats.put("cancelledSpaceReservations", cancelledSpaceRes);
         stats.put("spaceRevenue", spaceRevenue);
 
-        // Inscriptions événements
         long confirmedEventRes = eventRegistrationRepository.findAll().stream()
                 .filter(r -> r.getStatus() == EventRegistrationStatus.CONFIRMED)
                 .count();
@@ -82,7 +79,6 @@ public class AdminStatsController {
         stats.put("cancelledEventRegistrations", cancelledEventRes);
         stats.put("eventRevenue", eventRevenue);
 
-        // Réservations garderie
         long confirmedGarderieRes = garderieReservationRepository.findAll().stream()
                 .filter(r -> r.getStatus() == GarderieReservationStatus.CONFIRMED)
                 .count();
@@ -98,7 +94,6 @@ public class AdminStatsController {
         stats.put("cancelledGarderieReservations", cancelledGarderieRes);
         stats.put("garderieRevenue", garderieRevenue);
 
-        // Total revenus
         stats.put("totalRevenue", spaceRevenue + eventRevenue + garderieRevenue);
 
         return stats;

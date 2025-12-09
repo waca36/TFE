@@ -9,7 +9,6 @@ import java.util.List;
 
 public interface GarderieSessionRepository extends JpaRepository<GarderieSession, Long> {
 
-    // sessions ouvertes à partir d'aujourd'hui
     List<GarderieSession> findByStatusAndSessionDateGreaterThanEqualOrderBySessionDateAsc(
             GarderieSessionStatus status,
             LocalDate date

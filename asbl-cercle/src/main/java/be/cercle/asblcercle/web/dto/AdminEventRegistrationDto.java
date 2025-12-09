@@ -30,7 +30,6 @@ public class AdminEventRegistrationDto {
         return dto;
     }
 
-    // Getters
     public Long getId() { return id; }
     public String getUserName() { return userName; }
     public String getUserEmail() { return userEmail; }

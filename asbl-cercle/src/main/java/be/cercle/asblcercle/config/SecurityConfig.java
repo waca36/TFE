@@ -35,21 +35,12 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Routes publiques
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/public/**").permitAll()
                         .requestMatchers("/api/payment/**", "/api/payments/**").permitAll()
-
-                        // Routes organisateur (ORGANIZER ou ADMIN)
                         .requestMatchers("/api/organizer/**").hasAnyRole("ORGANIZER", "ADMIN")
-
-                        // Routes admin uniquement
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-
-                        // Routes utilisateur connecté
                         .requestMatchers("/api/user/**").authenticated()
-
-                        // Tout le reste nécessite authentification
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

@@ -1,0 +1,138 @@
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.title {
+  color: #1e3455;
+  margin-bottom: 1rem;
+}
+
+.info {
+  color: #1f2937;
+}
+
+.error {
+  color: #dc2626;
+}
+
+.linkRow {
+  margin: 0.5rem 0 1rem;
+}
+
+.linkGhost {
+  color: #618cc3;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.pendingBadge {
+  padding: 0.25rem 0.5rem;
+  background: #fef3c7;
+  color: #92400e;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.cardBody {
+  padding: 1rem;
+}
+
+.description {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: #f9fafb;
+  border-radius: 6px;
+}
+
+.cardActions {
+  padding: 1rem;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.approveBtn {
+  padding: 0.5rem 1rem;
+  background: #059669;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.rejectBtn {
+  padding: 0.5rem 1rem;
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.cancelBtn {
+  padding: 0.5rem 1rem;
+  background: #f3f4f6;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.rejectForm {
+  width: 100%;
+}
+
+.textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  resize: vertical;
+}
+
+.rejectActions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.emptyState {
+  padding: 3rem;
+  text-align: center;
+  background: #d1fae5;
+  border-radius: 8px;
+  color: #065f46;
+}

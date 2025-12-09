@@ -17,26 +17,22 @@ public class AdminController {
         this.espaceRepository = espaceRepository;
     }
 
-    // Liste de tous les espaces
     @GetMapping("/espaces")
     public List<Espace> getAllEspaces() {
         return espaceRepository.findAll();
     }
 
-    // Récupérer un espace précis
     @GetMapping("/espaces/{id}")
     public Espace getEspace(@PathVariable Long id) {
         return espaceRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Espace not found"));
     }
 
-    // Créer un nouvel espace
     @PostMapping("/espaces")
     public Espace createEspace(@RequestBody Espace e) {
         return espaceRepository.save(e);
     }
 
-    // Modifier un espace
     @PutMapping("/espaces/{id}")
     public Espace updateEspace(@PathVariable Long id, @RequestBody Espace updated) {
         Espace existing = espaceRepository.findById(id)
@@ -51,7 +47,6 @@ public class AdminController {
         return espaceRepository.save(existing);
     }
 
-    // Supprimer un espace
     @DeleteMapping("/espaces/{id}")
     public void deleteEspace(@PathVariable Long id) {
         espaceRepository.deleteById(id);

@@ -1,0 +1,181 @@
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.title {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #1f2937;
+}
+
+.info {
+  color: #1f2937;
+}
+
+.error {
+  color: #dc2626;
+}
+
+.approvedSection {
+  background: #f8fafc;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+.sectionTitle {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+  color: #111827;
+}
+
+.sectionDesc {
+  margin-bottom: 1rem;
+  color: #4b5563;
+}
+
+.approvedList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.approvedCard {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+}
+
+.approvedHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.approvedEspace {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.approvedDetails {
+  color: #4b5563;
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+
+.approvedActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.payButton {
+  padding: 0.5rem 0.8rem;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.cancelButtonSmall {
+  padding: 0.5rem 0.8rem;
+  background: #f3f4f6;
+  color: #111827;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.table th,
+.table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.statusConfirmed {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.statusPending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.statusApproved {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.statusCancelled {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.statusRejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.statusDefault {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.cancelButton {
+  padding: 0.4rem 0.8rem;
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.disabledText {
+  color: #9ca3af;
+  font-size: 0.85rem;
+}
+
+.rejectionReason {
+  color: #9ca3af;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.paymentCard {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.loadingBox {
+  background: #fff;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

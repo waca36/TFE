@@ -1,0 +1,56 @@
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.title {
+  color: #1e3455;
+  margin-bottom: 1rem;
+}
+
+.info {
+  color: #1f2937;
+}
+
+.linkRow {
+  margin: 0.5rem 0 1rem;
+}
+
+.linkGhost {
+  color: #618cc3;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+.table th,
+.table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.cancelButton {
+  padding: 0.4rem 0.8rem;
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.disabledText {
+  color: #9ca3af;
+  font-size: 0.85rem;
+}
+
+.error {
+  color: #dc2626;
+}

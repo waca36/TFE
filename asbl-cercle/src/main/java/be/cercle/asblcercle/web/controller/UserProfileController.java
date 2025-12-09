@@ -54,7 +54,6 @@ public class UserProfileController {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utilisateur introuvable"));
 
-        // option simple : on ne fait pas de check d’unicité de l’email, ou tu peux ajouter un contrôle
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());

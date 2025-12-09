@@ -28,8 +28,6 @@ public class Espace {
     @Column(nullable = false, length = 20)
     private EspaceStatus status = EspaceStatus.AVAILABLE;
 
-    // Getters / setters
-
     public Long getId() { return id; }
 
     public void setId(Long id) { this.id = id; }

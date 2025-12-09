@@ -44,8 +44,6 @@ public class AdminReservationsController {
         this.userRepository = userRepository;
     }
 
-    // ==================== VUE GLOBALE UNIFIÉE ====================
-
     @GetMapping("/all")
     public List<AdminReservationDto> getAllReservations() {
         List<AdminReservationDto> allReservations = new ArrayList<>();
@@ -67,9 +65,6 @@ public class AdminReservationsController {
         return allReservations;
     }
 
-    // ==================== ENDPOINTS POUR DASHBOARD ADMIN (DTOs détaillés) ====================
-
-    // Réservations d'espaces (format détaillé pour le dashboard)
     @GetMapping("/spaces")
     public List<AdminSpaceReservationDto> getSpaceReservationsDetailed() {
         return reservationRepository.findAll().stream()
@@ -78,7 +73,6 @@ public class AdminReservationsController {
                 .toList();
     }
 
-    // Inscriptions événements (format détaillé pour le dashboard)
     @GetMapping("/events")
     public List<AdminEventRegistrationDto> getEventRegistrationsDetailed() {
         return eventRegistrationRepository.findAll().stream()
@@ -87,7 +81,6 @@ public class AdminReservationsController {
                 .toList();
     }
 
-    // Réservations garderie (format détaillé pour le dashboard)
     @GetMapping("/childcare")
     public List<AdminGarderieReservationDto> getGarderieReservationsDetailed() {
         return garderieReservationRepository.findAll().stream()
@@ -95,8 +88,6 @@ public class AdminReservationsController {
                 .sorted(Comparator.comparing(AdminGarderieReservationDto::getCreatedAt).reversed())
                 .toList();
     }
-
-    // ==================== ENDPOINTS ALTERNATIFS (format unifié) ====================
 
     @GetMapping("/espaces")
     public List<AdminReservationDto> getEspaceReservations() {
@@ -114,9 +105,6 @@ public class AdminReservationsController {
                 .toList();
     }
 
-    // ==================== GESTION DES RÉSERVATIONS D'AUDITOIRE EN ATTENTE ====================
-
-    // Récupérer les réservations en attente d'approbation
     @GetMapping("/pending")
     public List<ReservationResponseDto> getPendingReservations() {
         return reservationRepository.findPendingApproval().stream()
@@ -124,7 +112,6 @@ public class AdminReservationsController {
                 .toList();
     }
 
-    // Récupérer une réservation par ID
     @GetMapping("/{id}")
     public ReservationResponseDto getReservationById(@PathVariable Long id) {
         Reservation reservation = reservationRepository.findById(id)
@@ -132,7 +119,6 @@ public class AdminReservationsController {
         return ReservationResponseDto.fromEntity(reservation);
     }
 
-    // Approuver ou rejeter une réservation d'auditoire
     @PostMapping("/{id}/approve")
     public ReservationResponseDto approveReservation(
             @PathVariable Long id,
@@ -156,7 +142,6 @@ public class AdminReservationsController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Admin introuvable"));
 
         if (request.getApproved()) {
-            // APPROVED = approuvé par admin, en attente de paiement par l'utilisateur
             reservation.setStatus(ReservationStatus.APPROVED);
             reservation.setApprovedBy(admin);
             reservation.setApprovedAt(LocalDateTime.now());

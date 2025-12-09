@@ -6,6 +6,7 @@ import be.cercle.asblcercle.entity.User;
 import be.cercle.asblcercle.repository.EventRepository;
 import be.cercle.asblcercle.repository.EventRegistrationRepository;
 import be.cercle.asblcercle.repository.UserRepository;
+import be.cercle.asblcercle.service.EventPlanningService;
 import be.cercle.asblcercle.web.dto.EventRequestDto;
 import be.cercle.asblcercle.web.dto.EventResponseDto;
 import jakarta.validation.Valid;
@@ -25,46 +26,36 @@ public class OrganizerEventController {
     private final EventRepository eventRepository;
     private final EventRegistrationRepository registrationRepository;
     private final UserRepository userRepository;
+    private final EventPlanningService eventPlanningService;
 
     public OrganizerEventController(
             EventRepository eventRepository,
             EventRegistrationRepository registrationRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            EventPlanningService eventPlanningService
     ) {
         this.eventRepository = eventRepository;
         this.registrationRepository = registrationRepository;
         this.userRepository = userRepository;
+        this.eventPlanningService = eventPlanningService;
     }
 
-    // Créer un événement (status = PENDING_APPROVAL)
     @PostMapping
     public EventResponseDto createEvent(@Valid @RequestBody EventRequestDto dto, Authentication authentication) {
         User organizer = getAuthenticatedUser(authentication);
 
-        // Vérifier que l'utilisateur est bien ORGANIZER ou ADMIN
         if (!organizer.getRole().name().equals("ORGANIZER") && !organizer.getRole().name().equals("ADMIN")) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Seuls les organisateurs peuvent créer des événements");
         }
 
-        // Validation des dates
-        if (dto.getStartDateTime().isBefore(LocalDateTime.now())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La date de début ne peut pas être dans le passé");
-        }
-        if (dto.getEndDateTime().isBefore(dto.getStartDateTime())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La date de fin doit être après la date de début");
-        }
-
         Event event = new Event();
-        event.setTitle(dto.getTitle());
-        event.setDescription(dto.getDescription());
-        event.setStartDateTime(dto.getStartDateTime());
-        event.setEndDateTime(dto.getEndDateTime());
-        event.setLocation(dto.getLocation());
-        event.setCapacity(dto.getCapacity());
-        event.setPrice(dto.getPrice());
+        eventPlanningService.applyAndValidate(
+                event,
+                EventPlanningService.EventData.from(dto, EventStatus.PENDING_APPROVAL),
+                null
+        );
         event.setCreatedBy(organizer);
 
-        // Si admin, l'événement est directement publié
         if (organizer.getRole().name().equals("ADMIN")) {
             event.setStatus(EventStatus.PUBLISHED);
             event.setApprovedAt(LocalDateTime.now());
@@ -77,7 +68,6 @@ public class OrganizerEventController {
         return EventResponseDto.fromEntity(saved);
     }
 
-    // Voir mes événements (organisateur)
     @GetMapping("/my")
     public List<EventResponseDto> getMyEvents(Authentication authentication) {
         User organizer = getAuthenticatedUser(authentication);
@@ -90,7 +80,6 @@ public class OrganizerEventController {
                 .toList();
     }
 
-    // Voir un de mes événements
     @GetMapping("/my/{id}")
     public EventResponseDto getMyEvent(@PathVariable Long id, Authentication authentication) {
         User organizer = getAuthenticatedUser(authentication);
@@ -106,7 +95,6 @@ public class OrganizerEventController {
         return EventResponseDto.fromEntity(event, registered);
     }
 
-    // Modifier un de mes événements (seulement si PENDING_APPROVAL)
     @PutMapping("/my/{id}")
     public EventResponseDto updateMyEvent(@PathVariable Long id, @Valid @RequestBody EventRequestDto dto, Authentication authentication) {
         User organizer = getAuthenticatedUser(authentication);
@@ -118,20 +106,16 @@ public class OrganizerEventController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Vous n'êtes pas le créateur de cet événement");
         }
 
-        // On ne peut modifier que si en attente ou rejeté
         if (event.getStatus() != EventStatus.PENDING_APPROVAL && event.getStatus() != EventStatus.REJECTED) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Impossible de modifier un événement déjà publié ou annulé");
         }
 
-        event.setTitle(dto.getTitle());
-        event.setDescription(dto.getDescription());
-        event.setStartDateTime(dto.getStartDateTime());
-        event.setEndDateTime(dto.getEndDateTime());
-        event.setLocation(dto.getLocation());
-        event.setCapacity(dto.getCapacity());
-        event.setPrice(dto.getPrice());
+        eventPlanningService.applyAndValidate(
+                event,
+                EventPlanningService.EventData.from(dto, event.getStatus()),
+                event.getId()
+        );
 
-        // Si c'était rejeté, on repasse en attente
         if (event.getStatus() == EventStatus.REJECTED) {
             event.setStatus(EventStatus.PENDING_APPROVAL);
             event.setRejectionReason(null);
@@ -141,7 +125,6 @@ public class OrganizerEventController {
         return EventResponseDto.fromEntity(saved);
     }
 
-    // Annuler un de mes événements
     @DeleteMapping("/my/{id}")
     public void cancelMyEvent(@PathVariable Long id, Authentication authentication) {
         User organizer = getAuthenticatedUser(authentication);

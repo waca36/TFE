@@ -25,7 +25,6 @@ public class EventController {
         this.registrationRepository = registrationRepository;
     }
 
-    // Liste des événements publiés et futurs (public)
     @GetMapping
     public List<EventResponseDto> getPublishedEvents() {
         return eventRepository.findByStatusAndStartDateTimeAfterOrderByStartDateTimeAsc(
@@ -39,13 +38,11 @@ public class EventController {
         .toList();
     }
 
-    // Détail d'un événement publié
     @GetMapping("/{id}")
     public EventResponseDto getEvent(@PathVariable Long id) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Événement introuvable"));
         
-        // Seuls les événements publiés sont accessibles au public
         if (event.getStatus() != EventStatus.PUBLISHED) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Événement introuvable");
         }

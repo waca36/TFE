@@ -3,6 +3,8 @@ package be.cercle.asblcercle.repository;
 import be.cercle.asblcercle.entity.Event;
 import be.cercle.asblcercle.entity.EventStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -11,15 +13,25 @@ import java.util.List;
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    // Événements publiés et futurs (pour le public)
     List<Event> findByStatusAndStartDateTimeAfterOrderByStartDateTimeAsc(EventStatus status, LocalDateTime dateTime);
 
-    // Événements en attente de validation (pour admin)
     List<Event> findByStatusOrderByCreatedAtDesc(EventStatus status);
 
-    // Événements créés par un utilisateur (pour organisateur)
     List<Event> findByCreatedByIdOrderByCreatedAtDesc(Long userId);
 
-    // Tous les événements triés par date de création (pour admin)
     List<Event> findAllByOrderByCreatedAtDesc();
+
+    @Query("""
+            SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END
+            FROM Event e
+            WHERE e.locationType = be.cercle.asblcercle.entity.EventLocationType.EXISTING_SPACE
+              AND e.space.id = :spaceId
+              AND e.startDateTime < :endDateTime
+              AND e.endDateTime > :startDateTime
+              AND (:excludeId IS NULL OR e.id <> :excludeId)
+            """)
+    boolean existsOverlappingEventForSpace(@Param("spaceId") Long spaceId,
+                                           @Param("startDateTime") LocalDateTime startDateTime,
+                                           @Param("endDateTime") LocalDateTime endDateTime,
+                                           @Param("excludeId") Long excludeId);
 }

@@ -45,16 +45,13 @@ public class EventRegistrationController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non connecté");
         }
 
-        // 1. Récupérer l'utilisateur
         String email = authentication.getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utilisateur introuvable"));
 
-        // 2. Récupérer l'événement
         Event event = eventRepository.findById(request.getEventId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Événement introuvable"));
 
-        // 3. Vérifier que l'événement est publié et pas encore passé
         if (event.getStatus() != EventStatus.PUBLISHED) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cet événement n'est pas ouvert aux inscriptions");
         }
@@ -63,12 +60,10 @@ public class EventRegistrationController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cet événement est déjà passé");
         }
 
-        // 4. Vérifier si l'utilisateur n'est pas déjà inscrit
         if (registrationRepository.existsByUserAndEvent(user, event)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Vous êtes déjà inscrit à cet événement");
         }
 
-        // 5. Vérifier la capacité
         if (event.getCapacity() != null) {
             Integer currentParticipants = registrationRepository.countTotalParticipantsByEventId(event.getId());
             if (currentParticipants + request.getNumberOfParticipants() > event.getCapacity()) {
@@ -76,7 +71,6 @@ public class EventRegistrationController {
             }
         }
 
-        // 6. Si l'événement est payant, vérifier le paiement
         Double totalPrice = 0.0;
         if (event.getPrice() != null && event.getPrice() > 0) {
             totalPrice = event.getPrice() * request.getNumberOfParticipants();
@@ -95,7 +89,6 @@ public class EventRegistrationController {
             }
         }
 
-        // 7. Créer l'inscription
         EventRegistration registration = new EventRegistration();
         registration.setUser(user);
         registration.setEvent(event);

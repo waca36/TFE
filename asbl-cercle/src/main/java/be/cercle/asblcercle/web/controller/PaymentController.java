@@ -29,12 +29,10 @@ public class PaymentController {
                     .setDescription(request.getDescription())
                     .putMetadata("reservationType", request.getReservationType());
 
-            // reservationId est optionnel maintenant (car la réservation n'existe pas encore)
             if (request.getReservationId() != null) {
                 paramsBuilder.putMetadata("reservationId", String.valueOf(request.getReservationId()));
             }
 
-            // Ajouter les métadonnées pour identifier la session/event
             if (request.getSessionId() != null) {
                 paramsBuilder.putMetadata("sessionId", String.valueOf(request.getSessionId()));
             }

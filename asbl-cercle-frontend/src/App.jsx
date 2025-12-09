@@ -32,7 +32,6 @@ export default function App() {
 
   return (
     <Routes>
-      {/* Page d'accueil */}
       <Route
         path="/"
         element={
@@ -42,11 +41,9 @@ export default function App() {
         }
       />
 
-      {/* Pages SANS Layout */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
 
-      {/* Pages AVEC Layout + Navbar */}
       <Route
         path="/espace"
         element={
@@ -74,7 +71,6 @@ export default function App() {
         }
       />
 
-      {/* EVENTS */}
       <Route
         path="/events"
         element={
@@ -102,7 +98,6 @@ export default function App() {
         }
       />
 
-      {/* GARDERIE */}
       <Route
         path="/garderie"
         element={
@@ -130,7 +125,6 @@ export default function App() {
         }
       />
 
-      {/* PROFILE */}
       <Route
         path="/profile"
         element={
@@ -140,7 +134,6 @@ export default function App() {
         }
       />
 
-      {/* ORGANIZER - Gestion événements */}
       <Route
         path="/organizer/events"
         element={
@@ -168,7 +161,6 @@ export default function App() {
         }
       />
 
-      {/* ADMIN */}
       <Route
         path="/admin"
         element={
@@ -277,12 +269,11 @@ export default function App() {
         }
       />
 
-      {/* Page 404 */}
       <Route
         path="*"
         element={
           <Layout>
-            <div style={{ padding: "2rem" }}>{t("error.404")}</div>
+            <div className="page404">{t("error.404")}</div>
           </Layout>
         }
       />

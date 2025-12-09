@@ -22,8 +22,6 @@ public class RegisterRequest {
     @Size(min = 8, max = 100)
     private String password;
 
-    // Getters / setters
-
     public String getFirstName() { return firstName; }
     public void setFirstName(String firstName) { this.firstName = firstName; }
 

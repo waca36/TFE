@@ -22,8 +22,6 @@ public class AuditoriumReservationRequest {
     @NotBlank(message = "Une justification est requise pour réserver un auditoire")
     private String justification;
 
-    // Getters / setters
-
     public Long getEspaceId() { return espaceId; }
     public void setEspaceId(Long espaceId) { this.espaceId = espaceId; }
 

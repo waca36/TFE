@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getPublicEvents, registerToEvent } from "../services/api";
+import { getPublicEvents, registerToEvent, createGarderieReservation } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "react-i18next";
 import PaymentForm from "../components/PaymentForm";
+import styles from "./EventRegisterPage.module.css";
 
 const STRIPE_PUBLIC_KEY = "pk_test_51SZtvU43LA5MMUSyvqwMUBrZfuUUVrERUSNHtXE6j60tCbnIc5DTcaKJO1RlgpjgniuXjsFiIJsyM9jjZizdLxxn008fF3zfDs";
 
@@ -15,9 +16,10 @@ export default function EventRegisterPage() {
 
   const [event, setEvent] = useState(null);
   const [numberOfParticipants, setNumberOfParticipants] = useState(1);
+  const [addChildcare, setAddChildcare] = useState(false);
+  const [childrenCount, setChildrenCount] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  
   const [showPayment, setShowPayment] = useState(false);
   const [registering, setRegistering] = useState(false);
 
@@ -33,21 +35,26 @@ export default function EventRegisterPage() {
         if (found) {
           setEvent(found);
         } else {
-          setError(t('events.notFound'));
+          setError(t("events.notFound"));
         }
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, [id, user, token, navigate, t]);
 
-  const isPaid = event?.price && event.price > 0;
-  const totalAmount = isPaid ? event.price * numberOfParticipants : 0;
+  const hasGarderie = !!event?.garderieSessionId;
+  const eventPrice = event?.price || 0;
+  const garderieUnit = event?.garderiePrice || 0;
+  const eventTotal = eventPrice * numberOfParticipants;
+  const garderieTotal = hasGarderie && addChildcare ? garderieUnit * childrenCount : 0;
+  const totalAmount = eventTotal + garderieTotal;
+  const requiresPayment = totalAmount > 0;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    if (isPaid) {
+    if (requiresPayment) {
       setShowPayment(true);
     } else {
       await completeRegistration(null);
@@ -59,13 +66,27 @@ export default function EventRegisterPage() {
     setError("");
 
     try {
-      await registerToEvent({
-        eventId: parseInt(id),
-        numberOfParticipants,
-        paymentIntentId,
-      }, token);
+      await registerToEvent(
+        {
+          eventId: parseInt(id),
+          numberOfParticipants,
+          paymentIntentId,
+        },
+        token
+      );
 
-      alert(isPaid ? t('payment.success') : t('events.registrationSuccess'));
+      if (hasGarderie && addChildcare && childrenCount > 0) {
+        await createGarderieReservation(
+          {
+            sessionId: event.garderieSessionId,
+            numberOfChildren: childrenCount,
+            paymentIntentId,
+          },
+          token
+        );
+      }
+
+      alert(requiresPayment ? t("payment.success") : t("events.registrationSuccess"));
       navigate("/events/my");
     } catch (err) {
       setError(err.message);
@@ -84,208 +105,139 @@ export default function EventRegisterPage() {
   };
 
   if (!user || !token) return null;
-  if (loading) return <p>{t('common.loading')}</p>;
-  if (error && !event) return <p style={{ color: "red" }}>{error}</p>;
+  if (loading) return <p className={styles.info}>{t("common.loading")}</p>;
+  if (error && !event) return <p className={styles.error}>{error}</p>;
 
-  if (showPayment && isPaid) {
+  if (showPayment && requiresPayment) {
     return (
-      <div style={styles.container}>
-        <h1 style={styles.title}>{t('payment.title')}</h1>
-        
+      <div className={styles.container}>
+        <h1 className={styles.title}>{t("payment.title")}</h1>
+
         {registering ? (
-          <div style={styles.loadingBox}>
-            <p>{t('events.registering')}</p>
+          <div className={styles.loadingBox}>
+            <p>{t("events.registering")}</p>
           </div>
         ) : (
           <PaymentForm
             stripePublicKey={STRIPE_PUBLIC_KEY}
             token={token}
             amount={totalAmount}
-            description={`${t('events.registration')}: ${event.title} - ${numberOfParticipants} ${t('events.participant', { count: numberOfParticipants })}`}
+            description={`${t("events.registration")}: ${event.title} - ${numberOfParticipants} ${t("events.participant", { count: numberOfParticipants })}`}
             reservationType="EVENT"
             metadata={{
               eventId: parseInt(id),
               numberOfParticipants,
+              garderieSessionId: hasGarderie && addChildcare ? event.garderieSessionId : undefined,
+              numberOfChildren: hasGarderie && addChildcare ? childrenCount : undefined,
             }}
             onSuccess={handlePaymentSuccess}
             onCancel={handlePaymentCancel}
           />
         )}
 
-        {error && <p style={styles.error}>{error}</p>}
+        {error && <p className={styles.error}>{error}</p>}
       </div>
     );
   }
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>{t('events.registerFor')}</h1>
+    <div className={styles.container}>
+      <h1 className={styles.title}>{t("events.registerFor")}</h1>
 
       {event && (
-        <div style={styles.eventCard}>
-          <h2 style={styles.eventTitle}>{event.title}</h2>
-          <div style={styles.eventInfo}>
-            <p><strong>{t('common.date')} :</strong> {event.startDateTime.replace("T", " ")}</p>
-            <p><strong>{t('common.description')} :</strong> {event.description}</p>
+        <div className={styles.eventCard}>
+          <h2 className={styles.eventTitle}>{event.title}</h2>
+          <div className={styles.eventInfo}>
+            <p>
+              <strong>{t("common.date")} :</strong> {event.startDateTime.replace("T", " ")}
+            </p>
+            <p>
+              <strong>{t("common.description")} :</strong> {event.description}
+            </p>
             {event.capacity && (
-              <p><strong>{t('common.capacity')} :</strong> {event.capacity} {t('common.persons')}</p>
+              <p>
+                <strong>{t("common.capacity")} :</strong> {event.capacity} {t("common.persons")}
+              </p>
             )}
             <p>
-              <strong>{t('common.price')} :</strong>{" "}
-              {isPaid ? `${event.price} € / ${t('events.participant', { count: 1 })}` : t('events.free')}
+              <strong>{t("common.price")} :</strong>{" "}
+              {eventPrice > 0 ? `${eventPrice} € / ${t("events.participant", { count: 1 })}` : t("events.free")}
             </p>
+            {hasGarderie && (
+              <p>
+                <strong>Garderie :</strong>{" "}
+                {garderieUnit > 0 ? `${garderieUnit} € / enfant` : t("events.free")}
+              </p>
+            )}
           </div>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <div style={styles.formGroup}>
-          <label style={styles.label}>{t('events.numberOfParticipants')} :</label>
+      <form onSubmit={handleSubmit} className={styles.form}>
+        <div className={styles.formGroup}>
+          <label className={styles.label}>{t("events.numberOfParticipants")} :</label>
           <input
             type="number"
             min="1"
             max={event?.capacity || 100}
             value={numberOfParticipants}
             onChange={(e) => setNumberOfParticipants(parseInt(e.target.value) || 1)}
-            style={styles.input}
+            className={styles.input}
           />
         </div>
 
-        {isPaid && (
-          <div style={styles.totalBox}>
-            <span>{t('reservation.totalPrice')} :</span>
-            <span style={styles.totalAmount}>{totalAmount.toFixed(2)} €</span>
+        {hasGarderie && (
+          <div className={styles.formGroup}>
+            <label className={styles.label}>
+              <input
+                type="checkbox"
+                checked={addChildcare}
+                onChange={(e) => setAddChildcare(e.target.checked)}
+                className={styles.checkbox}
+              />
+              Ajouter la garderie
+            </label>
+
+            {addChildcare && (
+              <div className={styles.childcareBlock}>
+                <label className={styles.label}>Nombre d'enfants :</label>
+                <input
+                  type="number"
+                  min="1"
+                  value={childrenCount}
+                  onChange={(e) => setChildrenCount(parseInt(e.target.value) || 1)}
+                  className={styles.input}
+                />
+                <p className={styles.helper}>
+                  Tarif garderie : {garderieUnit} € / enfant
+                </p>
+              </div>
+            )}
           </div>
         )}
 
-        {error && <p style={styles.error}>{error}</p>}
+        {requiresPayment && (
+          <div className={styles.totalBox}>
+            <span>{t("reservation.totalPrice")} :</span>
+            <span className={styles.totalAmount}>{totalAmount.toFixed(2)} €</span>
+          </div>
+        )}
 
-        <div style={styles.buttonGroup}>
-          <button
-            type="button"
-            onClick={() => navigate("/events")}
-            style={styles.cancelButton}
-          >
-            {t('common.cancel')}
+        {error && <p className={styles.error}>{error}</p>}
+
+        <div className={styles.buttonGroup}>
+          <button type="button" onClick={() => navigate("/events")} className={styles.cancelButton}>
+            {t("common.cancel")}
           </button>
-          <button
-            type="submit"
-            style={styles.submitButton}
-            disabled={registering}
-          >
-            {registering 
-              ? t('common.loading') 
-              : isPaid 
-                ? t('reservation.proceedPayment') 
-                : t('events.confirmRegistration')
-            }
+          <button type="submit" className={styles.submitButton} disabled={registering}>
+            {registering
+              ? t("common.loading")
+              : requiresPayment
+              ? t("reservation.proceedPayment")
+              : t("events.confirmRegistration")}
           </button>
         </div>
       </form>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    maxWidth: "600px",
-    margin: "0 auto",
-  },
-  title: {
-    fontSize: "1.8rem",
-    marginBottom: "1.5rem",
-    color: "#1f2937",
-  },
-  eventCard: {
-    background: "#fff",
-    borderRadius: "8px",
-    padding: "1.5rem",
-    marginBottom: "1.5rem",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-  },
-  eventTitle: {
-    fontSize: "1.3rem",
-    marginBottom: "1rem",
-    color: "#374151",
-  },
-  eventInfo: {
-    display: "grid",
-    gap: "0.5rem",
-    color: "#4b5563",
-  },
-  form: {
-    background: "#fff",
-    borderRadius: "8px",
-    padding: "1.5rem",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-  },
-  formGroup: {
-    marginBottom: "1.5rem",
-  },
-  label: {
-    display: "block",
-    marginBottom: "0.5rem",
-    fontWeight: "500",
-    color: "#374151",
-  },
-  input: {
-    width: "80px",
-    padding: "0.5rem 1rem",
-    border: "1px solid #d1d5db",
-    borderRadius: "6px",
-    fontSize: "1rem",
-  },
-  totalBox: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    background: "#f3f4f6",
-    padding: "1rem",
-    borderRadius: "6px",
-    marginBottom: "1.5rem",
-  },
-  totalAmount: {
-    fontSize: "1.5rem",
-    fontWeight: "bold",
-    color: "#1f2937",
-  },
-  error: {
-    color: "#dc2626",
-    background: "#fef2f2",
-    padding: "0.75rem",
-    borderRadius: "6px",
-    marginBottom: "1rem",
-  },
-  loadingBox: {
-    background: "#fff",
-    borderRadius: "8px",
-    padding: "2rem",
-    textAlign: "center",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-  },
-  buttonGroup: {
-    display: "flex",
-    gap: "1rem",
-  },
-  cancelButton: {
-    flex: 1,
-    padding: "0.75rem 1rem",
-    border: "1px solid #d1d5db",
-    borderRadius: "6px",
-    background: "#fff",
-    color: "#374151",
-    fontSize: "1rem",
-    cursor: "pointer",
-  },
-  submitButton: {
-    flex: 1,
-    padding: "0.75rem 1rem",
-    border: "none",
-    borderRadius: "6px",
-    background: "#2563eb",
-    color: "#fff",
-    fontSize: "1rem",
-    fontWeight: "500",
-    cursor: "pointer",
-  },
-};

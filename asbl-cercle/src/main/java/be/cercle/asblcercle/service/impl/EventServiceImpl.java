@@ -5,6 +5,7 @@ import be.cercle.asblcercle.entity.EventStatus;
 import be.cercle.asblcercle.repository.EventRegistrationRepository;
 import be.cercle.asblcercle.repository.EventRepository;
 import be.cercle.asblcercle.service.EventService;
+import be.cercle.asblcercle.service.EventPlanningService;
 import be.cercle.asblcercle.web.dto.EventRequest;
 import be.cercle.asblcercle.web.dto.EventResponseDto;
 import org.springframework.http.HttpStatus;
@@ -21,11 +22,14 @@ public class EventServiceImpl implements EventService {
 
     private final EventRepository eventRepository;
     private final EventRegistrationRepository registrationRepository;
+    private final EventPlanningService planningService;
 
     public EventServiceImpl(EventRepository eventRepository,
-                            EventRegistrationRepository registrationRepository) {
+                            EventRegistrationRepository registrationRepository,
+                            EventPlanningService planningService) {
         this.eventRepository = eventRepository;
         this.registrationRepository = registrationRepository;
+        this.planningService = planningService;
     }
 
     @Override
@@ -48,7 +52,7 @@ public class EventServiceImpl implements EventService {
         validateEventDates(request);
 
         Event e = new Event();
-        applyRequestToEntity(request, e);
+        planningService.applyAndValidate(e, EventPlanningService.EventData.from(request), null);
         Event saved = eventRepository.save(e);
         return EventResponseDto.fromEntity(saved, 0);
     }
@@ -60,7 +64,7 @@ public class EventServiceImpl implements EventService {
         Event e = eventRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Événement introuvable"));
 
-        applyRequestToEntity(request, e);
+        planningService.applyAndValidate(e, EventPlanningService.EventData.from(request), id);
         Event saved = eventRepository.save(e);
         Integer registeredCount = registrationRepository.countTotalParticipantsByEventId(saved.getId());
         return EventResponseDto.fromEntity(saved, registeredCount);

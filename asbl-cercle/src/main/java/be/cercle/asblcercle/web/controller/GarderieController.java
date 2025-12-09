@@ -35,7 +35,6 @@ public class GarderieController {
         this.userRepository = userRepository;
     }
 
-    // PUBLIC : voir les sessions ouvertes avec places restantes
     @GetMapping("/sessions")
     public List<GarderieSessionResponseDto> listOpenSessions() {
         List<GarderieSession> sessions =
@@ -51,7 +50,6 @@ public class GarderieController {
                 .toList();
     }
 
-    // USER (auth) : créer une réservation APRES paiement validé
     @PostMapping("/reservations")
     public GarderieReservationResponseDto createReservation(
             @Valid @RequestBody GarderieReservationRequest request,
@@ -61,7 +59,6 @@ public class GarderieController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non connecté");
         }
 
-        // 1. Vérifier le paiement Stripe
         try {
             PaymentIntent paymentIntent = PaymentIntent.retrieve(request.getPaymentIntentId());
 
@@ -72,12 +69,10 @@ public class GarderieController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erreur vérification paiement: " + e.getMessage());
         }
 
-        // 2. Récupérer l'utilisateur
         String email = authentication.getName();
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utilisateur introuvable"));
 
-        // 3. Récupérer la session
         GarderieSession session = sessionRepository.findById(request.getSessionId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Session introuvable"));
 
@@ -90,7 +85,6 @@ public class GarderieController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nombre d'enfants invalide");
         }
 
-        // 4. Vérifier la capacité restante
         Integer currentChildren = reservationRepository.countTotalChildrenBySessionId(session.getId());
         if (currentChildren + totalChildren > session.getCapacity()) {
             int remaining = session.getCapacity() - currentChildren;
@@ -100,7 +94,6 @@ public class GarderieController {
 
         double totalPrice = session.getPricePerChild() * totalChildren;
 
-        // 5. Créer la réservation avec statut CONFIRMED
         GarderieReservation reservation = new GarderieReservation();
         reservation.setUser(user);
         reservation.setSession(session);
@@ -113,7 +106,6 @@ public class GarderieController {
         return GarderieReservationResponseDto.fromEntity(saved);
     }
 
-    // USER (auth) : voir ses réservations garderie
     @GetMapping("/reservations/me")
     public List<GarderieReservationResponseDto> listMyReservations(Authentication authentication) {
         if (authentication == null || authentication.getName() == null) {
@@ -132,7 +124,6 @@ public class GarderieController {
                 .toList();
     }
 
-    // USER (auth) : annuler une réservation garderie
     @DeleteMapping("/reservations/{id}/cancel")
     public void cancelReservation(@PathVariable Long id, Authentication authentication) {
         if (authentication == null || authentication.getName() == null) {
@@ -150,7 +141,6 @@ public class GarderieController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Vous ne pouvez pas annuler cette réservation");
         }
 
-        // Vérifier que la session n'est pas déjà passée
         if (reservation.getSession().getSessionDate().isBefore(java.time.LocalDate.now())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La session est déjà passée");
         }
