@@ -301,7 +301,18 @@
     "noPendingReservations": "Geen auditoriumreserveringen in afwachting",
     "auditoriumReservationsPending": "auditoriumreservering(en) in afwachting van goedkeuring",
     "rejectReservation": "Reservering weigeren",
-    "rejectReservationMessage": "Geef de reden voor het weigeren van deze auditoriumreservering."
+    "rejectReservationMessage": "Geef de reden voor het weigeren van deze auditoriumreservering.",
+    "confirmReject": "Weigering bevestigen",
+    "usersManagement": "Gebruikersbeheer",
+    "noUsers": "Geen gebruikers",
+    "role": "Rol",
+    "confirmRoleChange": "Weet u zeker dat u de rol van deze gebruiker wilt wijzigen?",
+    "currentUser": "U (huidig)",
+    "roles": {
+      "member": "Lid",
+      "organizer": "Organisator",
+      "admin": "Beheerder"
+    }
   },
 
   "validation": {

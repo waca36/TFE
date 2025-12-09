@@ -309,7 +309,17 @@
     "auditoriumReservationsPending": "réservation(s) d'auditoire en attente d'approbation",
     "rejectReservation": "Refuser la réservation",
     "rejectReservationMessage": "Veuillez indiquer la raison du refus de cette réservation d'auditoire.",
-    "confirmReject": "Confirmer le refus"
+    "confirmReject": "Confirmer le refus",
+    "usersManagement": "Gestion des utilisateurs",
+    "noUsers": "Aucun utilisateur",
+    "role": "Rôle",
+    "confirmRoleChange": "Êtes-vous sûr de vouloir modifier le rôle de cet utilisateur ?",
+    "currentUser": "Vous (actuel)",
+    "roles": {
+      "member": "Membre",
+      "organizer": "Organisateur",
+      "admin": "Administrateur"
+    }
   },
 
   "validation": {

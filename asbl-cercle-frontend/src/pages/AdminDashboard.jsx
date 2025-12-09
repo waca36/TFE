@@ -13,6 +13,8 @@ import {
   adminGetPendingReservations,
   adminApproveEvent,
   adminDeleteEvent,
+  adminGetUsers,
+  adminUpdateUserRole,
 } from "../services/api";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -35,6 +37,7 @@ export default function AdminDashboard() {
   const [spaceReservations, setSpaceReservations] = useState([]);
   const [eventRegistrations, setEventRegistrations] = useState([]);
   const [garderieReservations, setGarderieReservations] = useState([]);
+  const [users, setUsers] = useState([]);
 
   // State pour le rejet d'événement
   const [rejectingEventId, setRejectingEventId] = useState(null);
@@ -61,6 +64,7 @@ export default function AdminDashboard() {
         spaceResData,
         eventResData,
         garderieResData,
+        usersData,
       ] = await Promise.all([
         adminGetStats(token),
         adminGetEspaces(token),
@@ -71,6 +75,7 @@ export default function AdminDashboard() {
         adminGetAllSpaceReservations(token),
         adminGetAllEventRegistrations(token),
         adminGetAllGarderieReservations(token),
+        adminGetUsers(token),
       ]);
 
       setStats(statsData);
@@ -82,6 +87,7 @@ export default function AdminDashboard() {
       setSpaceReservations(spaceResData);
       setEventRegistrations(eventResData);
       setGarderieReservations(garderieResData);
+      setUsers(usersData);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -135,6 +141,18 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleUpdateUserRole = async (userId, newRole) => {
+    if (!window.confirm(t("admin.confirmRoleChange"))) return;
+    try {
+      await adminUpdateUserRole(userId, newRole, token);
+      setUsers((prev) =>
+        prev.map((u) => (u.id === userId ? { ...u, role: newRole } : u))
+      );
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   if (!user || user.role !== "ADMIN") return null;
   if (loading) return <div style={styles.loading}>{t("common.loading")}</div>;
   if (error) return <div style={styles.error}>{error}</div>;
@@ -142,6 +160,7 @@ export default function AdminDashboard() {
   const tabs = [
     { id: "overview", label: t("admin.overview"), icon: "📊" },
     { id: "pendingEvents", label: t("admin.pendingEvents"), icon: "⏳", badge: pendingEvents.length },
+    { id: "users", label: t("admin.usersManagement"), icon: "👥" },
     { id: "spaces", label: t("admin.spacesManagement"), icon: "🏢" },
     { id: "events", label: t("admin.eventsManagement"), icon: "📅" },
     { id: "garderie", label: t("admin.childcareManagement"), icon: "👶" },
@@ -367,6 +386,77 @@ export default function AdminDashboard() {
                   </div>
                 ))}
               </div>
+            )}
+          </div>
+        )}
+
+        {/* Users Tab */}
+        {activeTab === "users" && (
+          <div>
+            <div style={styles.sectionHeader}>
+              <h2 style={styles.sectionTitle}>{t("admin.usersManagement")}</h2>
+              <span style={styles.countBadge}>{users.length} {t("admin.totalUsers").toLowerCase()}</span>
+            </div>
+
+            {users.length === 0 ? (
+              <div style={styles.emptyState}>
+                <span style={styles.emptyIcon}>👥</span>
+                <h3>{t("admin.noUsers")}</h3>
+              </div>
+            ) : (
+              <table style={styles.table}>
+                <thead>
+                  <tr>
+                    <th style={styles.th}>{t("common.name")}</th>
+                    <th style={styles.th}>{t("auth.email")}</th>
+                    <th style={styles.th}>{t("admin.role")}</th>
+                    <th style={styles.th}>{t("admin.createdAt")}</th>
+                    <th style={styles.th}>{t("common.actions")}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((u) => (
+                    <tr key={u.id}>
+                      <td style={styles.td}>
+                        {u.firstName} {u.lastName}
+                      </td>
+                      <td style={styles.td}>{u.email}</td>
+                      <td style={styles.td}>
+                        <span style={{
+                          padding: "0.25rem 0.6rem",
+                          borderRadius: "12px",
+                          fontSize: "0.75rem",
+                          fontWeight: "500",
+                          background: u.role === "ADMIN" ? "#dbeafe" : u.role === "ORGANIZER" ? "#fef3c7" : "#f3f4f6",
+                          color: u.role === "ADMIN" ? "#1e40af" : u.role === "ORGANIZER" ? "#92400e" : "#374151",
+                        }}>
+                          {t(`admin.roles.${u.role.toLowerCase()}`)}
+                        </span>
+                      </td>
+                      <td style={styles.td}>
+                        {u.createdAt ? new Date(u.createdAt).toLocaleDateString("fr-BE") : "-"}
+                      </td>
+                      <td style={styles.td}>
+                        {u.id !== user.id ? (
+                          <select
+                            value={u.role}
+                            onChange={(e) => handleUpdateUserRole(u.id, e.target.value)}
+                            style={styles.roleSelect}
+                          >
+                            <option value="MEMBER">{t("admin.roles.member")}</option>
+                            <option value="ORGANIZER">{t("admin.roles.organizer")}</option>
+                            <option value="ADMIN">{t("admin.roles.admin")}</option>
+                          </select>
+                        ) : (
+                          <span style={{ color: "#9ca3af", fontSize: "0.85rem" }}>
+                            {t("admin.currentUser")}
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             )}
           </div>
         )}
@@ -864,5 +954,13 @@ const styles = {
     color: "#ef4444",
     cursor: "pointer",
     fontWeight: "500",
+  },
+  roleSelect: {
+    padding: "0.4rem 0.6rem",
+    borderRadius: "6px",
+    border: "1px solid #d1d5db",
+    fontSize: "0.85rem",
+    cursor: "pointer",
+    background: "#fff",
   },
 };
