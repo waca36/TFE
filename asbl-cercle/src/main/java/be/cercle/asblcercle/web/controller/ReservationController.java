@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/public/reservations")
-@CrossOrigin(origins = "*")
 public class ReservationController {
 
     private final ReservationRepository reservationRepository;

@@ -24,7 +24,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin/reservations")
-@CrossOrigin(origins = "*")
 public class AdminReservationsController {
 
     private final ReservationRepository reservationRepository;

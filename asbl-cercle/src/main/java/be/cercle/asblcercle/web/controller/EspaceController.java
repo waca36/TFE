@@ -9,7 +9,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/public/espaces")
-@CrossOrigin(origins = "*")
 public class EspaceController {
 
     private final EspaceRepository espaceRepository;

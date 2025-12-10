@@ -37,7 +37,6 @@ export default function ReservationCalendar({ espaceId, onSelectDate, selectedDa
     const dayStart = new Date(`${dateStr}T${String(OPENING_HOUR).padStart(2, "0")}:00:00`);
     const dayEnd = new Date(`${dateStr}T${String(CLOSING_HOUR).padStart(2, "0")}:00:00`);
 
-    // Réservations qui touchent cette journée
     const dayReservations = reservations.filter((r) => {
       const start = new Date(r.startDateTime);
       const end = new Date(r.endDateTime);

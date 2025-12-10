@@ -10,9 +10,11 @@ import java.util.List;
 
 public interface GarderieReservationRepository extends JpaRepository<GarderieReservation, Long> {
 
-    List<GarderieReservation> findByUserId(Long userId);
+    @Query("SELECT gr FROM GarderieReservation gr JOIN FETCH gr.session JOIN FETCH gr.user WHERE gr.user.id = :userId")
+    List<GarderieReservation> findByUserId(@Param("userId") Long userId);
 
-    List<GarderieReservation> findBySessionId(Long sessionId);
+    @Query("SELECT gr FROM GarderieReservation gr JOIN FETCH gr.user WHERE gr.session.id = :sessionId")
+    List<GarderieReservation> findBySessionId(@Param("sessionId") Long sessionId);
 
     @Query("SELECT COALESCE(SUM(r.numberOfChildren), 0) FROM GarderieReservation r WHERE r.session.id = :sessionId AND r.status != 'CANCELLED'")
     Integer countTotalChildrenBySessionId(@Param("sessionId") Long sessionId);

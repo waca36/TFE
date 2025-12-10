@@ -12,9 +12,11 @@ import java.util.Optional;
 
 public interface EventRegistrationRepository extends JpaRepository<EventRegistration, Long> {
 
-    List<EventRegistration> findByUserId(Long userId);
+    @Query("SELECT er FROM EventRegistration er JOIN FETCH er.event JOIN FETCH er.user WHERE er.user.id = :userId")
+    List<EventRegistration> findByUserId(@Param("userId") Long userId);
 
-    List<EventRegistration> findByEventId(Long eventId);
+    @Query("SELECT er FROM EventRegistration er JOIN FETCH er.user WHERE er.event.id = :eventId")
+    List<EventRegistration> findByEventId(@Param("eventId") Long eventId);
 
     Optional<EventRegistration> findByUserAndEvent(User user, Event event);
 

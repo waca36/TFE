@@ -3,7 +3,6 @@ import { createContext, useContext, useEffect, useState } from "react";
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  // Initialiser directement depuis localStorage
   const [auth, setAuth] = useState(() => {
     const saved = localStorage.getItem("auth");
     if (saved) {
@@ -19,12 +18,10 @@ export function AuthProvider({ children }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Marquer le chargement comme terminé
     setIsLoading(false);
   }, []);
 
   useEffect(() => {
-    // Sauvegarder seulement après le chargement initial
     if (!isLoading) {
       if (auth.token) {
         localStorage.setItem("auth", JSON.stringify(auth));

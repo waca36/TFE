@@ -48,6 +48,9 @@ public class Event {
     @Column(nullable = false)
     private EventStatus status = EventStatus.PENDING_APPROVAL;
 
+    @Version
+    private Long version;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
     private User createdBy;

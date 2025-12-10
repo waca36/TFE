@@ -39,6 +39,9 @@ public class GarderieSession {
     @Column(nullable = false)
     private GarderieSessionStatus status = GarderieSessionStatus.OPEN;
 
+    @Version
+    private Long version;
+
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 

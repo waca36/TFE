@@ -32,6 +32,9 @@ public class Reservation {
     @Column(nullable = false, length = 20)
     private ReservationStatus status = ReservationStatus.CONFIRMED;
 
+    @Version
+    private Long version;
+
     @Column(name = "payment_intent_id")
     private String paymentIntentId;
 

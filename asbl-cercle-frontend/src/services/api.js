@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8080";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 export function authHeaders(token) {
   return token ? { Authorization: `Bearer ${token}` } : {};
@@ -14,7 +14,6 @@ async function handleResponse(res, defaultMessage) {
   }
 
   let message = defaultMessage;
-  // Essayer JSON puis texte simple
   try {
     const data = await res.json();
     if (data?.message) message = data.message;
@@ -25,7 +24,6 @@ async function handleResponse(res, defaultMessage) {
       const text = await res.text();
       if (text) message = text;
     } catch {
-      // ignore parse errors
     }
   }
 
@@ -48,15 +46,18 @@ async function handleResponse(res, defaultMessage) {
   throw new Error(message);
 }
 
-// ==================== AUTH ====================
-
 export async function loginRequest(email, password) {
   const res = await fetch(`${API_URL}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
   });
-  if (!res.ok) throw new Error("Email ou mot de passe incorrect");
+  if (!res.ok) {
+    if (res.status === 403) {
+      throw new Error("ACCOUNT_SUSPENDED");
+    }
+    throw new Error("Email ou mot de passe incorrect");
+  }
   return res.json();
 }
 
@@ -70,15 +71,11 @@ export async function registerRequest(data) {
   return res.json();
 }
 
-// ==================== ESPACES ====================
-
 export async function getEspaces() {
   const res = await fetch(`${API_URL}/api/public/espaces`);
   if (!res.ok) throw new Error("Erreur lors du chargement des espaces");
   return res.json();
 }
-
-// ==================== RESERVATIONS ESPACES ====================
 
 export async function getEspaceReservationsForCalendar(espaceId, year, month) {
   const res = await fetch(`${API_URL}/api/public/reservations/espace/${espaceId}/calendar?year=${year}&month=${month}`);
@@ -120,7 +117,6 @@ export async function cancelReservation(id, token) {
   return handleResponse(res, "Erreur lors de l'annulation");
 }
 
-// Demande de réservation d'auditoire (sans paiement, en attente d'approbation)
 export async function requestAuditoriumReservation(payload, token) {
   const res = await fetch(`${API_URL}/api/public/reservations/auditorium`, {
     method: "POST",
@@ -133,7 +129,6 @@ export async function requestAuditoriumReservation(payload, token) {
   return handleResponse(res, "Erreur lors de la demande de réservation");
 }
 
-// Payer une réservation approuvée
 export async function payApprovedReservation(id, paymentIntentId, token) {
   const res = await fetch(`${API_URL}/api/public/reservations/${id}/pay`, {
     method: "POST",
@@ -145,8 +140,6 @@ export async function payApprovedReservation(id, paymentIntentId, token) {
   });
   return handleResponse(res, "Erreur lors du paiement de la réservation");
 }
-
-// ==================== EVENTS ====================
 
 export async function getPublicEvents() {
   const res = await fetch(`${API_URL}/api/public/events`);
@@ -182,8 +175,6 @@ export async function cancelEventRegistration(id, token) {
   return handleResponse(res, "Erreur lors de l'annulation");
 }
 
-// ==================== GARDERIE ====================
-
 export async function getGarderieSessions() {
   const res = await fetch(`${API_URL}/api/public/garderie/sessions`);
   if (!res.ok) throw new Error("Erreur lors du chargement des sessions");
@@ -218,8 +209,6 @@ export async function cancelGarderieReservation(id, token) {
   return handleResponse(res, "Erreur lors de l'annulation");
 }
 
-// ==================== PROFILE ====================
-
 export async function getMyProfile(token) {
   const res = await fetch(`${API_URL}/api/user/me`, {
     headers: authHeaders(token),
@@ -252,8 +241,6 @@ export async function changeMyPassword(data, token) {
   });
   if (!res.ok) throw new Error("Erreur changement mot de passe");
 }
-
-// ==================== ADMIN ESPACES ====================
 
 export async function adminGetEspaces(token) {
   const res = await fetch(`${API_URL}/api/admin/espaces`, {
@@ -305,8 +292,6 @@ export async function adminDeleteEspace(id, token) {
   if (!res.ok) throw new Error("Erreur suppression espace (admin)");
 }
 
-// ==================== ADMIN EVENTS ====================
-
 export async function adminGetEvents(token) {
   const res = await fetch(`${API_URL}/api/admin/events`, {
     headers: authHeaders(token),
@@ -348,8 +333,6 @@ export async function adminDeleteEvent(id, token) {
   });
   if (!res.ok) throw new Error("Erreur suppression événement (admin)");
 }
-
-// ==================== ADMIN GARDERIE ====================
 
 export async function adminGetGarderieSessions(token) {
   const res = await fetch(`${API_URL}/api/admin/garderie/sessions`, {
@@ -401,8 +384,6 @@ export async function adminDeleteGarderieSession(id, token) {
   if (!res.ok) throw new Error("Erreur suppression session (admin)");
 }
 
-// ==================== ADMIN RESERVATIONS (VUE GLOBALE) ====================
-
 export async function adminGetAllReservations(token) {
   const res = await fetch(`${API_URL}/api/admin/reservations/all`, {
     headers: authHeaders(token),
@@ -435,8 +416,6 @@ export async function adminGetAllGarderieReservations(token) {
   return res.json();
 }
 
-// ==================== ADMIN STATS ====================
-
 export async function adminGetStats(token) {
   const res = await fetch(`${API_URL}/api/admin/stats`, {
     headers: authHeaders(token),
@@ -444,8 +423,6 @@ export async function adminGetStats(token) {
   if (!res.ok) throw new Error("Erreur récupération statistiques");
   return res.json();
 }
-
-// ==================== ADMIN PENDING RESERVATIONS (AUDITOIRES) ====================
 
 export async function adminGetPendingReservations(token) {
   const res = await fetch(`${API_URL}/api/admin/reservations/pending`, {
@@ -470,8 +447,6 @@ export async function adminApproveReservation(id, approved, rejectionReason, tok
   }
   return res.json();
 }
-
-// ==================== ORGANIZER EVENTS ====================
 
 export async function organizerCreateEvent(data, token) {
   const res = await fetch(`${API_URL}/api/organizer/events`, {
@@ -529,8 +504,6 @@ export async function organizerCancelMyEvent(id, token) {
   if (!res.ok) throw new Error("Erreur annulation événement");
 }
 
-// ==================== ADMIN EVENTS (avec approbation) ====================
-
 export async function adminGetPendingEvents(token) {
   const res = await fetch(`${API_URL}/api/admin/events/pending`, {
     headers: authHeaders(token),
@@ -551,8 +524,6 @@ export async function adminApproveEvent(id, approved, rejectionReason, token) {
   if (!res.ok) throw new Error("Erreur approbation événement");
   return res.json();
 }
-
-// ==================== ADMIN USERS ====================
 
 export async function adminGetUsers(token) {
   const res = await fetch(`${API_URL}/api/admin/users`, {

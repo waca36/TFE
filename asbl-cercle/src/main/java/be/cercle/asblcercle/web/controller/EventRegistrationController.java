@@ -19,7 +19,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/public/events")
-@CrossOrigin(origins = "*")
 public class EventRegistrationController {
 
     private final EventRegistrationRepository registrationRepository;

@@ -1,0 +1,297 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.title {
+  margin: 0.2rem 0;
+  font-size: 1.8rem;
+  color: #1e3455;
+}
+
+.subtitle {
+  margin: 0;
+  color: #4b5563;
+}
+
+.backLink {
+  color: #618cc3;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  background: #f3f4f6;
+  padding: 0.5rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.tab {
+  padding: 0.6rem 1rem;
+  border: none;
+  background: transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.tabActive {
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.tabBadge {
+  background: #e5e7eb;
+  padding: 0.1rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+}
+
+.section {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #111827;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.statCard {
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 1rem;
+  border-left: 4px solid #6b7280;
+}
+
+.statBlue {
+  border-color: #3b82f6;
+}
+
+.statGreen {
+  border-color: #10b981;
+}
+
+.statOrange {
+  border-color: #f59e0b;
+}
+
+.statLabel {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.statNumber {
+  margin: 0.35rem 0 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.cardTitle {
+  margin: 0.1rem 0 0;
+  font-size: 1.05rem;
+  color: #1f2937;
+}
+
+.cardDate {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.85rem;
+}
+
+.cardMeta {
+  margin: 0.35rem 0 0;
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.cardDesc {
+  color: #4b5563;
+}
+
+.badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.badgePending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.cardActions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.btnSuccess {
+  background: #10b981;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 0.9rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btnDanger {
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 0.9rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btnDangerSmall {
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.35rem 0.7rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btnGhost {
+  background: #f3f4f6;
+  color: #111827;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 0.9rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.linkGhost {
+  color: #618cc3;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.rejectBox {
+  width: 100%;
+}
+
+.textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  resize: vertical;
+}
+
+.rejectActions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.tableContainer {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 0.75rem 0.9rem;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.select {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: #6b7280;
+}
+
+.error {
+  padding: 1rem;
+  background: #fee2e2;
+  color: #991b1b;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.btnDangerSmall + .btnDangerSmall {
+  margin-left: 0.35rem;
+}

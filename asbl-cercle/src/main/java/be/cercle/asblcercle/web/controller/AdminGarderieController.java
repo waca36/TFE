@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin/garderie")
-@CrossOrigin(origins = "*")
 public class AdminGarderieController {
 
     private final GarderieSessionRepository sessionRepository;

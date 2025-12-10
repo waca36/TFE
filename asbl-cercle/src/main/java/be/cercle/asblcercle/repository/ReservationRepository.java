@@ -12,9 +12,11 @@ import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
-    List<Reservation> findByUser(User user);
+    @Query("SELECT r FROM Reservation r JOIN FETCH r.espace WHERE r.user = :user")
+    List<Reservation> findByUser(@Param("user") User user);
 
-    List<Reservation> findByEspace(Espace espace);
+    @Query("SELECT r FROM Reservation r JOIN FETCH r.user WHERE r.espace = :espace")
+    List<Reservation> findByEspace(@Param("espace") Espace espace);
 
     @Query("SELECT COUNT(r) > 0 FROM Reservation r " +
            "WHERE r.espace.id = :espaceId " +
@@ -50,7 +52,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("endDateTime") LocalDateTime endDateTime
     );
 
-    @Query("SELECT r FROM Reservation r " +
+    @Query("SELECT r FROM Reservation r JOIN FETCH r.user JOIN FETCH r.espace " +
            "WHERE r.status = 'PENDING_APPROVAL' " +
            "ORDER BY r.createdAt DESC")
     List<Reservation> findPendingApproval();

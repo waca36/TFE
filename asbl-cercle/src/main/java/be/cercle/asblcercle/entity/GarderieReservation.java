@@ -30,6 +30,9 @@ public class GarderieReservation {
     @Column(nullable = false)
     private GarderieReservationStatus status = GarderieReservationStatus.CONFIRMED;
 
+    @Version
+    private Long version;
+
     @Column(name = "payment_intent_id")
     private String paymentIntentId;
 

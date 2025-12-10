@@ -20,7 +20,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/organizer/events")
-@CrossOrigin(origins = "*")
 public class OrganizerEventController {
 
     private final EventRepository eventRepository;

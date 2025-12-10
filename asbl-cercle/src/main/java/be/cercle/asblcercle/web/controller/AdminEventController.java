@@ -21,7 +21,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/admin/events")
-@CrossOrigin(origins = "*")
 public class AdminEventController {
 
     private final EventRepository eventRepository;

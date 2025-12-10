@@ -29,6 +29,9 @@ public class EventRegistration {
     @Column(nullable = false, length = 20)
     private EventRegistrationStatus status = EventRegistrationStatus.CONFIRMED;
 
+    @Version
+    private Long version;
+
     @Column(name = "payment_intent_id")
     private String paymentIntentId;
 

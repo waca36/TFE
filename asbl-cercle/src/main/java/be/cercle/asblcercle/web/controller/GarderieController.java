@@ -20,7 +20,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/public/garderie")
-@CrossOrigin(origins = "*")
 public class GarderieController {
 
     private final GarderieSessionRepository sessionRepository;

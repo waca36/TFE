@@ -34,7 +34,8 @@
     "noData": "No data",
     "all": "All",
     "view": "View",
-    "user": "User"
+    "user": "User",
+    "backToSite": "Back to site"
   },
 
   "nav": {
@@ -67,7 +68,8 @@
     "createAccount": "Create an account",
     "loginLink": "Login",
     "loginError": "Incorrect email or password",
-    "registerError": "Registration error"
+    "registerError": "Registration error",
+    "accountSuspended": "Your account has been suspended. Please contact administration."
   },
 
   "spaces": {
@@ -223,6 +225,7 @@
 
   "admin": {
     "dashboard": "Admin Dashboard",
+    "dashboardSubtitle": "Manage events, spaces, childcare and registrations",
     "overview": "Overview",
     "statistics": "Statistics",
     "eventsManagement": "Events",
@@ -246,6 +249,7 @@
     "confirmDeleteSession": "Delete this session?",
     "noSpaces": "No spaces",
     "noEvents": "No events",
+    "noEventsFound": "No events available",
     "noSessions": "No sessions created",
     "noReservations": "No reservations",
     "name": "Name",
@@ -282,6 +286,7 @@
     "unpaid": "Unpaid",
     "reservationsShown": "reservations shown",
     "pendingEvents": "Events pending approval",
+    "pendingApprovals": "Pending approvals",
     "noPendingEvents": "No events pending approval",
     "confirmApprove": "Do you want to approve this event?",
     "approve": "Approve",

@@ -1,23 +1,23 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/asbl_cercle?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Europe/Brussels
-    username: root
-    password:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/asbl_cercle?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Europe/Brussels}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
 
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: ${DDL_AUTO:update}
+    show-sql: ${SHOW_SQL:true}
 
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
 
 app:
   security:
     jwt:
-      secret: "4Fk!92q@Px#71Lm$Rz%8Bn^Ty&c3aVj*WQ6tEe0Hu!(YsDp)LKfG5Sd?XMb"
-      expiration: 3600000  # 1 heure en millisecondes
+      secret: ${JWT_SECRET:changeme-in-production-use-env-variable}
+      expiration: ${JWT_EXPIRATION:3600000}
 
 stripe:
-  secret-key: "sk_test_51SZtvU43LA5MMUSy07hwnJ9em0Y8h5JeG7bbECWc5aWXYcbJ2LkWOnY3sQ8PrZh2TOZl9qSZurc13EdR1xT8tVLK00sgkjFIsf"
-  public-key: "pk_test_51SZtvU43LA5MMUSyvqwMUBrZfuUUVrERUSNHtXE6j60tCbnIc5DTcaKJO1RlgpjgniuXjsFiIJsyM9jjZizdLxxn008fF3zfDs"
+  secret-key: ${STRIPE_SECRET_KEY:}
+  public-key: ${STRIPE_PUBLIC_KEY:}
