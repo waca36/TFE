@@ -29,6 +29,8 @@ const formatRange = (startIso, endIso) => {
 
 export default function EventsPage() {
   const [events, setEvents] = useState([]);
+  const [priceFilter, setPriceFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("date");
   const { user } = useAuth();
   const { t } = useTranslation();
 
@@ -37,6 +39,30 @@ export default function EventsPage() {
       .then(setEvents)
       .catch(console.error);
   }, []);
+
+  const filteredAndSortedEvents = events
+    .filter((ev) => {
+      if (priceFilter === "all") return true;
+      if (priceFilter === "free") return !ev.price || ev.price === 0;
+      if (priceFilter === "paid") return ev.price && ev.price > 0;
+      return true;
+    })
+    .sort((a, b) => {
+      if (sortBy === "date") {
+        return new Date(a.startDateTime) - new Date(b.startDateTime);
+      }
+      if (sortBy === "priceAsc") {
+        const priceA = a.price || 0;
+        const priceB = b.price || 0;
+        return priceA - priceB;
+      }
+      if (sortBy === "priceDesc") {
+        const priceA = a.price || 0;
+        const priceB = b.price || 0;
+        return priceB - priceA;
+      }
+      return 0;
+    });
 
   return (
     <div className={styles.page}>
@@ -58,10 +84,49 @@ export default function EventsPage() {
         </div>
       </div>
 
-      {events.length === 0 && <p className={styles.empty}>{t("events.noEvents")}</p>}
+      <div className={styles.filtersBar}>
+        <div className={styles.filterGroup}>
+          <label className={styles.filterLabel}>{t("events.filterByPrice")}</label>
+          <div className={styles.filterButtons}>
+            <button
+              className={`${styles.filterButton} ${priceFilter === "all" ? styles.active : ""}`}
+              onClick={() => setPriceFilter("all")}
+            >
+              {t("events.allEvents")}
+            </button>
+            <button
+              className={`${styles.filterButton} ${priceFilter === "free" ? styles.active : ""}`}
+              onClick={() => setPriceFilter("free")}
+            >
+              {t("events.freeEvents")}
+            </button>
+            <button
+              className={`${styles.filterButton} ${priceFilter === "paid" ? styles.active : ""}`}
+              onClick={() => setPriceFilter("paid")}
+            >
+              {t("events.paidEvents")}
+            </button>
+          </div>
+        </div>
+
+        <div className={styles.filterGroup}>
+          <label className={styles.filterLabel}>{t("events.sortBy")}</label>
+          <select
+            className={styles.sortSelect}
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+          >
+            <option value="date">{t("events.sortByDate")}</option>
+            <option value="priceAsc">{t("events.sortByPriceAsc")}</option>
+            <option value="priceDesc">{t("events.sortByPriceDesc")}</option>
+          </select>
+        </div>
+      </div>
+
+      {filteredAndSortedEvents.length === 0 && <p className={styles.empty}>{t("events.noEvents")}</p>}
 
       <div className={styles.grid}>
-        {events.map((ev) => (
+        {filteredAndSortedEvents.map((ev) => (
           <div key={ev.id} className={styles.card}>
             <div className={styles.cardHeader}>
               <div>

@@ -51,6 +51,88 @@
   color: var(--orange);
 }
 
+.filtersBar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  background: var(--surface);
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.filterLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--blue-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.filterButtons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filterButton {
+  padding: 0.6rem 1.2rem;
+  border: 2px solid var(--border);
+  background: #fff;
+  color: var(--blue-dark);
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filterButton:hover {
+  border-color: var(--orange);
+  background: rgba(194, 117, 70, 0.05);
+  color: var(--orange);
+}
+
+.filterButton.active {
+  background: linear-gradient(135deg, var(--orange) 0%, #d4855a 100%);
+  color: #fff;
+  border-color: var(--orange);
+  box-shadow: 0 4px 12px rgba(194, 117, 70, 0.25);
+}
+
+.sortSelect {
+  padding: 0.7rem 1rem;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  background: #fff;
+  color: var(--blue-dark);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  max-width: 250px;
+}
+
+.sortSelect:hover {
+  border-color: var(--blue-light);
+}
+
+.sortSelect:focus {
+  outline: none;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(194, 117, 70, 0.15);
+}
+
 .badge {
   padding: 0.4rem 0.85rem;
   border-radius: 999px;
@@ -253,12 +335,35 @@
   font-size: 1rem;
 }
 
+@media (max-width: 768px) {
+  .filtersBar {
+    padding: 1rem;
+  }
+
+  .filterButtons {
+    flex-direction: column;
+  }
+
+  .filterButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .sortSelect {
+    max-width: 100%;
+  }
+}
+
 @media (max-width: 600px) {
   .grid {
     grid-template-columns: 1fr;
   }
 
   .actions {
+    flex-direction: column;
+  }
+
+  .header {
     flex-direction: column;
   }
 }

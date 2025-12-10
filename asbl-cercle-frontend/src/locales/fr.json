@@ -37,7 +37,9 @@
         "viewAll": "Voir tout",
         "user": "Utilisateur",
         "backToSite": "Retour au site",
-        "legend": "Légende"
+        "legend": "Légende",
+        "location": "Lieu",
+        "toBeAnnounced": "À annoncer"
     },
     "nav": {
         "spaces": "Espaces",
@@ -175,7 +177,16 @@
         "event": "Événement",
         "free": "Gratuit",
         "placesAvailable": "places disponibles",
-        "notFound": "Événement introuvable"
+        "notFound": "Événement introuvable",
+        "childcareAvailable": "Garderie disponible",
+        "filterByPrice": "Filtrer par prix",
+        "allEvents": "Tous",
+        "freeEvents": "Gratuits",
+        "paidEvents": "Payants",
+        "sortBy": "Trier par",
+        "sortByDate": "Date",
+        "sortByPriceAsc": "Prix croissant",
+        "sortByPriceDesc": "Prix décroissant"
     },
     "childcare": {
         "title": "Garderie - Sessions disponibles",

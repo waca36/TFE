@@ -36,7 +36,10 @@
     "viewAll": "View all",
     "view": "View",
     "user": "User",
-    "backToSite": "Back to site"
+    "backToSite": "Back to site",
+    "legend": "Legend",
+    "location": "Location",
+    "toBeAnnounced": "To be announced"
   },
 
   "nav": {
@@ -180,7 +183,16 @@
     "event": "Event",
     "free": "Free",
     "placesAvailable": "places available",
-    "notFound": "Event not found"
+    "notFound": "Event not found",
+    "childcareAvailable": "Childcare available",
+    "filterByPrice": "Filter by price",
+    "allEvents": "All",
+    "freeEvents": "Free",
+    "paidEvents": "Paid",
+    "sortBy": "Sort by",
+    "sortByDate": "Date",
+    "sortByPriceAsc": "Price ascending",
+    "sortByPriceDesc": "Price descending"
   },
 
   "childcare": {

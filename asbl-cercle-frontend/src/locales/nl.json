@@ -36,7 +36,10 @@
                    "viewAll":  "Alles bekijken",
                    "view":  "Bekijken",
                    "user":  "Gebruiker",
-                   "backToSite":  "Terug naar site"
+                   "backToSite":  "Terug naar site",
+                   "legend":  "Legende",
+                   "location":  "Locatie",
+                   "toBeAnnounced":  "Nog aan te kondigen"
                },
     "nav":  {
                 "spaces":  "Ruimtes",
@@ -173,7 +176,16 @@
                    "event":  "Evenement",
                    "free":  "Gratis",
                    "placesAvailable":  "plaatsen beschikbaar",
-                   "notFound":  "Evenement niet gevonden"
+                   "notFound":  "Evenement niet gevonden",
+                   "childcareAvailable":  "Kinderopvang beschikbaar",
+                   "filterByPrice":  "Filteren op prijs",
+                   "allEvents":  "Alle",
+                   "freeEvents":  "Gratis",
+                   "paidEvents":  "Betaald",
+                   "sortBy":  "Sorteren op",
+                   "sortByDate":  "Datum",
+                   "sortByPriceAsc":  "Prijs oplopend",
+                   "sortByPriceDesc":  "Prijs aflopend"
                },
     "childcare":  {
                       "title":  "Kinderopvang - Beschikbare sessies",
