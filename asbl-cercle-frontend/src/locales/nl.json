@@ -33,6 +33,7 @@
                    "to":  "Tot",
                    "noData":  "Geen gegevens",
                    "all":  "Alle",
+                   "viewAll":  "Alles bekijken",
                    "view":  "Bekijken",
                    "user":  "Gebruiker",
                    "backToSite":  "Terug naar site"
@@ -76,10 +77,12 @@
                    "noSpaces":  "Geen ruimtes beschikbaar",
                    "space":  "Ruimte",
                    "auditoriumRequiresApproval":  "Auditoriumreserveringen vereisen een motivatie en moeten worden goedgekeurd door een beheerder."
-               },
+    },
     "spaceType":  {
                       "salle":  "Zaal",
-                      "auditoire":  "Auditorium"
+                      "SALLE":  "Zaal",
+                      "auditoire":  "Auditorium",
+                      "AUDITOIRE":  "Auditorium"
                   },
     "reservation":  {
                         "newReservation":  "Nieuwe reservering",
@@ -362,7 +365,16 @@
                       "capacityHint":  "Maximum aantal deelnemers",
                       "priceHint":  "Laat leeg of 0 voor gratis",
                       "eventRejected":  "Dit evenement is geweigerd",
-                      "modifyAndResubmit":  "Pas het aan en dien het opnieuw in ter goedkeuring"
+                      "modifyAndResubmit":  "Pas het aan en dien het opnieuw in ter goedkeuring",
+                      "cancelEvent":  "Evenement annuleren",
+                      "awaitingApproval":  "Wacht op goedkeuring",
+                      "minAge":  "Minimumleeftijd",
+                      "maxAge":  "Maximumleeftijd",
+                      "childcareRequired":  "Kinderopvang nodig",
+                      "childcarePrice":  "Prijs kinderopvang per kind",
+                      "childcareCapacity":  "Aantal plaatsen kinderopvang",
+                      "childcareMinAge":  "Minimumleeftijd kinderopvang",
+                      "childcareMaxAge":  "Maximumleeftijd kinderopvang"
                   },
     "error":  {
                   "404":  "Pagina niet gevonden",

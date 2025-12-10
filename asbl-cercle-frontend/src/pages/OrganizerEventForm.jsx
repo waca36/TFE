@@ -20,6 +20,13 @@ export default function OrganizerEventForm() {
     location: "",
     capacity: "",
     price: "",
+    minAge: "",
+    maxAge: "",
+    garderieRequired: false,
+    garderiePrice: "",
+    garderieCapacity: "",
+    garderieMinAge: "",
+    garderieMaxAge: "",
   });
   const [originalEvent, setOriginalEvent] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -46,6 +53,13 @@ export default function OrganizerEventForm() {
             location: event.location || "",
             capacity: event.capacity,
             price: event.price || "",
+            minAge: event.minAge ?? "",
+            maxAge: event.maxAge ?? "",
+            garderieRequired: event.garderieRequired || false,
+            garderiePrice: event.garderiePrice ?? "",
+            garderieCapacity: event.garderieCapacity ?? "",
+            garderieMinAge: event.garderieMinAge ?? "",
+            garderieMaxAge: event.garderieMaxAge ?? "",
           });
         })
         .catch((err) => setError(err.message))
@@ -54,8 +68,8 @@ export default function OrganizerEventForm() {
   }, [id, isEdit, user, token, navigate]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
     setError("");
   };
 
@@ -99,6 +113,12 @@ export default function OrganizerEventForm() {
       ...form,
       capacity: parseInt(form.capacity),
       price: form.price ? parseFloat(form.price) : 0,
+      minAge: form.minAge !== "" ? parseInt(form.minAge) : null,
+      maxAge: form.maxAge !== "" ? parseInt(form.maxAge) : null,
+      garderiePrice: form.garderiePrice !== "" ? parseFloat(form.garderiePrice) : null,
+      garderieCapacity: form.garderieCapacity !== "" ? parseInt(form.garderieCapacity) : null,
+      garderieMinAge: form.garderieMinAge !== "" ? parseInt(form.garderieMinAge) : null,
+      garderieMaxAge: form.garderieMaxAge !== "" ? parseInt(form.garderieMaxAge) : null,
     };
 
     try {
@@ -257,6 +277,95 @@ export default function OrganizerEventForm() {
               <span className={styles.hint}>{t("organizer.priceHint")}</span>
             </div>
           </div>
+
+          <div className={styles.row}>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>{t("organizer.minAge")}</label>
+              <input
+                type="number"
+                name="minAge"
+                value={form.minAge}
+                onChange={handleChange}
+                min="0"
+                className={styles.input}
+              />
+            </div>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>{t("organizer.maxAge")}</label>
+              <input
+                type="number"
+                name="maxAge"
+                value={form.maxAge}
+                onChange={handleChange}
+                min="0"
+                className={styles.input}
+              />
+            </div>
+          </div>
+
+          <div className={styles.divider} />
+
+          <div className={styles.checkboxRow}>
+            <label className={styles.checkboxLabel}>
+              <input
+                type="checkbox"
+                name="garderieRequired"
+                checked={form.garderieRequired}
+                onChange={handleChange}
+              />
+              <span>{t("organizer.childcareRequired")}</span>
+            </label>
+          </div>
+
+          {form.garderieRequired && (
+            <div className={styles.garderieGrid}>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>{t("organizer.childcarePrice")}</label>
+                <input
+                  type="number"
+                  name="garderiePrice"
+                  value={form.garderiePrice}
+                  onChange={handleChange}
+                  min="0"
+                  step="0.01"
+                  className={styles.input}
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>{t("organizer.childcareCapacity")}</label>
+                <input
+                  type="number"
+                  name="garderieCapacity"
+                  value={form.garderieCapacity}
+                  onChange={handleChange}
+                  min="1"
+                  className={styles.input}
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>{t("organizer.childcareMinAge")}</label>
+                <input
+                  type="number"
+                  name="garderieMinAge"
+                  value={form.garderieMinAge}
+                  onChange={handleChange}
+                  min="0"
+                  className={styles.input}
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label className={styles.label}>{t("organizer.childcareMaxAge")}</label>
+                <input
+                  type="number"
+                  name="garderieMaxAge"
+                  value={form.garderieMaxAge}
+                  onChange={handleChange}
+                  min="0"
+                  className={styles.input}
+                />
+              </div>
+            </div>
+          )}
 
           <div className={styles.actions}>
             <button type="button" onClick={() => navigate("/organizer/events")} className={styles.cancelBtn}>

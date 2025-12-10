@@ -4,7 +4,7 @@ import { Elements, CardElement, useStripe, useElements } from "@stripe/react-str
 import { useTranslation } from "react-i18next";
 import styles from "./PaymentForm.module.css";
 
-const API_URL = "http://localhost:8080/api";
+const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:8080") + "/api";
 const EURO = "\u20ac";
 
 const cardStyle = {

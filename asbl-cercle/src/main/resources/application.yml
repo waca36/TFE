@@ -15,8 +15,10 @@ server:
 app:
   security:
     jwt:
-      secret: ${JWT_SECRET:changeme-in-production-use-env-variable}
+      secret: ${JWT_SECRET:3d5f7c1a2b4e6d8f9a0c1b2d3e4f60718293a4b5c6d7e8f9a0b1c2d3e4f50617} # default strong 256-bit key to avoid weak key errors
       expiration: ${JWT_EXPIRATION:3600000}
+  testing:
+    allowFakePayments: ${APP_TESTING_ALLOWFAKEPAYMENTS:true}
 
 stripe:
   secret-key: ${STRIPE_SECRET_KEY:}

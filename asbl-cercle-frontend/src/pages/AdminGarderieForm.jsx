@@ -58,6 +58,11 @@ export default function AdminGarderieForm() {
     e.preventDefault();
     setError("");
 
+    if (!form.description || form.description.trim().length < 10) {
+      setError(t('validation.descriptionRequired') || "Description requise (10 caractères minimum)");
+      return;
+    }
+
     const payload = {
       ...form,
       capacity: Number(form.capacity),
@@ -110,6 +115,8 @@ export default function AdminGarderieForm() {
             value={form.description}
             onChange={handleChange}
             rows="3"
+            minLength={10}
+            required
             style={styles.textarea}
           />
         </div>

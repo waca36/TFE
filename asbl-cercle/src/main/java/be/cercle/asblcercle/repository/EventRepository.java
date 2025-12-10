@@ -34,4 +34,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                                            @Param("startDateTime") LocalDateTime startDateTime,
                                            @Param("endDateTime") LocalDateTime endDateTime,
                                            @Param("excludeId") Long excludeId);
+
+    @Query("SELECT e FROM Event e WHERE e.space.id = :spaceId")
+    List<Event> findBySpaceId(@Param("spaceId") Long spaceId);
 }

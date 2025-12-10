@@ -2,10 +2,12 @@ package be.cercle.asblcercle.web.controller;
 
 import be.cercle.asblcercle.entity.GarderieSession;
 import be.cercle.asblcercle.repository.GarderieSessionRepository;
+import be.cercle.asblcercle.repository.GarderieReservationRepository;
 import be.cercle.asblcercle.web.dto.GarderieSessionRequest;
 import be.cercle.asblcercle.web.dto.GarderieSessionResponseDto;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,9 +16,12 @@ import java.util.List;
 public class AdminGarderieController {
 
     private final GarderieSessionRepository sessionRepository;
+    private final GarderieReservationRepository reservationRepository;
 
-    public AdminGarderieController(GarderieSessionRepository sessionRepository) {
+    public AdminGarderieController(GarderieSessionRepository sessionRepository,
+                                   GarderieReservationRepository reservationRepository) {
         this.sessionRepository = sessionRepository;
+        this.reservationRepository = reservationRepository;
     }
 
     @GetMapping("/sessions")
@@ -35,6 +40,13 @@ public class AdminGarderieController {
         return GarderieSessionResponseDto.fromEntity(saved);
     }
 
+    @GetMapping("/sessions/{id}")
+    public GarderieSessionResponseDto getSession(@PathVariable Long id) {
+        GarderieSession s = sessionRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Session not found"));
+        return GarderieSessionResponseDto.fromEntity(s);
+    }
+
     @PutMapping("/sessions/{id}")
     public GarderieSessionResponseDto updateSession(
             @PathVariable Long id,
@@ -49,7 +61,9 @@ public class AdminGarderieController {
     }
 
     @DeleteMapping("/sessions/{id}")
+    @Transactional
     public void deleteSession(@PathVariable Long id) {
+        reservationRepository.deleteBySessionId(id);
         sessionRepository.deleteById(id);
     }
 

@@ -3,8 +3,10 @@ package be.cercle.asblcercle.repository;
 import be.cercle.asblcercle.entity.GarderieReservation;
 import be.cercle.asblcercle.entity.GarderieReservationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,4 +20,9 @@ public interface GarderieReservationRepository extends JpaRepository<GarderieRes
 
     @Query("SELECT COALESCE(SUM(r.numberOfChildren), 0) FROM GarderieReservation r WHERE r.session.id = :sessionId AND r.status != 'CANCELLED'")
     Integer countTotalChildrenBySessionId(@Param("sessionId") Long sessionId);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM GarderieReservation gr WHERE gr.session.id = :sessionId")
+    void deleteBySessionId(@Param("sessionId") Long sessionId);
 }

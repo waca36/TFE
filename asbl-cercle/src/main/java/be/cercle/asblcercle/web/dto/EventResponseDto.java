@@ -19,6 +19,8 @@ public class EventResponseDto {
     private String externalAddress;
     private Integer capacity;
     private Double price;
+    private Integer minAge;
+    private Integer maxAge;
     private String status;
     private Integer registeredCount;
     private Integer availablePlaces;
@@ -55,6 +57,8 @@ public class EventResponseDto {
         dto.externalAddress = e.getExternalAddress();
         dto.capacity = e.getCapacity();
         dto.price = e.getPrice();
+        dto.minAge = e.getMinAge();
+        dto.maxAge = e.getMaxAge();
         dto.status = e.getStatus().name();
         dto.registeredCount = registeredCount;
         dto.availablePlaces = e.getCapacity() != null ? e.getCapacity() - registeredCount : null;
@@ -95,6 +99,8 @@ public class EventResponseDto {
     public String getExternalAddress() { return externalAddress; }
     public Integer getCapacity() { return capacity; }
     public Double getPrice() { return price; }
+    public Integer getMinAge() { return minAge; }
+    public Integer getMaxAge() { return maxAge; }
     public String getStatus() { return status; }
     public Integer getRegisteredCount() { return registeredCount; }
     public Integer getAvailablePlaces() { return availablePlaces; }

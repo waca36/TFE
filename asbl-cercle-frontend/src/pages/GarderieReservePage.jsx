@@ -6,8 +6,8 @@ import { useTranslation } from "react-i18next";
 import PaymentForm from "../components/PaymentForm";
 import styles from "./GarderieReservePage.module.css";
 
-const STRIPE_PUBLIC_KEY = "pk_test_51SZtvU43LA5MMUSyvqwMUBrZfuUUVrERUSNHtXE6j60tCbnIc5DTcaKJO1RlgpjgniuXjsFiIJsyM9jjZizdLxxn008fF3zfDs";
-const API_URL = "http://localhost:8080";
+const STRIPE_PUBLIC_KEY = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 export default function GarderieReservePage() {
   const { id } = useParams();

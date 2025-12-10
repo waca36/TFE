@@ -1,5 +1,6 @@
 package be.cercle.asblcercle.web.controller;
 
+import be.cercle.asblcercle.config.PaymentVerifier;
 import be.cercle.asblcercle.entity.*;
 import be.cercle.asblcercle.repository.GarderieReservationRepository;
 import be.cercle.asblcercle.repository.GarderieSessionRepository;
@@ -7,8 +8,6 @@ import be.cercle.asblcercle.repository.UserRepository;
 import be.cercle.asblcercle.web.dto.GarderieReservationRequest;
 import be.cercle.asblcercle.web.dto.GarderieReservationResponseDto;
 import be.cercle.asblcercle.web.dto.GarderieSessionResponseDto;
-import com.stripe.exception.StripeException;
-import com.stripe.model.PaymentIntent;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -25,13 +24,16 @@ public class GarderieController {
     private final GarderieSessionRepository sessionRepository;
     private final GarderieReservationRepository reservationRepository;
     private final UserRepository userRepository;
+    private final PaymentVerifier paymentVerifier;
 
     public GarderieController(GarderieSessionRepository sessionRepository,
                               GarderieReservationRepository reservationRepository,
-                              UserRepository userRepository) {
+                              UserRepository userRepository,
+                              PaymentVerifier paymentVerifier) {
         this.sessionRepository = sessionRepository;
         this.reservationRepository = reservationRepository;
         this.userRepository = userRepository;
+        this.paymentVerifier = paymentVerifier;
     }
 
     @GetMapping("/sessions")
@@ -58,15 +60,7 @@ public class GarderieController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non connecté");
         }
 
-        try {
-            PaymentIntent paymentIntent = PaymentIntent.retrieve(request.getPaymentIntentId());
-
-            if (!"succeeded".equals(paymentIntent.getStatus())) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Paiement non validé");
-            }
-        } catch (StripeException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erreur vérification paiement: " + e.getMessage());
-        }
+        paymentVerifier.verifyPayment(request.getPaymentIntentId());
 
         String email = authentication.getName();
         User user = userRepository.findByEmail(email)
@@ -87,7 +81,7 @@ public class GarderieController {
         Integer currentChildren = reservationRepository.countTotalChildrenBySessionId(session.getId());
         if (currentChildren + totalChildren > session.getCapacity()) {
             int remaining = session.getCapacity() - currentChildren;
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, 
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                 "Capacité insuffisante. Places restantes : " + remaining);
         }
 

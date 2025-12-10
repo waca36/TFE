@@ -168,9 +168,13 @@ export default function OrganizerEventsPage() {
                     {t("organizer.cancelEvent")}
                   </button>
                 )}
-                <Link to={`/events/register/${e.id}`} className={styles.viewButton}>
-                  {t("common.view")}
-                </Link>
+                {e.status === "PUBLISHED" ? (
+                  <Link to={`/events/register/${e.id}`} className={styles.viewButton}>
+                    {t("common.view")}
+                  </Link>
+                ) : e.status === "PENDING_APPROVAL" ? (
+                  <span className={styles.pendingNote}>{t("organizer.awaitingApproval")}</span>
+                ) : null}
               </div>
             </div>
           ))}

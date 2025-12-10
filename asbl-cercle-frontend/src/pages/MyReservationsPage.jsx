@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import PaymentForm from "../components/PaymentForm";
 import styles from "./MyReservationsPage.module.css";
 
-const STRIPE_PUBLIC_KEY = "pk_test_51SZtvU43LA5MMUSyvqwMUBrZfuUUVrERUSNHtXE6j60tCbnIc5DTcaKJO1RlgpjgniuXjsFiIJsyM9jjZizdLxxn008fF3zfDs";
+const STRIPE_PUBLIC_KEY = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
 
 export default function MyReservationsPage() {
   const { user, token } = useAuth();
@@ -101,7 +101,7 @@ export default function MyReservationsPage() {
             token={token}
             amount={payingReservation.totalPrice}
             description={`${t("reservation.payReservation")}: ${payingReservation.espace?.name}`}
-            reservationType="ESPACE"
+            reservationType="SPACE"
             metadata={{ reservationId: payingReservation.id }}
             onSuccess={handlePaymentSuccess}
             onCancel={handlePaymentCancel}

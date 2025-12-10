@@ -1,8 +1,14 @@
 package be.cercle.asblcercle.web.controller;
 
 import be.cercle.asblcercle.entity.Espace;
+import be.cercle.asblcercle.entity.Event;
 import be.cercle.asblcercle.repository.EspaceRepository;
+import be.cercle.asblcercle.repository.EventRegistrationRepository;
+import be.cercle.asblcercle.repository.EventRepository;
+import be.cercle.asblcercle.repository.GarderieReservationRepository;
+import be.cercle.asblcercle.repository.ReservationRepository;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -11,9 +17,21 @@ import java.util.List;
 public class AdminController {
 
     private final EspaceRepository espaceRepository;
+    private final ReservationRepository reservationRepository;
+    private final EventRepository eventRepository;
+    private final EventRegistrationRepository eventRegistrationRepository;
+    private final GarderieReservationRepository garderieReservationRepository;
 
-    public AdminController(EspaceRepository espaceRepository) {
+    public AdminController(EspaceRepository espaceRepository,
+                           ReservationRepository reservationRepository,
+                           EventRepository eventRepository,
+                           EventRegistrationRepository eventRegistrationRepository,
+                           GarderieReservationRepository garderieReservationRepository) {
         this.espaceRepository = espaceRepository;
+        this.reservationRepository = reservationRepository;
+        this.eventRepository = eventRepository;
+        this.eventRegistrationRepository = eventRegistrationRepository;
+        this.garderieReservationRepository = garderieReservationRepository;
     }
 
     @GetMapping("/espaces")
@@ -47,7 +65,18 @@ public class AdminController {
     }
 
     @DeleteMapping("/espaces/{id}")
+    @Transactional
     public void deleteEspace(@PathVariable Long id) {
+        List<Event> eventsWithSpace = eventRepository.findBySpaceId(id);
+        for (Event event : eventsWithSpace) {
+            if (event.getGarderieSession() != null) {
+                garderieReservationRepository.deleteBySessionId(event.getGarderieSession().getId());
+            }
+            eventRegistrationRepository.deleteByEventId(event.getId());
+            eventRepository.delete(event);
+        }
+
+        reservationRepository.deleteByEspaceId(id);
         espaceRepository.deleteById(id);
     }
 }

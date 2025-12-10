@@ -3,6 +3,7 @@ import { getEspaces } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import styles from "./EspacesPage.module.css";
 
 export default function EspacesPage() {
   const { user } = useAuth();
@@ -14,39 +15,48 @@ export default function EspacesPage() {
   }, []);
 
   return (
-    <div>
-      <h1>{t('spaces.title')}</h1>
-      {user && <p>{t('spaces.welcome')} {user.firstName}</p>}
-      <hr />
-
-      {espaces.length === 0 && <p>{t('spaces.noSpaces')}</p>}
-
-      {espaces.map((e) => (
-        <div key={e.id} style={styles.card}>
-          <h3>{e.name}</h3>
-          <p>{t('common.type')} : {e.type}</p>
-          <p>{t('common.capacity')} : {e.capacity} {t('common.persons')}</p>
-          <p>{t('common.price')} : {e.basePrice} € {t('common.perHour')}</p>
-          <Link to={`/reservations/new/${e.id}`} style={styles.link}>
-            {t('spaces.reserve')}
-          </Link>
+    <div className={styles.page}>
+      <div className={styles.header}>
+        <div className={styles.headerText}>
+          <h1>{t('spaces.title')}</h1>
+          {user && <p className={styles.subtitle}>{t('spaces.welcome')} {user.firstName}</p>}
         </div>
-      ))}
+      </div>
+
+      {espaces.length === 0 ? (
+        <div className={styles.emptyState}>
+          <p>{t('spaces.noSpaces')}</p>
+        </div>
+      ) : (
+        <div className={styles.grid}>
+          {espaces.map((e) => (
+            <div key={e.id} className={styles.card}>
+              <div className={styles.cardHeader}>
+                <h3 className={styles.cardTitle}>{e.name}</h3>
+                <span className={styles.cardBadge}>{t(`spaceType.${e.type}`) || e.type}</span>
+              </div>
+
+              <div className={styles.cardDetails}>
+                <div className={styles.cardDetail}>
+                  <span className={styles.cardIcon}>👥</span>
+                  <span>{t('common.capacity')}: <strong>{e.capacity} {t('common.persons')}</strong></span>
+                </div>
+              </div>
+
+              <div className={styles.price}>
+                {e.basePrice} €
+                <span className={styles.priceUnit}>/ {t('common.perHour')}</span>
+              </div>
+
+              <div className={styles.cardFooter}>
+                <Link to={`/reservations/new/${e.id}`} className={styles.reserveButton}>
+                  {t('spaces.reserve')} →
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
-
-const styles = {
-  card: {
-    background: "#fff",
-    padding: "1rem",
-    borderRadius: "8px",
-    marginBottom: "1rem",
-    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-  },
-  link: {
-    color: "#2563eb",
-    textDecoration: "none",
-    fontWeight: "500",
-  },
-};

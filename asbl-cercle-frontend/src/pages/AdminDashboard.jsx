@@ -5,6 +5,7 @@ import {
   adminDeleteEspace,
   adminGetEvents,
   adminGetGarderieSessions,
+  adminDeleteGarderieSession,
   adminGetStats,
   adminGetAllSpaceReservations,
   adminGetAllEventRegistrations,
@@ -151,6 +152,16 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleDeleteGarderieSession = async (id) => {
+    if (!window.confirm(t("admin.confirmDeleteSession"))) return;
+    try {
+      await adminDeleteGarderieSession(id, token);
+      setGarderieSessions((prev) => prev.filter((s) => s.id !== id));
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
   if (!user || user.role !== "ADMIN") return null;
   if (loading) return <div className={styles.loading}>{t("common.loading")}</div>;
   if (error) return <div className={styles.error}>{error}</div>;
@@ -162,6 +173,7 @@ export default function AdminDashboard() {
     { id: "spaces", label: t("admin.spacesManagement") },
     { id: "events", label: t("admin.eventsManagement") },
     { id: "garderie", label: t("admin.childcareManagement") },
+    { id: "pendingReservations", label: t("admin.pendingReservations"), badge: pendingReservations.length },
     { id: "spaceReservations", label: t("admin.spaceReservations") },
     { id: "eventReservations", label: t("admin.eventReservations") },
     { id: "garderieReservations", label: t("admin.garderieReservations") },
@@ -180,6 +192,36 @@ export default function AdminDashboard() {
         </Link>
       </div>
 
+      {pendingEvents.length > 0 && (
+        <div className={styles.alertBanner}>
+          <span className={styles.alertIcon}>⚠️</span>
+          <span>
+            {pendingEvents.length} {t("admin.eventsPendingApproval")}
+          </span>
+          <button
+            className={styles.alertButton}
+            onClick={() => setActiveTab("pendingEvents")}
+          >
+            {t("common.view")}
+          </button>
+        </div>
+      )}
+
+      {pendingReservations.length > 0 && (
+        <div className={styles.alertBanner}>
+          <span className={styles.alertIcon}>⚠️</span>
+          <span>
+            {pendingReservations.length} {t("admin.auditoriumReservationsPending")}
+          </span>
+          <button
+            className={styles.alertButton}
+            onClick={() => setActiveTab("pendingReservations")}
+          >
+            {t("common.view")}
+          </button>
+        </div>
+      )}
+
       <div className={styles.tabs}>
         {tabs.map((tab) => (
           <button
@@ -196,6 +238,7 @@ export default function AdminDashboard() {
       {activeTab === "overview" && stats && (
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>{t("admin.overview")}</h2>
+
           <div className={styles.statsGrid}>
             <div className={styles.statCard}>
               <p className={styles.statLabel}>{t("admin.totalUsers")}</p>
@@ -212,6 +255,54 @@ export default function AdminDashboard() {
             <div className={`${styles.statCard} ${styles.statOrange}`}>
               <p className={styles.statLabel}>{t("admin.pendingApprovals")}</p>
               <p className={styles.statNumber}>{pendingEvents.length + pendingReservations.length}</p>
+            </div>
+          </div>
+
+          <h3 className={styles.subsectionTitle}>{t("admin.reservationsOverview")}</h3>
+          <div className={styles.statsGrid}>
+            <div className={styles.statCard}>
+              <p className={styles.statLabel}>{t("admin.confirmedSpaceRes")}</p>
+              <p className={styles.statNumber}>{spaceReservations.filter(r => r.status === "CONFIRMED").length}</p>
+            </div>
+            <div className={`${styles.statCard} ${styles.statBlue}`}>
+              <p className={styles.statLabel}>{t("admin.confirmedEventRes")}</p>
+              <p className={styles.statNumber}>{eventRegistrations.filter(r => r.status === "CONFIRMED").length}</p>
+            </div>
+            <div className={`${styles.statCard} ${styles.statGreen}`}>
+              <p className={styles.statLabel}>{t("admin.confirmedGarderieRes")}</p>
+              <p className={styles.statNumber}>{garderieReservations.filter(r => r.status === "CONFIRMED").length}</p>
+            </div>
+          </div>
+
+          <h3 className={styles.subsectionTitle}>{t("admin.revenue")}</h3>
+          <div className={styles.statsGrid}>
+            <div className={styles.statCard}>
+              <p className={styles.statLabel}>{t("admin.spaceRevenue")}</p>
+              <p className={styles.statNumber}>
+                {spaceReservations.filter(r => r.status === "CONFIRMED").reduce((sum, r) => sum + (r.totalPrice || 0), 0).toFixed(2)} €
+              </p>
+            </div>
+            <div className={`${styles.statCard} ${styles.statBlue}`}>
+              <p className={styles.statLabel}>{t("admin.eventRevenue")}</p>
+              <p className={styles.statNumber}>
+                {eventRegistrations.filter(r => r.status === "CONFIRMED").reduce((sum, r) => sum + (r.totalPrice || 0), 0).toFixed(2)} €
+              </p>
+            </div>
+            <div className={`${styles.statCard} ${styles.statGreen}`}>
+              <p className={styles.statLabel}>{t("admin.garderieRevenue")}</p>
+              <p className={styles.statNumber}>
+                {garderieReservations.filter(r => r.status === "CONFIRMED").reduce((sum, r) => sum + (r.totalPrice || 0), 0).toFixed(2)} €
+              </p>
+            </div>
+            <div className={`${styles.statCard} ${styles.statPurple}`}>
+              <p className={styles.statLabel}>{t("admin.totalRevenue")}</p>
+              <p className={styles.statNumber}>
+                {(
+                  spaceReservations.filter(r => r.status === "CONFIRMED").reduce((sum, r) => sum + (r.totalPrice || 0), 0) +
+                  eventRegistrations.filter(r => r.status === "CONFIRMED").reduce((sum, r) => sum + (r.totalPrice || 0), 0) +
+                  garderieReservations.filter(r => r.status === "CONFIRMED").reduce((sum, r) => sum + (r.totalPrice || 0), 0)
+                ).toFixed(2)} €
+              </p>
             </div>
           </div>
         </section>
@@ -274,6 +365,32 @@ export default function AdminDashboard() {
         </section>
       )}
 
+      {activeTab === "pendingReservations" && (
+        <section className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>{t("admin.auditoriumReservationsPending")}</h2>
+            <Link to="/admin/reservations/pending" className={styles.linkGhost}>
+              {t("common.viewAll")}
+            </Link>
+          </div>
+          <div className={styles.grid}>
+            {pendingReservations.map((r) => (
+              <div key={r.id} className={styles.card}>
+                <div className={styles.cardHeader}>
+                  <div>
+                    <p className={styles.cardDate}>{r.startDateTime}</p>
+                    <h3 className={styles.cardTitle}>{r.espace?.name || t("spaces.space")}</h3>
+                    <p className={styles.cardMeta}>{r.user?.email}</p>
+                  </div>
+                  <span className={`${styles.badge} ${styles.badgePending}`}>{t("status.pending_approval")}</span>
+                </div>
+                {r.justification ? <p className={styles.cardDesc}>{r.justification}</p> : null}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {activeTab === "users" && (
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>{t("admin.usersManagement")}</h2>
@@ -312,7 +429,12 @@ export default function AdminDashboard() {
 
       {activeTab === "spaces" && (
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>{t("admin.spacesManagement")}</h2>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>{t("admin.spacesManagement")}</h2>
+            <Link to="/admin/espaces/new" className={styles.btnPrimary}>
+              + {t("admin.createSpace")}
+            </Link>
+          </div>
           <div className={styles.tableContainer}>
             <table className={styles.table}>
               <thead>
@@ -320,6 +442,7 @@ export default function AdminDashboard() {
                   <th>{t("common.title")}</th>
                   <th>{t("common.capacity")}</th>
                   <th>{t("spaces.basePrice")}</th>
+                  <th>{t("common.actions")}</th>
                   <th>{t("common.actions")}</th>
                 </tr>
               </thead>
@@ -329,6 +452,11 @@ export default function AdminDashboard() {
                     <td>{e.name}</td>
                     <td>{e.capacity}</td>
                     <td>{e.basePrice} €</td>
+                    <td>
+                      <Link to={`/admin/espaces/${e.id}/edit`} className={styles.btnGhostSmall}>
+                        {t("common.edit")}
+                      </Link>
+                    </td>
                     <td>
                       <button onClick={() => handleDeleteEspace(e.id)} className={styles.btnDangerSmall}>
                         {t("common.delete")}
@@ -344,7 +472,12 @@ export default function AdminDashboard() {
 
       {activeTab === "events" && (
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>{t("admin.eventsManagement")}</h2>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>{t("admin.eventsManagement")}</h2>
+            <Link to="/admin/events/new" className={styles.btnPrimary}>
+              + {t("admin.createEvent")}
+            </Link>
+          </div>
           <div className={styles.tableContainer}>
             <table className={styles.table}>
               <thead>
@@ -352,6 +485,7 @@ export default function AdminDashboard() {
                   <th>{t("common.title")}</th>
                   <th>{t("common.date")}</th>
                   <th>{t("common.price")}</th>
+                  <th>{t("common.actions")}</th>
                   <th>{t("common.actions")}</th>
                 </tr>
               </thead>
@@ -361,6 +495,11 @@ export default function AdminDashboard() {
                     <td>{e.title}</td>
                     <td>{new Date(e.startDateTime).toLocaleString("fr-BE")}</td>
                     <td>{e.price ? `${e.price} €` : t("events.free")}</td>
+                    <td>
+                      <Link to={`/admin/events/${e.id}/edit`} className={styles.btnGhostSmall}>
+                        {t("common.edit")}
+                      </Link>
+                    </td>
                     <td>
                       <button onClick={() => handleDeleteEvent(e.id)} className={styles.btnDangerSmall}>
                         {t("common.delete")}
@@ -376,7 +515,12 @@ export default function AdminDashboard() {
 
       {activeTab === "garderie" && (
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>{t("admin.childcareManagement")}</h2>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>{t("admin.childcareManagement")}</h2>
+            <Link to="/admin/garderie/new" className={styles.btnPrimary}>
+              + {t("admin.createSession")}
+            </Link>
+          </div>
           <div className={styles.tableContainer}>
             <table className={styles.table}>
               <thead>
@@ -385,6 +529,8 @@ export default function AdminDashboard() {
                   <th>{t("common.date")}</th>
                   <th>{t("common.time")}</th>
                   <th>{t("childcare.pricePerChild")}</th>
+                  <th>{t("common.actions")}</th>
+                  <th>{t("common.actions")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -394,6 +540,16 @@ export default function AdminDashboard() {
                     <td>{s.sessionDate}</td>
                     <td>{s.startTime} - {s.endTime}</td>
                     <td>{s.pricePerChild} €</td>
+                    <td>
+                      <Link to={`/admin/garderie/edit/${s.id}`} className={styles.btnGhostSmall}>
+                        {t("common.edit")}
+                      </Link>
+                    </td>
+                    <td>
+                      <button onClick={() => handleDeleteGarderieSession(s.id)} className={styles.btnDangerSmall}>
+                        {t("common.delete")}
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -418,9 +574,9 @@ export default function AdminDashboard() {
               <tbody>
                 {spaceReservations.map((r) => (
                   <tr key={r.id}>
-                    <td>{r.espace?.name}</td>
-                    <td>{r.user?.email}</td>
-                    <td>{r.startDateTime}</td>
+                    <td>{r.espaceName}</td>
+                    <td>{r.userEmail}</td>
+                    <td>{new Date(r.startDateTime).toLocaleString("fr-BE")}</td>
                     <td>{r.totalPrice} €</td>
                   </tr>
                 ))}
@@ -446,9 +602,9 @@ export default function AdminDashboard() {
               <tbody>
                 {eventRegistrations.map((r) => (
                   <tr key={r.id}>
-                    <td>{r.event?.title}</td>
-                    <td>{r.user?.email}</td>
-                    <td>{r.event?.startDateTime}</td>
+                    <td>{r.eventTitle}</td>
+                    <td>{r.userEmail}</td>
+                    <td>{new Date(r.eventDate).toLocaleString("fr-BE")}</td>
                     <td>{r.totalPrice} €</td>
                   </tr>
                 ))}
@@ -475,9 +631,9 @@ export default function AdminDashboard() {
               <tbody>
                 {garderieReservations.map((r) => (
                   <tr key={r.id}>
-                    <td>{r.session?.title}</td>
-                    <td>{r.user?.email}</td>
-                    <td>{r.session?.sessionDate}</td>
+                    <td>{r.sessionTitle}</td>
+                    <td>{r.userEmail}</td>
+                    <td>{r.sessionDate}</td>
                     <td>{r.numberOfChildren}</td>
                     <td>{r.totalPrice} €</td>
                   </tr>

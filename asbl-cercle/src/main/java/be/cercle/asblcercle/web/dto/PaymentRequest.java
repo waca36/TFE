@@ -6,6 +6,8 @@ public class PaymentRequest {
     private String description;
     private String reservationType;
     private Long reservationId;
+    private Double hours;
+    private Integer numberOfParticipants;
 
     private Long sessionId;
     private Long eventId;
@@ -26,6 +28,12 @@ public class PaymentRequest {
 
     public Long getReservationId() { return reservationId; }
     public void setReservationId(Long reservationId) { this.reservationId = reservationId; }
+
+    public Double getHours() { return hours; }
+    public void setHours(Double hours) { this.hours = hours; }
+
+    public Integer getNumberOfParticipants() { return numberOfParticipants; }
+    public void setNumberOfParticipants(Integer numberOfParticipants) { this.numberOfParticipants = numberOfParticipants; }
 
     public Long getSessionId() { return sessionId; }
     public void setSessionId(Long sessionId) { this.sessionId = sessionId; }

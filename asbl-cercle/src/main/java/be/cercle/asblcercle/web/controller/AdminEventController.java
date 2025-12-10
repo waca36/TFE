@@ -3,8 +3,9 @@ package be.cercle.asblcercle.web.controller;
 import be.cercle.asblcercle.entity.Event;
 import be.cercle.asblcercle.entity.EventStatus;
 import be.cercle.asblcercle.entity.User;
-import be.cercle.asblcercle.repository.EventRepository;
 import be.cercle.asblcercle.repository.EventRegistrationRepository;
+import be.cercle.asblcercle.repository.EventRepository;
+import be.cercle.asblcercle.repository.GarderieReservationRepository;
 import be.cercle.asblcercle.repository.UserRepository;
 import be.cercle.asblcercle.service.EventPlanningService;
 import be.cercle.asblcercle.web.dto.EventApprovalDto;
@@ -13,6 +14,7 @@ import be.cercle.asblcercle.web.dto.EventResponseDto;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -25,17 +27,20 @@ public class AdminEventController {
 
     private final EventRepository eventRepository;
     private final EventRegistrationRepository registrationRepository;
+    private final GarderieReservationRepository garderieReservationRepository;
     private final UserRepository userRepository;
     private final EventPlanningService eventPlanningService;
 
     public AdminEventController(
             EventRepository eventRepository,
             EventRegistrationRepository registrationRepository,
+            GarderieReservationRepository garderieReservationRepository,
             UserRepository userRepository,
             EventPlanningService eventPlanningService
     ) {
         this.eventRepository = eventRepository;
         this.registrationRepository = registrationRepository;
+        this.garderieReservationRepository = garderieReservationRepository;
         this.userRepository = userRepository;
         this.eventPlanningService = eventPlanningService;
     }
@@ -63,7 +68,7 @@ public class AdminEventController {
     @GetMapping("/{id}")
     public EventResponseDto getEvent(@PathVariable Long id) {
         Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Événement introuvable"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Evenement introuvable"));
         int registered = registrationRepository.countTotalParticipantsByEventId(event.getId());
         return EventResponseDto.fromEntity(event, registered);
     }
@@ -90,7 +95,7 @@ public class AdminEventController {
     @PutMapping("/{id}")
     public EventResponseDto updateEvent(@PathVariable Long id, @Valid @RequestBody EventRequestDto dto) {
         Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Événement introuvable"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Evenement introuvable"));
 
         eventPlanningService.applyAndValidate(
                 event,
@@ -110,12 +115,12 @@ public class AdminEventController {
             Authentication authentication
     ) {
         User admin = getAuthenticatedAdmin(authentication);
-        
+
         Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Événement introuvable"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Evenement introuvable"));
 
         if (event.getStatus() != EventStatus.PENDING_APPROVAL) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cet événement n'est pas en attente d'approbation");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cet evenement n'est pas en attente d'approbation");
         }
 
         if (dto.isApproved()) {
@@ -136,14 +141,14 @@ public class AdminEventController {
     @PatchMapping("/{id}/status")
     public EventResponseDto updateStatus(@PathVariable Long id, @RequestParam String status, Authentication authentication) {
         User admin = getAuthenticatedAdmin(authentication);
-        
+
         Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Événement introuvable"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Evenement introuvable"));
 
         try {
             EventStatus newStatus = EventStatus.valueOf(status.toUpperCase());
             event.setStatus(newStatus);
-            
+
             if (newStatus == EventStatus.PUBLISHED && event.getApprovedAt() == null) {
                 event.setApprovedAt(LocalDateTime.now());
                 event.setApprovedBy(admin);
@@ -158,16 +163,21 @@ public class AdminEventController {
     }
 
     @DeleteMapping("/{id}")
+    @Transactional
     public void deleteEvent(@PathVariable Long id) {
-        if (!eventRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Événement introuvable");
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Evenement introuvable"));
+
+        if (event.getGarderieSession() != null) {
+            garderieReservationRepository.deleteBySessionId(event.getGarderieSession().getId());
         }
-        eventRepository.deleteById(id);
+        registrationRepository.deleteByEventId(id);
+        eventRepository.delete(event);
     }
 
     private User getAuthenticatedAdmin(Authentication authentication) {
         if (authentication == null || authentication.getName() == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non connecté");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non connecte");
         }
         return userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utilisateur introuvable"));

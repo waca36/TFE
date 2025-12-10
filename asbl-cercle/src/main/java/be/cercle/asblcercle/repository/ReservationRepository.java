@@ -4,8 +4,10 @@ import be.cercle.asblcercle.entity.Espace;
 import be.cercle.asblcercle.entity.Reservation;
 import be.cercle.asblcercle.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -56,4 +58,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
            "WHERE r.status = 'PENDING_APPROVAL' " +
            "ORDER BY r.createdAt DESC")
     List<Reservation> findPendingApproval();
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Reservation r WHERE r.espace.id = :espaceId")
+    void deleteByEspaceId(@Param("espaceId") Long espaceId);
 }

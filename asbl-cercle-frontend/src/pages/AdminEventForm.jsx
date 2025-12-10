@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { adminCreateEvent, adminUpdateEvent } from "../services/api";
+import { adminCreateEvent, adminUpdateEvent, adminGetEspaces } from "../services/api";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import styles from "./AdminEventForm.module.css";
@@ -18,11 +18,22 @@ export default function AdminEventForm() {
     description: "",
     startDateTime: "",
     endDateTime: "",
+    locationType: "EXTERNAL",
+    spaceId: "",
+    location: "",
     capacity: "",
     price: "",
+    minAge: "",
+    maxAge: "",
+    garderieRequired: false,
+    garderiePrice: "",
+    garderieCapacity: "",
+    garderieMinAge: "",
+    garderieMaxAge: "",
     status: "DRAFT",
   });
 
+  const [espaces, setEspaces] = useState([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -30,6 +41,10 @@ export default function AdminEventForm() {
       navigate("/login");
       return;
     }
+
+    adminGetEspaces(token)
+      .then(setEspaces)
+      .catch(() => setEspaces([]));
 
     if (isEdit) {
       fetch("http://localhost:8080/api/admin/events", {
@@ -44,8 +59,18 @@ export default function AdminEventForm() {
               description: ev.description,
               startDateTime: ev.startDateTime,
               endDateTime: ev.endDateTime,
+              locationType: ev.locationType || (ev.spaceId ? "EXISTING_SPACE" : "EXTERNAL"),
+              spaceId: ev.spaceId ?? "",
+              location: ev.externalAddress || ev.location || "",
               capacity: ev.capacity || "",
               price: ev.price || "",
+              minAge: ev.minAge ?? "",
+              maxAge: ev.maxAge ?? "",
+              garderieRequired: ev.garderieRequired || false,
+              garderiePrice: ev.garderiePrice ?? "",
+              garderieCapacity: ev.garderieCapacity ?? "",
+              garderieMinAge: ev.garderieMinAge ?? "",
+              garderieMaxAge: ev.garderieMaxAge ?? "",
               status: ev.status,
             });
           }
@@ -87,10 +112,28 @@ export default function AdminEventForm() {
       return;
     }
 
+    if (event.locationType === "EXISTING_SPACE" && !event.spaceId) {
+      setError(t("admin.spaceRequired") || "Veuillez sélectionner un espace");
+      return;
+    }
+
+    if (event.locationType === "EXTERNAL" && !event.location.trim()) {
+      setError(t("admin.addressRequired") || "Adresse requise");
+      return;
+    }
+
     const payload = {
       ...event,
+      spaceId: event.spaceId ? Number(event.spaceId) : null,
       capacity: event.capacity ? Number(event.capacity) : null,
       price: event.price ? Number(event.price) : null,
+      minAge: event.minAge !== "" ? Number(event.minAge) : null,
+      maxAge: event.maxAge !== "" ? Number(event.maxAge) : null,
+      garderiePrice: event.garderiePrice !== "" ? Number(event.garderiePrice) : null,
+      garderieCapacity: event.garderieCapacity !== "" ? Number(event.garderieCapacity) : null,
+      garderieMinAge: event.garderieMinAge !== "" ? Number(event.garderieMinAge) : null,
+      garderieMaxAge: event.garderieMaxAge !== "" ? Number(event.garderieMaxAge) : null,
+      externalAddress: event.locationType === "EXTERNAL" ? event.location : null,
     };
 
     try {
@@ -106,7 +149,8 @@ export default function AdminEventForm() {
   };
 
   const handleChange = (e) => {
-    setEvent({ ...event, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    setEvent({ ...event, [name]: type === "checkbox" ? checked : value });
     setError("");
   };
 
@@ -151,6 +195,51 @@ export default function AdminEventForm() {
             className={styles.textarea}
             required
           />
+        </div>
+
+        <div className={styles.row}>
+          <div className={styles.field}>
+            <label className={styles.label}>{t("events.locationType")} *</label>
+            <select
+              name="locationType"
+              value={event.locationType}
+              onChange={handleChange}
+              className={styles.select}
+            >
+              <option value="EXTERNAL">{t("events.externalAddress")}</option>
+              <option value="EXISTING_SPACE">{t("events.existingSpace")}</option>
+            </select>
+          </div>
+
+          {event.locationType === "EXISTING_SPACE" ? (
+            <div className={styles.field}>
+              <label className={styles.label}>{t("spaces.space")}</label>
+              <select
+                name="spaceId"
+                value={event.spaceId}
+                onChange={handleChange}
+                className={styles.select}
+              >
+                <option value="">{t("common.select")}</option>
+                {espaces.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <div className={styles.field}>
+              <label className={styles.label}>{t("events.location")} *</label>
+              <input
+                name="location"
+                value={event.location}
+                onChange={handleChange}
+                className={styles.input}
+                required
+              />
+            </div>
+          )}
         </div>
 
         <div className={styles.row}>
@@ -207,6 +296,93 @@ export default function AdminEventForm() {
             />
           </div>
         </div>
+
+        <div className={styles.row}>
+          <div className={styles.field}>
+            <label className={styles.label}>{t("organizer.minAge")}</label>
+            <input
+              type="number"
+              name="minAge"
+              value={event.minAge}
+              onChange={handleChange}
+              min="0"
+              className={styles.input}
+            />
+          </div>
+          <div className={styles.field}>
+            <label className={styles.label}>{t("organizer.maxAge")}</label>
+            <input
+              type="number"
+              name="maxAge"
+              value={event.maxAge}
+              onChange={handleChange}
+              min="0"
+              className={styles.input}
+            />
+          </div>
+        </div>
+
+        <div className={styles.checkboxRow}>
+          <label className={styles.checkboxLabel}>
+            <input
+              type="checkbox"
+              name="garderieRequired"
+              checked={event.garderieRequired}
+              onChange={handleChange}
+            />
+            <span>{t("organizer.childcareRequired")}</span>
+          </label>
+        </div>
+
+        {event.garderieRequired && (
+          <div className={styles.garderieGrid}>
+            <div className={styles.field}>
+              <label className={styles.label}>{t("organizer.childcarePrice")}</label>
+              <input
+                type="number"
+                name="garderiePrice"
+                value={event.garderiePrice}
+                onChange={handleChange}
+                min="0"
+                step="0.01"
+                className={styles.input}
+              />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>{t("organizer.childcareCapacity")}</label>
+              <input
+                type="number"
+                name="garderieCapacity"
+                value={event.garderieCapacity}
+                onChange={handleChange}
+                min="1"
+                className={styles.input}
+              />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>{t("organizer.childcareMinAge")}</label>
+              <input
+                type="number"
+                name="garderieMinAge"
+                value={event.garderieMinAge}
+                onChange={handleChange}
+                min="0"
+                className={styles.input}
+              />
+            </div>
+            <div className={styles.field}>
+              <label className={styles.label}>{t("organizer.childcareMaxAge")}</label>
+              <input
+                type="number"
+                name="garderieMaxAge"
+                value={event.garderieMaxAge}
+                onChange={handleChange}
+                min="0"
+                className={styles.input}
+              />
+            </div>
+          </div>
+        )}
 
         <div className={styles.field}>
           <label className={styles.label}>{t("common.status")} *</label>

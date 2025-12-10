@@ -1,13 +1,12 @@
 package be.cercle.asblcercle.web.controller;
 
+import be.cercle.asblcercle.config.PaymentVerifier;
 import be.cercle.asblcercle.entity.*;
 import be.cercle.asblcercle.repository.EventRegistrationRepository;
 import be.cercle.asblcercle.repository.EventRepository;
 import be.cercle.asblcercle.repository.UserRepository;
 import be.cercle.asblcercle.web.dto.EventRegistrationRequest;
 import be.cercle.asblcercle.web.dto.EventRegistrationResponseDto;
-import com.stripe.exception.StripeException;
-import com.stripe.model.PaymentIntent;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -24,15 +23,18 @@ public class EventRegistrationController {
     private final EventRegistrationRepository registrationRepository;
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
+    private final PaymentVerifier paymentVerifier;
 
     public EventRegistrationController(
             EventRegistrationRepository registrationRepository,
             EventRepository eventRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            PaymentVerifier paymentVerifier
     ) {
         this.registrationRepository = registrationRepository;
         this.eventRepository = eventRepository;
         this.userRepository = userRepository;
+        this.paymentVerifier = paymentVerifier;
     }
 
     @PostMapping("/register")
@@ -78,14 +80,7 @@ public class EventRegistrationController {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Paiement requis pour cet événement");
             }
 
-            try {
-                PaymentIntent paymentIntent = PaymentIntent.retrieve(request.getPaymentIntentId());
-                if (!"succeeded".equals(paymentIntent.getStatus())) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Paiement non validé");
-                }
-            } catch (StripeException e) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erreur vérification paiement: " + e.getMessage());
-            }
+            paymentVerifier.verifyPayment(request.getPaymentIntentId());
         }
 
         EventRegistration registration = new EventRegistration();

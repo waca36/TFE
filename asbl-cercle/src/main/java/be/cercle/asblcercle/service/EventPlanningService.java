@@ -41,6 +41,17 @@ public class EventPlanningService {
         }
         event.setCapacity(data.capacity());
         event.setPrice(data.price());
+        event.setMinAge(data.minAge());
+        event.setMaxAge(data.maxAge());
+        if (data.minAge() != null && data.minAge() < 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "L'âge minimum doit être positif");
+        }
+        if (data.maxAge() != null && data.maxAge() < 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "L'âge maximum doit être positif");
+        }
+        if (data.minAge() != null && data.maxAge() != null && data.maxAge() < data.minAge()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "L'âge maximum doit être supérieur ou égal à l'âge minimum");
+        }
         if (data.status() != null) {
             event.setStatus(data.status());
         }
@@ -149,6 +160,8 @@ public class EventPlanningService {
             LocalDateTime endDateTime,
             Integer capacity,
             Double price,
+            Integer minAge,
+            Integer maxAge,
             EventStatus status,
             EventLocationType locationType,
             Long spaceId,
@@ -168,6 +181,8 @@ public class EventPlanningService {
                     dto.getEndDateTime(),
                     dto.getCapacity(),
                     dto.getPrice(),
+                    dto.getMinAge(),
+                    dto.getMaxAge(),
                     status,
                     dto.getLocationType(),
                     dto.getSpaceId(),
@@ -189,6 +204,8 @@ public class EventPlanningService {
                     dto.getEndDateTime(),
                     dto.getCapacity(),
                     dto.getPrice(),
+                    dto.getMinAge(),
+                    dto.getMaxAge(),
                     dto.getStatus(),
                     dto.getLocationType(),
                     dto.getSpaceId(),

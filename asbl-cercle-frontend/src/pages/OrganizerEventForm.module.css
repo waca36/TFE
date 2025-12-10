@@ -166,6 +166,32 @@
   color: #9ca3af;
 }
 
+.divider {
+  height: 1px;
+  background: #f3f4f6;
+  margin: 0.5rem 0 1rem;
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.checkboxLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.garderieGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
 .actions {
   display: flex;
   justify-content: flex-end;

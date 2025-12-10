@@ -31,6 +31,10 @@ public class EventRequest {
 
     private Double price;
 
+    private Integer minAge;
+
+    private Integer maxAge;
+
     @NotNull
     private EventStatus status;
 
@@ -62,6 +66,12 @@ public class EventRequest {
 
     public Double getPrice() { return price; }
     public void setPrice(Double price) { this.price = price; }
+
+    public Integer getMinAge() { return minAge; }
+    public void setMinAge(Integer minAge) { this.minAge = minAge; }
+
+    public Integer getMaxAge() { return maxAge; }
+    public void setMaxAge(Integer maxAge) { this.maxAge = maxAge; }
 
     public EventStatus getStatus() { return status; }
     public void setStatus(EventStatus status) { this.status = status; }

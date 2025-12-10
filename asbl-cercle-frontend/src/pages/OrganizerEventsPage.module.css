@@ -249,6 +249,16 @@
   font-weight: 500;
 }
 
+.pendingNote {
+  padding: 0.5rem 1rem;
+  background: #fef3c7;
+  color: #92400e;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  font-style: italic;
+}
+
 .legend {
   margin-top: 2rem;
   padding: 1.5rem;

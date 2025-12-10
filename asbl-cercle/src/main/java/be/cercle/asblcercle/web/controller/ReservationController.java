@@ -1,5 +1,6 @@
 package be.cercle.asblcercle.web.controller;
 
+import be.cercle.asblcercle.config.PaymentVerifier;
 import be.cercle.asblcercle.entity.*;
 import be.cercle.asblcercle.repository.EspaceRepository;
 import be.cercle.asblcercle.repository.ReservationRepository;
@@ -9,8 +10,6 @@ import be.cercle.asblcercle.web.dto.CalendarReservationDto;
 import be.cercle.asblcercle.web.dto.CreateReservationRequest;
 import be.cercle.asblcercle.web.dto.PayReservationRequest;
 import be.cercle.asblcercle.web.dto.ReservationResponseDto;
-import com.stripe.exception.StripeException;
-import com.stripe.model.PaymentIntent;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -29,13 +28,16 @@ public class ReservationController {
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
     private final EspaceRepository espaceRepository;
+    private final PaymentVerifier paymentVerifier;
 
     public ReservationController(ReservationRepository reservationRepository,
                                  UserRepository userRepository,
-                                 EspaceRepository espaceRepository) {
+                                 EspaceRepository espaceRepository,
+                                 PaymentVerifier paymentVerifier) {
         this.reservationRepository = reservationRepository;
         this.userRepository = userRepository;
         this.espaceRepository = espaceRepository;
+        this.paymentVerifier = paymentVerifier;
     }
 
     @PostMapping
@@ -44,7 +46,7 @@ public class ReservationController {
             Authentication authentication
     ) {
         if (authentication == null || authentication.getName() == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non connecté");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non connectÃ©");
         }
 
         Espace espace = espaceRepository.findById(request.getEspaceId())
@@ -52,17 +54,10 @@ public class ReservationController {
 
         if (espace.getType() == EspaceType.AUDITOIRE) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                "Les auditoires doivent être réservés via l'endpoint /auditorium");
+                "Les auditoires doivent Ãªtre rÃ©servÃ©s via l'endpoint /auditorium");
         }
 
-        try {
-            PaymentIntent paymentIntent = PaymentIntent.retrieve(request.getPaymentIntentId());
-            if (!"succeeded".equals(paymentIntent.getStatus())) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Paiement non validé");
-            }
-        } catch (StripeException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erreur vérification paiement: " + e.getMessage());
-        }
+        paymentVerifier.verifyPayment(request.getPaymentIntentId());
 
         String email = authentication.getName();
         User user = userRepository.findByEmail(email)
@@ -80,7 +75,7 @@ public class ReservationController {
 
         if (hasOverlap) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
-                "Cet espace est déjà réservé pour cette période. Veuillez choisir un autre créneau.");
+                "Cet espace est dÃ©jÃ  rÃ©servÃ© pour cette pÃ©riode. Veuillez choisir un autre crÃ©neau.");
         }
 
         Reservation reservation = new Reservation();
@@ -102,7 +97,7 @@ public class ReservationController {
             Authentication authentication
     ) {
         if (authentication == null || authentication.getName() == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non connecté");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non connectÃ©");
         }
 
         Espace espace = espaceRepository.findById(request.getEspaceId())
@@ -129,7 +124,7 @@ public class ReservationController {
 
         if (hasOverlap) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
-                "Cet espace est déjà réservé pour cette période. Veuillez choisir un autre créneau.");
+                "Cet espace est dÃ©jÃ  rÃ©servÃ© pour cette pÃ©riode. Veuillez choisir un autre crÃ©neau.");
         }
 
         Reservation reservation = new Reservation();
@@ -152,7 +147,7 @@ public class ReservationController {
             Authentication authentication
     ) {
         if (authentication == null || authentication.getName() == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non connecté");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non connectÃ©");
         }
 
         String email = authentication.getName();
@@ -160,25 +155,18 @@ public class ReservationController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utilisateur introuvable"));
 
         Reservation reservation = reservationRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Réservation introuvable"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "RÃ©servation introuvable"));
 
         if (!reservation.getUser().getId().equals(user.getId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Vous ne pouvez pas payer cette réservation");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Vous ne pouvez pas payer cette rÃ©servation");
         }
 
         if (reservation.getStatus() != ReservationStatus.APPROVED) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                "Cette réservation n'est pas en attente de paiement. Statut actuel: " + reservation.getStatus());
+                "Cette rÃ©servation n'est pas en attente de paiement. Statut actuel: " + reservation.getStatus());
         }
 
-        try {
-            PaymentIntent paymentIntent = PaymentIntent.retrieve(request.getPaymentIntentId());
-            if (!"succeeded".equals(paymentIntent.getStatus())) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Paiement non validé");
-            }
-        } catch (StripeException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erreur vérification paiement: " + e.getMessage());
-        }
+        paymentVerifier.verifyPayment(request.getPaymentIntentId());
 
         reservation.setPaymentIntentId(request.getPaymentIntentId());
         reservation.setStatus(ReservationStatus.CONFIRMED);
@@ -190,7 +178,7 @@ public class ReservationController {
     @GetMapping("/me")
     public List<ReservationResponseDto> getMyReservations(Authentication authentication) {
         if (authentication == null || authentication.getName() == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non connecté");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non connectÃ©");
         }
 
         String email = authentication.getName();
@@ -205,20 +193,26 @@ public class ReservationController {
 
     @GetMapping("/user/{userId}")
     public List<ReservationResponseDto> getByUser(@PathVariable Long userId, Authentication authentication) {
-        if (authentication == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non connecté");
+        if (authentication == null || authentication.getName() == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non connectÇ¸");
         }
+
+        User requester = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utilisateur introuvable"));
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Utilisateur introuvable"));
+
+        if (!requester.getId().equals(userId) && requester.getRole() != Role.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Accès refusé");
+        }
 
         List<Reservation> reservations = reservationRepository.findByUser(user);
         return reservations.stream()
                 .map(ReservationResponseDto::fromEntity)
                 .collect(Collectors.toList());
     }
-
-    @GetMapping("/check-availability")
+@GetMapping("/check-availability")
     public boolean checkAvailability(
             @RequestParam Long espaceId,
             @RequestParam String startDateTime,
@@ -226,8 +220,8 @@ public class ReservationController {
     ) {
         return !reservationRepository.existsOverlappingReservation(
                 espaceId,
-                java.time.LocalDateTime.parse(startDateTime),
-                java.time.LocalDateTime.parse(endDateTime)
+                LocalDateTime.parse(startDateTime),
+                LocalDateTime.parse(endDateTime)
         );
     }
 
@@ -256,7 +250,7 @@ public class ReservationController {
     @DeleteMapping("/{id}/cancel")
     public void cancelReservation(@PathVariable Long id, Authentication authentication) {
         if (authentication == null || authentication.getName() == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non connecté");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Non connectÃ©");
         }
 
         String email = authentication.getName();
@@ -264,21 +258,23 @@ public class ReservationController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utilisateur introuvable"));
 
         Reservation reservation = reservationRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Réservation introuvable"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "RÃ©servation introuvable"));
 
         if (!reservation.getUser().getId().equals(user.getId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Vous ne pouvez pas annuler cette réservation");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Vous ne pouvez pas annuler cette rÃ©servation");
         }
 
-        if (reservation.getStartDateTime().isBefore(java.time.LocalDateTime.now())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La réservation est déjà passée");
+        if (reservation.getStartDateTime().isBefore(LocalDateTime.now())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La rÃ©servation est dÃ©jÃ  passÃ©e");
         }
 
         if (reservation.getStatus() == ReservationStatus.CANCELLED) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cette réservation est déjà annulée");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cette rÃ©servation est dÃ©jÃ  annulÃ©e");
         }
 
         reservation.setStatus(ReservationStatus.CANCELLED);
         reservationRepository.save(reservation);
     }
 }
+
+

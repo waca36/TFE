@@ -87,6 +87,13 @@
             <version>24.0.0</version>
         </dependency>
 
+        <!-- Dotenv pour charger les variables d'environnement depuis .env -->
+        <dependency>
+            <groupId>me.paulschwarz</groupId>
+            <artifactId>spring-dotenv</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>

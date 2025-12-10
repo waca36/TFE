@@ -28,6 +28,9 @@ public class EventRequestDto {
 
     private Double price;
 
+    private Integer minAge;
+    private Integer maxAge;
+
     private EventLocationType locationType;
     private Long spaceId;
     private String externalAddress;
@@ -58,6 +61,12 @@ public class EventRequestDto {
 
     public Double getPrice() { return price; }
     public void setPrice(Double price) { this.price = price; }
+
+    public Integer getMinAge() { return minAge; }
+    public void setMinAge(Integer minAge) { this.minAge = minAge; }
+
+    public Integer getMaxAge() { return maxAge; }
+    public void setMaxAge(Integer maxAge) { this.maxAge = maxAge; }
 
     public EventLocationType getLocationType() { return locationType; }
     public void setLocationType(EventLocationType locationType) { this.locationType = locationType; }

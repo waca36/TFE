@@ -33,6 +33,7 @@
     "to": "To",
     "noData": "No data",
     "all": "All",
+    "viewAll": "View all",
     "view": "View",
     "user": "User",
     "backToSite": "Back to site"
@@ -83,7 +84,9 @@
 
   "spaceType": {
     "salle": "Room",
-    "auditoire": "Auditorium"
+    "SALLE": "Room",
+    "auditoire": "Auditorium",
+    "AUDITOIRE": "Auditorium"
   },
 
   "reservation": {
@@ -383,7 +386,16 @@
     "capacityHint": "Maximum number of participants",
     "priceHint": "Leave empty or 0 for free",
     "eventRejected": "This event was rejected",
-    "modifyAndResubmit": "Modify it and resubmit for approval"
+    "modifyAndResubmit": "Modify it and resubmit for approval",
+    "cancelEvent": "Cancel event",
+    "awaitingApproval": "Awaiting approval",
+    "minAge": "Minimum age",
+    "maxAge": "Maximum age",
+    "childcareRequired": "Childcare needed",
+    "childcarePrice": "Childcare price per child",
+    "childcareCapacity": "Childcare places",
+    "childcareMinAge": "Childcare minimum age",
+    "childcareMaxAge": "Childcare maximum age"
   },
 
   "error": {

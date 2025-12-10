@@ -8,7 +8,7 @@ import ReservationCalendar from "../components/ReservationCalendar";
 import DayTimeSlots from "../components/DayTimeSlots";
 import styles from "./CreateReservationPage.module.css";
 
-const STRIPE_PUBLIC_KEY = "pk_test_51SZtvU43LA5MMUSyvqwMUBrZfuUUVrERUSNHtXE6j60tCbnIc5DTcaKJO1RlgpjgniuXjsFiIJsyM9jjZizdLxxn008fF3zfDs";
+const STRIPE_PUBLIC_KEY = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
 
 export default function CreateReservationPage() {
   const { espaceId } = useParams();
@@ -43,17 +43,16 @@ export default function CreateReservationPage() {
       .finally(() => setLoading(false));
   }, [user, token, espaceId, navigate]);
 
-  const calculateTotalPrice = () => {
-    if (!espace || !selectedDate || !startTime || !endTime) return espace?.basePrice || 0;
+  const calculateHours = () => {
+    if (!selectedDate || !startTime || !endTime) return 1;
 
     const start = new Date(`${selectedDate}T${startTime}`);
     const end = new Date(`${selectedDate}T${endTime}`);
-    const hours = Math.max(1, (end - start) / (1000 * 60 * 60));
-
-    return espace.basePrice * hours;
+    return Math.max(1, (end - start) / (1000 * 60 * 60));
   };
 
-  const totalPrice = calculateTotalPrice();
+  const durationHours = calculateHours();
+  const totalPrice = espace ? espace.basePrice * durationHours : 0;
 
   const handleDateSelect = (date) => {
     setSelectedDate(date);
@@ -202,9 +201,10 @@ export default function CreateReservationPage() {
             token={token}
             amount={totalPrice}
             description={`${t("reservation.newReservation")}: ${espace.name} - ${selectedDate} ${startTime} ${t("common.to").toLowerCase()} ${endTime}`}
-            reservationType="ESPACE"
+            reservationType="SPACE"
             metadata={{
               espaceId: Number(espaceId),
+              hours: durationHours,
             }}
             onSuccess={handlePaymentSuccess}
             onCancel={handlePaymentCancel}
