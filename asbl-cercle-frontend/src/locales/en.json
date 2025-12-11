@@ -223,7 +223,8 @@
     "sortBy": "Sort by",
     "sortByDate": "Date",
     "sortByPriceAsc": "Price ascending",
-    "sortByPriceDesc": "Price descending"
+    "sortByPriceDesc": "Price descending",
+    "full": "Full"
   },
 
   "childcare": {

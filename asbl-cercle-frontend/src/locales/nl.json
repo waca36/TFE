@@ -216,7 +216,8 @@
                    "sortBy":  "Sorteren op",
                    "sortByDate":  "Datum",
                    "sortByPriceAsc":  "Prijs oplopend",
-                   "sortByPriceDesc":  "Prijs aflopend"
+                   "sortByPriceDesc":  "Prijs aflopend",
+                   "full":  "Volzet"
                },
     "childcare":  {
                       "title":  "Kinderopvang - Beschikbare sessies",

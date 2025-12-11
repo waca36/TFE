@@ -126,51 +126,60 @@ export default function EventsPage() {
       {filteredAndSortedEvents.length === 0 && <p className={styles.empty}>{t("events.noEvents")}</p>}
 
       <div className={styles.grid}>
-        {filteredAndSortedEvents.map((ev) => (
-          <div key={ev.id} className={styles.card}>
-            <div className={styles.cardHeader}>
-              <div>
-                <p className={styles.date}>{formatRange(ev.startDateTime, ev.endDateTime)}</p>
-                <h2 className={styles.cardTitle}>{ev.title}</h2>
+        {filteredAndSortedEvents.map((ev) => {
+          const isFull = ev.availablePlaces !== null && ev.availablePlaces !== undefined && ev.availablePlaces <= 0;
+
+          return (
+            <div key={ev.id} className={`${styles.card} ${isFull ? styles.cardFull : ""}`}>
+              <div className={styles.cardHeader}>
+                <div>
+                  <p className={styles.date}>{formatRange(ev.startDateTime, ev.endDateTime)}</p>
+                  <h2 className={styles.cardTitle}>{ev.title}</h2>
+                </div>
+                <div className={styles.tags}>
+                  {isFull && <span className={`${styles.tag} ${styles.tagFull}`}>{t("events.full")}</span>}
+                  {ev.garderieSessionId && <span className={`${styles.tag} ${styles.tagGarderie}`}>{t("events.childcareAvailable")}</span>}
+                  {ev.price && ev.price > 0 ? (
+                    <span className={`${styles.tag} ${styles.tagPricePaid}`}>{ev.price} {EURO}</span>
+                  ) : (
+                    <span className={`${styles.tag} ${styles.tagPriceFree}`}>{t("events.free")}</span>
+                  )}
+                </div>
               </div>
-              <div className={styles.tags}>
-                {ev.garderieSessionId && <span className={`${styles.tag} ${styles.tagGarderie}`}>{t("events.childcareAvailable")}</span>}
-                {ev.price && ev.price > 0 ? (
-                  <span className={`${styles.tag} ${styles.tagPricePaid}`}>{ev.price} {EURO}</span>
+
+              <p className={styles.desc}>{ev.description}</p>
+
+              <div className={styles.metaRow}>
+                <div className={styles.meta}>
+                  <span className={styles.metaLabel}>{t("common.location")}</span>
+                  <span className={styles.metaValue}>{ev.location || t("common.toBeAnnounced")}</span>
+                </div>
+                <div className={styles.meta}>
+                  <span className={styles.metaLabel}>{t("common.capacity")}</span>
+                  <span className={`${styles.capacity} ${isFull ? styles.capacityFull : ""}`}>
+                    {ev.availablePlaces ?? ev.capacity} / {ev.capacity} {t("common.persons")}
+                  </span>
+                </div>
+              </div>
+
+              <div className={styles.actions}>
+                {isFull ? (
+                  <span className={styles.buttonDisabled}>
+                    {t("events.full")}
+                  </span>
+                ) : user ? (
+                  <Link to={`/events/register/${ev.id}`} className={styles.button}>
+                    {t("events.register")}
+                  </Link>
                 ) : (
-                  <span className={`${styles.tag} ${styles.tagPriceFree}`}>{t("events.free")}</span>
+                  <Link to="/login" className={styles.buttonSecondary}>
+                    {t("events.loginToRegister")}
+                  </Link>
                 )}
               </div>
             </div>
-
-            <p className={styles.desc}>{ev.description}</p>
-
-            <div className={styles.metaRow}>
-              <div className={styles.meta}>
-                <span className={styles.metaLabel}>{t("common.location")}</span>
-                <span className={styles.metaValue}>{ev.location || t("common.toBeAnnounced")}</span>
-              </div>
-              <div className={styles.meta}>
-                <span className={styles.metaLabel}>{t("common.capacity")}</span>
-                <span className={styles.capacity}>
-                  {ev.availablePlaces ?? ev.capacity} / {ev.capacity} {t("common.persons")}
-                </span>
-              </div>
-            </div>
-
-            <div className={styles.actions}>
-              {user ? (
-                <Link to={`/events/register/${ev.id}`} className={styles.button}>
-                  {t("events.register")}
-                </Link>
-              ) : (
-                <Link to="/login" className={styles.buttonSecondary}>
-                  {t("events.loginToRegister")}
-                </Link>
-              )}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

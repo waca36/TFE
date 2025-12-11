@@ -217,7 +217,8 @@
         "sortBy": "Trier par",
         "sortByDate": "Date",
         "sortByPriceAsc": "Prix croissant",
-        "sortByPriceDesc": "Prix décroissant"
+        "sortByPriceDesc": "Prix décroissant",
+        "full": "Complet"
     },
     "childcare": {
         "title": "Garderie - Sessions disponibles",
