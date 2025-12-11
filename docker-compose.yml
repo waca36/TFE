@@ -1,0 +1,45 @@
+services:
+  db:
+    image: mysql:8
+    container_name: asbl-cercle-db
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: asbl_cercle
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysql", "-uroot", "-e", "SELECT 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+
+  backend:
+    build: ./asbl-cercle
+    container_name: asbl-cercle-backend
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:mysql://db:3306/asbl_cercle?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Europe/Brussels
+      DB_USERNAME: root
+      DB_PASSWORD: ""
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./asbl-cercle-frontend
+    container_name: asbl-cercle-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./asbl-cercle-frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:

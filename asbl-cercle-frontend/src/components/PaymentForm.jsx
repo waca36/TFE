@@ -58,7 +58,24 @@ function CheckoutForm({ amount, description, reservationType, metadata, onSucces
       });
 
       if (!response.ok) {
-        throw new Error(`Erreur ${response.status}`);
+        let errorMessage = t("payment.error");
+        try {
+          const errorData = await response.json();
+          if (errorData?.message) {
+            errorMessage = errorData.message;
+          } else if (errorData?.error) {
+            errorMessage = errorData.error;
+          } else if (typeof errorData === "string") {
+            errorMessage = errorData;
+          }
+        } catch {
+          // Si le JSON échoue, essayer le texte brut
+          try {
+            const text = await response.text();
+            if (text) errorMessage = text;
+          } catch {}
+        }
+        throw new Error(errorMessage);
       }
 
       const { clientSecret } = await response.json();
@@ -75,7 +92,7 @@ function CheckoutForm({ amount, description, reservationType, metadata, onSucces
         onSuccess(result.paymentIntent.id);
       }
     } catch (err) {
-      setError(t("payment.error") + " " + err.message);
+      setError(err.message);
     } finally {
       setLoading(false);
     }

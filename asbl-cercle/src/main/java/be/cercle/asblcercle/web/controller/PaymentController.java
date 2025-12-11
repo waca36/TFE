@@ -5,10 +5,16 @@ import be.cercle.asblcercle.entity.Event;
 import be.cercle.asblcercle.entity.Espace;
 import be.cercle.asblcercle.entity.GarderieSession;
 import be.cercle.asblcercle.entity.Reservation;
+import be.cercle.asblcercle.entity.User;
+import be.cercle.asblcercle.entity.EventRegistrationStatus;
 import be.cercle.asblcercle.repository.EventRepository;
 import be.cercle.asblcercle.repository.EspaceRepository;
+import be.cercle.asblcercle.repository.EventRegistrationRepository;
 import be.cercle.asblcercle.repository.GarderieSessionRepository;
 import be.cercle.asblcercle.repository.ReservationRepository;
+import be.cercle.asblcercle.repository.UserRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import be.cercle.asblcercle.web.dto.PaymentRequest;
 import be.cercle.asblcercle.web.dto.PaymentResponse;
 import com.stripe.exception.StripeException;
@@ -39,23 +45,43 @@ public class PaymentController {
     private final EspaceRepository espaceRepository;
     private final GarderieSessionRepository garderieSessionRepository;
     private final ReservationRepository reservationRepository;
+    private final EventRegistrationRepository eventRegistrationRepository;
+    private final UserRepository userRepository;
     private final PaymentVerifier paymentVerifier;
 
     public PaymentController(EventRepository eventRepository,
                              EspaceRepository espaceRepository,
                              GarderieSessionRepository garderieSessionRepository,
                              ReservationRepository reservationRepository,
+                             EventRegistrationRepository eventRegistrationRepository,
+                             UserRepository userRepository,
                              PaymentVerifier paymentVerifier) {
         this.eventRepository = eventRepository;
         this.espaceRepository = espaceRepository;
         this.garderieSessionRepository = garderieSessionRepository;
         this.reservationRepository = reservationRepository;
+        this.eventRegistrationRepository = eventRegistrationRepository;
+        this.userRepository = userRepository;
         this.paymentVerifier = paymentVerifier;
     }
 
     @PostMapping("/create-payment-intent")
     public ResponseEntity<PaymentResponse> createPaymentIntent(@RequestBody PaymentRequest request) {
         try {
+            // Vérifier si l'utilisateur est déjà inscrit à l'événement
+            if ("EVENT".equalsIgnoreCase(request.getReservationType()) && request.getEventId() != null) {
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                String email = auth.getName();
+                User user = userRepository.findByEmail(email)
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Utilisateur non trouvé"));
+                Event event = eventRepository.findById(request.getEventId())
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Événement introuvable"));
+
+                if (eventRegistrationRepository.existsByUserAndEventAndStatusNot(user, event, EventRegistrationStatus.CANCELLED)) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Vous êtes déjà inscrit à cet événement");
+                }
+            }
+
             Long calculatedAmount = calculateServerSideAmount(request);
 
             if (request.getAmount() != null && !request.getAmount().equals(calculatedAmount)) {
