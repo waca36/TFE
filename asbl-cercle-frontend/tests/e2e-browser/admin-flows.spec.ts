@@ -10,10 +10,8 @@ test.describe.serial("E2E Admin Flows", () => {
     await ensureLoggedOut(page);
     await login(page, ADMIN_EMAIL, ADMIN_PASSWORD);
 
-    // Navigate to admin dashboard
     await page.goto(`${BASE_URL}/admin`);
 
-    // Dashboard should load - check we're on admin page
     await expect(page).toHaveURL(/admin/);
     await expect(page.locator('body')).toBeVisible();
 
@@ -26,7 +24,6 @@ test.describe.serial("E2E Admin Flows", () => {
 
     await page.goto(`${BASE_URL}/admin`);
 
-    // Click on users tab
     const usersTab = page.getByRole('button', { name: /users|utilisateurs/i }).first();
     if (await usersTab.isVisible({ timeout: 3000 }).catch(() => false)) {
       await usersTab.click();
@@ -42,7 +39,6 @@ test.describe.serial("E2E Admin Flows", () => {
 
     await page.goto(`${BASE_URL}/admin`);
 
-    // Click on spaces tab
     const spacesTab = page.getByRole('button', { name: /spaces|espaces/i }).first();
     if (await spacesTab.isVisible({ timeout: 3000 }).catch(() => false)) {
       await spacesTab.click();
@@ -58,7 +54,6 @@ test.describe.serial("E2E Admin Flows", () => {
 
     await page.goto(`${BASE_URL}/admin`);
 
-    // Click on events tab
     const eventsTab = page.getByRole('button', { name: /events|événements/i }).first();
     if (await eventsTab.isVisible({ timeout: 3000 }).catch(() => false)) {
       await eventsTab.click();
@@ -74,7 +69,6 @@ test.describe.serial("E2E Admin Flows", () => {
 
     await page.goto(`${BASE_URL}/admin`);
 
-    // Click on pending events tab
     const pendingTab = page.getByRole('button', { name: /pending|attente/i }).first();
     if (await pendingTab.isVisible({ timeout: 3000 }).catch(() => false)) {
       await pendingTab.click();

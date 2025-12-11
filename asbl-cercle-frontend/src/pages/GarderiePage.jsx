@@ -28,7 +28,7 @@ export default function GarderiePage() {
 
       {user && (
         <p className={styles.linkRow}>
-          <Link to="/garderie/my" className={styles.linkGhost}>
+          <Link to="/my-reservations?tab=childcare" className={styles.linkGhost}>
             ← {t("childcare.viewMyReservations")}
           </Link>
         </p>

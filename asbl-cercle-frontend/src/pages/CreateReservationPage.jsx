@@ -136,7 +136,7 @@ export default function CreateReservationPage() {
       );
 
       alert(t("reservation.pendingApprovalMessage"));
-      navigate("/reservations");
+      navigate("/my-reservations?tab=spaces");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -164,7 +164,7 @@ export default function CreateReservationPage() {
       );
 
       alert(t("payment.success"));
-      navigate("/reservations");
+      navigate("/my-reservations?tab=spaces");
     } catch (err) {
       setError(err.message);
       setShowPayment(false);

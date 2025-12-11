@@ -73,6 +73,7 @@
   },
 
   "nav": {
+    "home": "Home",
     "spaces": "Spaces",
     "events": "Events",
     "childcare": "Childcare",

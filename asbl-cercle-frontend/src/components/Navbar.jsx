@@ -16,6 +16,38 @@ export default function Navbar() {
 
   return (
     <header className={styles.header}>
+      {/* Top bar - auth & language */}
+      <div className={styles.topBar}>
+        <div className={styles.topBarContent}>
+          <LanguageSwitcher />
+          <div className={styles.authSection}>
+            {user ? (
+              <>
+                <span className={styles.greeting}>
+                  {t("nav.hello")}, <b>{user.firstName}</b>
+                </span>
+                <Link to="/profile" className={styles.topLink}>
+                  {t("nav.profile")}
+                </Link>
+                <button onClick={handleLogout} className={styles.topButton}>
+                  {t("nav.logout")}
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className={styles.topLink}>
+                  {t("nav.login")}
+                </Link>
+                <Link to="/register" className={styles.topCta}>
+                  {t("nav.register")}
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Main navbar */}
       <div className={styles.bar}>
         <Link to="/" className={styles.logo}>
           <div className={styles.logoMark}>
@@ -29,7 +61,7 @@ export default function Navbar() {
 
         <nav className={styles.nav}>
           <Link to="/" className={styles.link}>
-            Accueil
+            {t("nav.home")}
           </Link>
           <Link to="/espace" className={styles.link}>
             {t("nav.spaces")}
@@ -49,43 +81,16 @@ export default function Navbar() {
 
           {user && (user.role === "ORGANIZER" || user.role === "ADMIN") && (
             <Link to="/organizer/events" className={styles.highlightLink}>
-              <span className={styles.chip}>Organisateur</span> {t("nav.organizerEvents")}
+              {t("nav.organizerEvents")}
             </Link>
           )}
 
           {user?.role === "ADMIN" && (
             <Link to="/admin" className={styles.adminLink}>
-              <span className={styles.adminChip}>Admin</span> {t("nav.admin")}
+              {t("nav.admin")}
             </Link>
           )}
         </nav>
-
-        <div className={styles.rightSection}>
-          <LanguageSwitcher />
-
-          {user ? (
-            <>
-              <span className={styles.greeting}>
-                {t("nav.hello")}, <b>{user.firstName}</b>
-              </span>
-              <Link to="/profile" className={styles.link}>
-                {t("nav.profile")}
-              </Link>
-              <button onClick={handleLogout} className={styles.button}>
-                {t("nav.logout")}
-              </button>
-            </>
-          ) : (
-            <>
-              <Link to="/login" className={styles.link}>
-                {t("nav.login")}
-              </Link>
-              <Link to="/register" className={styles.cta}>
-                {t("nav.register")}
-              </Link>
-            </>
-          )}
-        </div>
       </div>
     </header>
   );

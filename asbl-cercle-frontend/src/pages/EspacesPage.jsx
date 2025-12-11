@@ -21,6 +21,11 @@ export default function EspacesPage() {
           <h1>{t('spaces.title')}</h1>
           {user && <p className={styles.subtitle}>{t('spaces.welcome')} {user.firstName}</p>}
         </div>
+        {user && (
+          <Link to="/my-reservations?tab=spaces" className={styles.linkGhost}>
+            ← {t('reservation.myReservations')}
+          </Link>
+        )}
       </div>
 
       {espaces.length === 0 ? (

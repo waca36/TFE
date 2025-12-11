@@ -67,7 +67,7 @@ export default function GarderieReservePage() {
       }
 
       alert(t("payment.success"));
-      navigate("/garderie/my");
+      navigate("/my-reservations?tab=childcare");
     } catch (err) {
       setError(err.message);
       setShowPayment(false);

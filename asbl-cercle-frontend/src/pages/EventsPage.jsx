@@ -73,7 +73,7 @@ export default function EventsPage() {
         </div>
         <div>
           {user ? (
-            <Link to="/events/my" className={styles.linkGhost}>
+            <Link to="/my-reservations?tab=events" className={styles.linkGhost}>
               ← {t("events.viewMyRegistrations")}
             </Link>
           ) : (

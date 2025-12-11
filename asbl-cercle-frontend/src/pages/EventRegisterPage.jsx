@@ -87,7 +87,7 @@ export default function EventRegisterPage() {
       }
 
       alert(requiresPayment ? t("payment.success") : t("events.registrationSuccess"));
-      navigate("/events/my");
+      navigate("/my-reservations?tab=events");
     } catch (err) {
       setError(err.message);
       setShowPayment(false);

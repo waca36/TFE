@@ -7,18 +7,14 @@ const USER_PASSWORD = "123456@789";
 
 test.describe.serial("E2E User Flows", () => {
   test("User can view events page", async ({ page }) => {
-    // Ensure logged out, then login
     await ensureLoggedOut(page);
     await login(page, USER_EMAIL, USER_PASSWORD);
 
-    // Navigate to events
     await page.goto(`${BASE_URL}/events`);
 
-    // Page should load (check body is visible)
     await expect(page.locator('body')).toBeVisible();
     await expect(page).toHaveURL(/events/);
 
-    // Logout
     await logout(page);
   });
 
@@ -26,10 +22,8 @@ test.describe.serial("E2E User Flows", () => {
     await ensureLoggedOut(page);
     await login(page, USER_EMAIL, USER_PASSWORD);
 
-    // Navigate to spaces
     await page.goto(`${BASE_URL}/espaces`);
 
-    // Page should load
     await expect(page.locator('body')).toBeVisible();
     await expect(page).toHaveURL(/espaces/);
 
@@ -40,10 +34,8 @@ test.describe.serial("E2E User Flows", () => {
     await ensureLoggedOut(page);
     await login(page, USER_EMAIL, USER_PASSWORD);
 
-    // Navigate to my reservations
     await page.goto(`${BASE_URL}/my-reservations`);
 
-    // Page should load
     await expect(page.locator('body')).toBeVisible();
 
     await logout(page);
@@ -53,10 +45,8 @@ test.describe.serial("E2E User Flows", () => {
     await ensureLoggedOut(page);
     await login(page, USER_EMAIL, USER_PASSWORD);
 
-    // Navigate to garderie
     await page.goto(`${BASE_URL}/garderie`);
 
-    // Page should load
     await expect(page.locator('body')).toBeVisible();
     await expect(page).toHaveURL(/garderie/);
 

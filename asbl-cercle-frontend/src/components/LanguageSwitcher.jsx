@@ -1,11 +1,7 @@
 import { useTranslation } from "react-i18next";
 import styles from "./LanguageSwitcher.module.css";
 
-const languages = [
-  { code: "fr", label: "FR" },
-  { code: "en", label: "EN" },
-  { code: "nl", label: "NL" },
-];
+const languages = ["fr", "en", "nl"];
 
 export default function LanguageSwitcher() {
   const { i18n } = useTranslation();
@@ -17,17 +13,19 @@ export default function LanguageSwitcher() {
     return "en";
   };
 
-  const handleChange = (e) => {
-    i18n.changeLanguage(e.target.value);
-  };
+  const currentLang = getCurrentLang();
 
   return (
-    <select value={getCurrentLang()} onChange={handleChange} className={styles.select}>
+    <div className={styles.switcher}>
       {languages.map((lang) => (
-        <option key={lang.code} value={lang.code}>
-          {lang.label}
-        </option>
+        <button
+          key={lang}
+          onClick={() => i18n.changeLanguage(lang)}
+          className={`${styles.btn} ${currentLang === lang ? styles.active : ""}`}
+        >
+          {lang.toUpperCase()}
+        </button>
       ))}
-    </select>
+    </div>
   );
 }
