@@ -12,14 +12,12 @@ import AdminEspaceForm from "./pages/AdminEspaceForm";
 import AdminReservationsPage from "./pages/AdminReservationsPage";
 import EventsPage from "./pages/EventsPage";
 import EventRegisterPage from "./pages/EventRegisterPage";
-import MyEventRegistrationsPage from "./pages/MyEventRegistrationsPage";
 import AdminEventsDashboard from "./pages/AdminEventsDashboard";
 import AdminEventForm from "./pages/AdminEventForm";
 import AdminPendingEventsPage from "./pages/AdminPendingEventsPage";
 import AdminPendingReservationsPage from "./pages/AdminPendingReservationsPage";
 import GarderiePage from "./pages/GarderiePage";
 import GarderieReservePage from "./pages/GarderieReservePage";
-import MyGarderieReservationsPage from "./pages/MyGarderieReservationsPage";
 import AdminGarderieDashboard from "./pages/AdminGarderieDashboard";
 import AdminGarderieForm from "./pages/AdminGarderieForm";
 import ProfilePage from "./pages/ProfilePage";
@@ -54,7 +52,7 @@ export default function App() {
       />
 
       <Route
-        path="/reservations"
+        path="/my-reservations"
         element={
           <Layout>
             <MyReservationsPage />
@@ -90,15 +88,6 @@ export default function App() {
       />
 
       <Route
-        path="/events/my"
-        element={
-          <Layout>
-            <MyEventRegistrationsPage />
-          </Layout>
-        }
-      />
-
-      <Route
         path="/garderie"
         element={
           <Layout>
@@ -112,15 +101,6 @@ export default function App() {
         element={
           <Layout>
             <GarderieReservePage />
-          </Layout>
-        }
-      />
-
-      <Route
-        path="/garderie/my"
-        element={
-          <Layout>
-            <MyGarderieReservationsPage />
           </Layout>
         }
       />

@@ -42,17 +42,9 @@ export default function Navbar() {
           </Link>
 
           {user && (
-            <>
-              <Link to="/reservations" className={styles.link}>
-                {t("nav.myReservations")}
-              </Link>
-              <Link to="/events/my" className={styles.link}>
-                {t("nav.myEvents")}
-              </Link>
-              <Link to="/garderie/my" className={styles.link}>
-                {t("nav.myChildcare")}
-              </Link>
-            </>
+            <Link to="/my-reservations" className={styles.link}>
+              {t("nav.myReservations")}
+            </Link>
           )}
 
           {user && (user.role === "ORGANIZER" || user.role === "ADMIN") && (

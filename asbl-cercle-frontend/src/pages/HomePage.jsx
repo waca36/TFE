@@ -1,62 +1,56 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import styles from "./HomePage.module.css";
 
 export default function HomePage() {
+  const { t } = useTranslation();
+
   return (
     <div className={styles.page}>
       <section className={styles.hero}>
         <div className={styles.heroText}>
-          <p className={styles.kicker}>ASBL CERCLE</p>
-          <h1 className={styles.title}>
-            Des espaces, des événements et des services pour faire vivre votre communauté.
-          </h1>
-          <p className={styles.lead}>
-            Cercle est une ASBL dédiée à la mise à disposition d'espaces adaptés, à l'organisation
-            d'événements associatifs et à l'accompagnement des familles grâce à un service de
-            garderie fiable.
-          </p>
+          <p className={styles.kicker}>{t("home.kicker")}</p>
+          <h1 className={styles.title}>{t("home.title")}</h1>
+          <p className={styles.lead}>{t("home.lead")}</p>
           <div className={styles.actions}>
             <Link to="/espace" className={styles.cta}>
-              Réserver un espace
+              {t("home.reserveSpace")}
             </Link>
             <Link to="/events" className={styles.secondary}>
-              Découvrir les événements
+              {t("home.discoverEvents")}
             </Link>
           </div>
           <div className={styles.badges}>
-            <span className={styles.pill}>Gestion simple</span>
-            <span className={styles.pill}>Accompagnement sur mesure</span>
-            <span className={styles.pill}>Communauté engagée</span>
+            <span className={styles.pill}>{t("home.badge1")}</span>
+            <span className={styles.pill}>{t("home.badge2")}</span>
+            <span className={styles.pill}>{t("home.badge3")}</span>
           </div>
         </div>
         <div className={styles.heroCard}>
           <div className={styles.heroCardHeader}>
-            <h2 className={styles.heroCardTitle}>Nos missions</h2>
-            <p className={styles.heroCardText}>
-              Offrir des lieux, des événements et des services éducatifs pour renforcer le lien
-              social.
-            </p>
+            <h2 className={styles.heroCardTitle}>{t("home.missionsTitle")}</h2>
+            <p className={styles.heroCardText}>{t("home.missionsText")}</p>
           </div>
           <ul className={styles.list}>
             <li className={styles.listItem}>
               <div className={styles.bullet} />
               <div>
-                <strong className={styles.listTitle}>Espaces modulables</strong>
-                <p className={styles.listText}>Salles équipées pour formations, réunions, ateliers et culture.</p>
+                <strong className={styles.listTitle}>{t("home.mission1Title")}</strong>
+                <p className={styles.listText}>{t("home.mission1Text")}</p>
               </div>
             </li>
             <li className={styles.listItem}>
               <div className={styles.bullet} />
               <div>
-                <strong className={styles.listTitle}>Programmation événementielle</strong>
-                <p className={styles.listText}>Agenda associatif, conférences, activités jeunesse et culturelles.</p>
+                <strong className={styles.listTitle}>{t("home.mission2Title")}</strong>
+                <p className={styles.listText}>{t("home.mission2Text")}</p>
               </div>
             </li>
             <li className={styles.listItem}>
               <div className={styles.bullet} />
               <div>
-                <strong className={styles.listTitle}>Service garderie</strong>
-                <p className={styles.listText}>Accueil encadré pour les enfants pendant vos activités.</p>
+                <strong className={styles.listTitle}>{t("home.mission3Title")}</strong>
+                <p className={styles.listText}>{t("home.mission3Text")}</p>
               </div>
             </li>
           </ul>
@@ -65,38 +59,29 @@ export default function HomePage() {
 
       <section className={styles.grid}>
         <div className={styles.card}>
-          <div className={styles.cardTag}>Espaces</div>
-          <h3 className={styles.cardTitle}>Des lieux prêts à accueillir vos projets</h3>
-          <p className={styles.cardText}>
-            Choisissez parmi nos salles adaptées (réunion, conférence, ateliers). Equipements, capacité
-            et tarifs transparents pour une organisation fluide.
-          </p>
+          <div className={styles.cardTag}>{t("home.spacesTag")}</div>
+          <h3 className={styles.cardTitle}>{t("home.spacesTitle")}</h3>
+          <p className={styles.cardText}>{t("home.spacesText")}</p>
           <Link to="/espace" className={styles.link}>
-            Voir les espaces →
+            {t("home.spacesLink")}
           </Link>
         </div>
 
         <div className={styles.card}>
-          <div className={styles.cardTag}>Événements</div>
-          <h3 className={styles.cardTitle}>Un agenda associatif vivant</h3>
-          <p className={styles.cardText}>
-            Participez ou proposez un événement. Notre équipe accompagne la validation, la mise en
-            ligne et la gestion des inscriptions.
-          </p>
+          <div className={styles.cardTag}>{t("home.eventsTag")}</div>
+          <h3 className={styles.cardTitle}>{t("home.eventsTitle")}</h3>
+          <p className={styles.cardText}>{t("home.eventsText")}</p>
           <Link to="/events" className={styles.link}>
-            Découvrir le programme →
+            {t("home.eventsLink")}
           </Link>
         </div>
 
         <div className={styles.card}>
-          <div className={styles.cardTag}>Garderie</div>
-          <h3 className={styles.cardTitle}>Confiance et sérénité pour les parents</h3>
-          <p className={styles.cardText}>
-            Réservez un créneau garderie lors de vos activités. Encadrement qualifié, horaires souples,
-            communication claire avec les familles.
-          </p>
+          <div className={styles.cardTag}>{t("home.garderieTag")}</div>
+          <h3 className={styles.cardTitle}>{t("home.garderieTitle")}</h3>
+          <p className={styles.cardText}>{t("home.garderieText")}</p>
           <Link to="/garderie" className={styles.link}>
-            Réserver une garderie →
+            {t("home.garderieLink")}
           </Link>
         </div>
       </section>
