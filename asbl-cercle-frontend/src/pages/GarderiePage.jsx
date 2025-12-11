@@ -63,10 +63,10 @@ export default function GarderiePage() {
                   <td>
                     {s.availablePlaces !== undefined ? (
                       <span className={isFull ? styles.full : styles.available}>
-                        {s.availablePlaces} / {s.capacity}
+                        {s.capacity - s.availablePlaces} / {s.capacity}
                       </span>
                     ) : (
-                      s.capacity
+                      `0 / ${s.capacity}`
                     )}
                   </td>
                   <td>

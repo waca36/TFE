@@ -24,7 +24,12 @@ import styles from "./AdminDashboard.module.css";
 export default function AdminDashboard() {
   const { user, token } = useAuth();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const getDateLocale = () => {
+    const locales = { fr: "fr-BE", nl: "nl-BE", en: "en-GB" };
+    return locales[i18n.language] || "fr-BE";
+  };
 
   const [activeTab, setActiveTab] = useState("overview");
   const [loading, setLoading] = useState(true);
@@ -321,7 +326,7 @@ export default function AdminDashboard() {
               <div key={e.id} className={styles.card}>
                 <div className={styles.cardHeader}>
                   <div>
-                    <p className={styles.cardDate}>{new Date(e.startDateTime).toLocaleString("fr-BE")}</p>
+                    <p className={styles.cardDate}>{new Date(e.startDateTime).toLocaleString(getDateLocale())}</p>
                     <h3 className={styles.cardTitle}>{e.title}</h3>
                     <p className={styles.cardMeta}>
                       {t("organizer.createdBy")}: {e.createdByName}
@@ -493,7 +498,7 @@ export default function AdminDashboard() {
                 {events.map((e) => (
                   <tr key={e.id}>
                     <td>{e.title}</td>
-                    <td>{new Date(e.startDateTime).toLocaleString("fr-BE")}</td>
+                    <td>{new Date(e.startDateTime).toLocaleString(getDateLocale())}</td>
                     <td>{e.price ? `${e.price} €` : t("events.free")}</td>
                     <td>
                       <Link to={`/admin/events/${e.id}/edit`} className={styles.btnGhostSmall}>
@@ -576,7 +581,7 @@ export default function AdminDashboard() {
                   <tr key={r.id}>
                     <td>{r.espaceName}</td>
                     <td>{r.userEmail}</td>
-                    <td>{new Date(r.startDateTime).toLocaleString("fr-BE")}</td>
+                    <td>{new Date(r.startDateTime).toLocaleString(getDateLocale())}</td>
                     <td>{r.totalPrice} €</td>
                   </tr>
                 ))}
@@ -604,7 +609,7 @@ export default function AdminDashboard() {
                   <tr key={r.id}>
                     <td>{r.eventTitle}</td>
                     <td>{r.userEmail}</td>
-                    <td>{new Date(r.eventDate).toLocaleString("fr-BE")}</td>
+                    <td>{new Date(r.eventDate).toLocaleString(getDateLocale())}</td>
                     <td>{r.totalPrice} €</td>
                   </tr>
                 ))}

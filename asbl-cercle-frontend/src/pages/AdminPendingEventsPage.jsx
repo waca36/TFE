@@ -8,7 +8,12 @@ import styles from "./AdminPendingEventsPage.module.css";
 export default function AdminPendingEventsPage() {
   const { user, token } = useAuth();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const getDateLocale = () => {
+    const locales = { fr: "fr-BE", nl: "nl-BE", en: "en-GB" };
+    return locales[i18n.language] || "fr-BE";
+  };
 
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -89,7 +94,7 @@ export default function AdminPendingEventsPage() {
                   <strong>{t("organizer.createdBy")}:</strong> {e.createdByName}
                 </p>
                 <p>
-                  <strong>{t("common.date")}:</strong> {new Date(e.startDateTime).toLocaleString("fr-BE")}
+                  <strong>{t("common.date")}:</strong> {new Date(e.startDateTime).toLocaleString(getDateLocale())}
                 </p>
                 <p>
                   <strong>{t("events.location")}:</strong> {e.location || "-"}

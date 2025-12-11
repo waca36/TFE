@@ -8,7 +8,12 @@ import styles from "./OrganizerEventsPage.module.css";
 export default function OrganizerEventsPage() {
   const { user, token } = useAuth();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const getDateLocale = () => {
+    const locales = { fr: "fr-BE", nl: "nl-BE", en: "en-GB" };
+    return locales[i18n.language] || "fr-BE";
+  };
 
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -143,7 +148,7 @@ export default function OrganizerEventsPage() {
               <div className={styles.eventDetails}>
                 <div className={styles.eventDetail}>
                   <span className={styles.detailIcon}>📅</span>
-                  {new Date(e.startDateTime).toLocaleString("fr-BE")} — {new Date(e.endDateTime).toLocaleTimeString("fr-BE")}
+                  {new Date(e.startDateTime).toLocaleString(getDateLocale())} — {new Date(e.endDateTime).toLocaleTimeString(getDateLocale())}
                 </div>
                 <div className={styles.eventDetail}>
                   <span className={styles.detailIcon}>📍</span>

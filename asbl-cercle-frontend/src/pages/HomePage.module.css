@@ -17,12 +17,6 @@
   border-radius: var(--radius-xl);
   padding: 2.5rem;
   box-shadow: var(--shadow-medium);
-  transition: all var(--transition-slow);
-}
-
-.heroText:hover {
-  box-shadow: var(--shadow-strong);
-  transform: translateY(-2px);
 }
 
 .kicker {
@@ -122,12 +116,6 @@
   font-weight: 500;
   font-size: 0.8rem;
   border: 1px solid var(--border);
-  transition: all var(--transition-fast);
-}
-
-.pill:hover {
-  background: rgba(30, 52, 85, 0.1);
-  border-color: var(--border-hover);
 }
 
 .heroCard {
@@ -139,12 +127,6 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  transition: all var(--transition-slow);
-}
-
-.heroCard:hover {
-  box-shadow: var(--shadow-strong);
-  transform: translateY(-2px);
 }
 
 .heroCardHeader {
@@ -183,11 +165,6 @@
   align-items: flex-start;
   padding: 0.75rem;
   border-radius: var(--radius-md);
-  transition: background var(--transition-fast);
-}
-
-.listItem:hover {
-  background: rgba(30, 52, 85, 0.03);
 }
 
 .bullet {

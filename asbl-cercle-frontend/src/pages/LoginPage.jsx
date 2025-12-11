@@ -3,6 +3,7 @@ import { loginRequest } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 import styles from "./LoginPage.module.css";
 
 export default function LoginPage() {
@@ -27,6 +28,9 @@ export default function LoginPage() {
 
   return (
     <div className={styles.container}>
+      <div className={styles.languageSwitcherWrapper}>
+        <LanguageSwitcher />
+      </div>
       <div className={styles.card}>
         <h1 className={styles.title}>{t("auth.login")}</h1>
         <form onSubmit={submit}>

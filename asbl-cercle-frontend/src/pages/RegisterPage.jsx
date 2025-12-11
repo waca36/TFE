@@ -3,6 +3,7 @@ import { registerRequest } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 import styles from "./RegisterPage.module.css";
 
 export default function RegisterPage() {
@@ -34,6 +35,9 @@ export default function RegisterPage() {
 
   return (
     <div className={styles.container}>
+      <div className={styles.languageSwitcherWrapper}>
+        <LanguageSwitcher />
+      </div>
       <div className={styles.card}>
         <h1 className={styles.title}>{t("auth.register")}</h1>
         <form onSubmit={submit}>

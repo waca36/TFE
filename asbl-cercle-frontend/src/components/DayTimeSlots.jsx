@@ -13,9 +13,14 @@ export default function DayTimeSlots({
   selectedStartTime,
   selectedEndTime,
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const getDateLocale = () => {
+    const locales = { fr: "fr-BE", nl: "nl-BE", en: "en-GB" };
+    return locales[i18n.language] || "fr-BE";
+  };
 
   useEffect(() => {
     if (!espaceId || !selectedDate) return;
@@ -83,7 +88,7 @@ export default function DayTimeSlots({
 
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString(undefined, {
+    return date.toLocaleDateString(getDateLocale(), {
       weekday: "long",
       year: "numeric",
       month: "long",
@@ -125,7 +130,7 @@ export default function DayTimeSlots({
           return (
             <div key={hour} className={slotClass} onClick={() => handleHourClick(hour)} aria-disabled={past}>
               <span className={styles.hourLabel}>{String(hour).padStart(2, "0")}:00</span>
-              {past && <span className={styles.reservedLabel}>Indisponible</span>}
+              {past && <span className={styles.reservedLabel}>{t("status.unavailable")}</span>}
               {status === "reserved" && <span className={styles.reservedLabel}>{t("calendar.reserved")}</span>}
               {isStartSelected(hour) && <span className={styles.selectionLabel}>{t("calendar.start")}</span>}
               {isEndSelected(hour) && <span className={styles.selectionLabel}>{t("calendar.end")}</span>}

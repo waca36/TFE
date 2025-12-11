@@ -7,7 +7,12 @@ import { useTranslation } from "react-i18next";
 export default function AdminPendingReservationsPage() {
   const { user, token } = useAuth();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const getDateLocale = () => {
+    const locales = { fr: "fr-BE", nl: "nl-BE", en: "en-GB" };
+    return locales[i18n.language] || "fr-BE";
+  };
 
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -70,7 +75,7 @@ export default function AdminPendingReservationsPage() {
 
   const formatDateTime = (dateTimeStr) => {
     const date = new Date(dateTimeStr);
-    return date.toLocaleString("fr-BE", {
+    return date.toLocaleString(getDateLocale(), {
       dateStyle: "short",
       timeStyle: "short",
     });

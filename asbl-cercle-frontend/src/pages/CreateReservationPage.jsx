@@ -225,7 +225,7 @@ export default function CreateReservationPage() {
           <h2 className={styles.espaceName}>{espace.name}</h2>
           <div className={styles.espaceInfo}>
             <p>
-              <strong>{t("spaces.type")} :</strong> {espace.type}
+              <strong>{t("spaces.type")} :</strong> {t(`spaceType.${espace.type}`) || espace.type}
             </p>
             <p>
               <strong>{t("common.capacity")} :</strong> {espace.capacity} {t("common.persons")}
@@ -244,7 +244,7 @@ export default function CreateReservationPage() {
       )}
 
       <div className={styles.calendarSection}>
-        <h3 className={styles.sectionTitle}>{t("calendar.selectDay")}</h3>
+        <h3 className={styles.sectionTitle}>{t("calendar.selectDate")}</h3>
         <ReservationCalendar espaceId={Number(espaceId)} onSelectDate={handleDateSelect} selectedDate={selectedDate} />
       </div>
 

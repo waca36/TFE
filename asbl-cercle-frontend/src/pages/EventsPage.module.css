@@ -62,6 +62,56 @@
   box-shadow: var(--shadow-soft);
 }
 
+.filtersTop {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.searchGroup {
+  flex: 1;
+  min-width: 200px;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  background: #fff;
+  color: var(--blue-dark);
+  font-size: 0.95rem;
+  transition: all var(--transition-fast);
+}
+
+.searchInput:hover {
+  border-color: var(--border-hover);
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(194, 117, 70, 0.15);
+}
+
+.searchInput::placeholder {
+  color: var(--taupe-dark);
+}
+
+.sortGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 180px;
+}
+
+.filtersGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.25rem;
+}
+
 .filterGroup {
   display: flex;
   flex-direction: column;
@@ -131,6 +181,40 @@
   outline: none;
   border-color: var(--orange);
   box-shadow: 0 0 0 3px rgba(194, 117, 70, 0.15);
+}
+
+.filtersFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.resultsCount {
+  font-size: 0.9rem;
+  color: var(--taupe-dark);
+  font-weight: 500;
+}
+
+.resetButton {
+  padding: 0.5rem 1rem;
+  background: transparent;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--blue-dark);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.resetButton:hover {
+  border-color: #dc2626;
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.05);
 }
 
 .badge {
@@ -386,17 +470,41 @@
     padding: 1rem;
   }
 
-  .filterButtons {
+  .filtersTop {
     flex-direction: column;
+    align-items: stretch;
+  }
+
+  .searchGroup {
+    min-width: 100%;
+  }
+
+  .sortGroup {
+    min-width: 100%;
+  }
+
+  .filtersGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .filterButtons {
+    flex-direction: row;
   }
 
   .filterButton {
-    width: 100%;
+    flex: 1;
     justify-content: center;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
   }
 
   .sortSelect {
     max-width: 100%;
+  }
+
+  .filtersFooter {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 

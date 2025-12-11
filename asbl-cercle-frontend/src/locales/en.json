@@ -113,7 +113,9 @@
     "reserve": "Book this space",
     "noSpaces": "No spaces available",
     "space": "Space",
-    "auditoriumRequiresApproval": "Auditorium reservations require justification and must be approved by an administrator."
+    "auditoriumRequiresApproval": "Auditorium reservations require justification and must be approved by an administrator.",
+    "type": "Type",
+    "basePrice": "Base price"
   },
 
   "spaceType": {
@@ -213,18 +215,36 @@
     "eventPassed": "Event passed",
     "event": "Event",
     "free": "Free",
+    "paid": "Paid",
     "placesAvailable": "places available",
     "notFound": "Event not found",
     "childcareAvailable": "Childcare available",
-    "filterByPrice": "Filter by price",
+    "searchPlaceholder": "Search for an event...",
+    "filterByPrice": "Price",
+    "filterByAvailability": "Availability",
+    "filterByChildcare": "Childcare",
     "allEvents": "All",
     "freeEvents": "Free",
     "paidEvents": "Paid",
+    "availableOnly": "Available",
+    "fullOnly": "Full",
+    "withChildcare": "With childcare",
+    "withoutChildcare": "Without childcare",
     "sortBy": "Sort by",
     "sortByDate": "Date",
+    "sortByDateAsc": "Date (soonest)",
+    "sortByDateDesc": "Date (latest)",
     "sortByPriceAsc": "Price ascending",
     "sortByPriceDesc": "Price descending",
-    "full": "Full"
+    "sortByCapacityAsc": "Capacity ascending",
+    "sortByCapacityDesc": "Capacity descending",
+    "full": "Full",
+    "eventFound": "event found",
+    "eventsFound": "events found",
+    "resetFilters": "Reset filters",
+    "location": "Location",
+    "startDate": "Start date",
+    "endDate": "End date"
   },
 
   "childcare": {
@@ -430,6 +450,7 @@
     "titlePlaceholder": "Ex: Networking evening",
     "descriptionPlaceholder": "Describe your event...",
     "locationPlaceholder": "Ex: Conference room, Brussels",
+    "locationHint": "Leave empty if the location is not yet confirmed",
     "capacityHint": "Maximum number of participants",
     "priceHint": "Leave empty or 0 for free",
     "eventRejected": "This event was rejected",

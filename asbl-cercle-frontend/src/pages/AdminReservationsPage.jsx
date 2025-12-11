@@ -8,7 +8,12 @@ import styles from "./AdminReservationsPage.module.css";
 export default function AdminReservationsPage() {
   const { user, token } = useAuth();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  const getDateLocale = () => {
+    const locales = { fr: "fr-BE", nl: "nl-BE", en: "en-GB" };
+    return locales[i18n.language] || "fr-BE";
+  };
 
   const [reservations, setReservations] = useState([]);
   const [filteredReservations, setFilteredReservations] = useState([]);
@@ -205,7 +210,7 @@ export default function AdminReservationsPage() {
                       "-"
                     )}
                   </td>
-                  <td className={styles.td}>{new Date(r.createdAt).toLocaleDateString("fr-BE")}</td>
+                  <td className={styles.td}>{new Date(r.createdAt).toLocaleDateString(getDateLocale())}</td>
                 </tr>
               ))
             )}
