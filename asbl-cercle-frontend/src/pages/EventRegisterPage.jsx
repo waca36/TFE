@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getPublicEvents, registerToEvent, createGarderieReservation } from "../services/api";
+import { getPublicEvents, registerToEvent } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "react-i18next";
 import PaymentForm from "../components/PaymentForm";
@@ -71,20 +71,11 @@ export default function EventRegisterPage() {
           eventId: parseInt(id),
           numberOfParticipants,
           paymentIntentId,
+          addChildcare: hasGarderie && addChildcare,
+          numberOfChildren: hasGarderie && addChildcare ? childrenCount : null,
         },
         token
       );
-
-      if (hasGarderie && addChildcare && childrenCount > 0) {
-        await createGarderieReservation(
-          {
-            sessionId: event.garderieSessionId,
-            numberOfChildren: childrenCount,
-            paymentIntentId,
-          },
-          token
-        );
-      }
 
       alert(requiresPayment ? t("payment.success") : t("events.registrationSuccess"));
       navigate("/my-reservations?tab=events");
@@ -187,30 +178,44 @@ export default function EventRegisterPage() {
         </div>
 
         {hasGarderie && (
-          <div className={styles.formGroup}>
-            <label className={styles.label}>
+          <div className={styles.childcareSection}>
+            <div className={styles.childcareHeader}>
+              <span className={styles.childcareIcon}>👶</span>
+              <span className={styles.childcareTitle}>{t("childcare.available")}</span>
+            </div>
+
+            <label
+              className={`${styles.childcareToggle} ${addChildcare ? styles.childcareToggleActive : ""}`}
+            >
               <input
                 type="checkbox"
                 checked={addChildcare}
                 onChange={(e) => setAddChildcare(e.target.checked)}
-                className={styles.checkbox}
+                className={styles.childcareCheckbox}
               />
-              Ajouter la garderie
+              <div className={styles.childcareToggleText}>
+                <span className={styles.childcareToggleLabel}>{t("childcare.addToRegistration")}</span>
+                <span className={styles.childcareTogglePrice}>
+                  {garderieUnit > 0 ? `${garderieUnit} € / ${t("childcare.perChild")}` : t("events.free")}
+                </span>
+              </div>
             </label>
 
             {addChildcare && (
-              <div className={styles.childcareBlock}>
-                <label className={styles.label}>Nombre d'enfants :</label>
-                <input
-                  type="number"
-                  min="1"
-                  value={childrenCount}
-                  onChange={(e) => setChildrenCount(parseInt(e.target.value) || 1)}
-                  className={styles.input}
-                />
-                <p className={styles.helper}>
-                  Tarif garderie : {garderieUnit} € / enfant
-                </p>
+              <div className={styles.childcareDetails}>
+                <div className={styles.childcareRow}>
+                  <label className={styles.label}>{t("childcare.numberOfChildren")} :</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={childrenCount}
+                    onChange={(e) => setChildrenCount(parseInt(e.target.value) || 1)}
+                    className={styles.childcareInput}
+                  />
+                  <span className={styles.childcareSubtotal}>
+                    {garderieTotal.toFixed(2)} €
+                  </span>
+                </div>
               </div>
             )}
           </div>

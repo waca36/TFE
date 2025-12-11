@@ -4,12 +4,14 @@ import be.cercle.asblcercle.config.PaymentVerifier;
 import be.cercle.asblcercle.entity.*;
 import be.cercle.asblcercle.repository.EventRegistrationRepository;
 import be.cercle.asblcercle.repository.EventRepository;
+import be.cercle.asblcercle.repository.GarderieReservationRepository;
 import be.cercle.asblcercle.repository.UserRepository;
 import be.cercle.asblcercle.web.dto.EventRegistrationRequest;
 import be.cercle.asblcercle.web.dto.EventRegistrationResponseDto;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -23,21 +25,25 @@ public class EventRegistrationController {
     private final EventRegistrationRepository registrationRepository;
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
+    private final GarderieReservationRepository garderieReservationRepository;
     private final PaymentVerifier paymentVerifier;
 
     public EventRegistrationController(
             EventRegistrationRepository registrationRepository,
             EventRepository eventRepository,
             UserRepository userRepository,
+            GarderieReservationRepository garderieReservationRepository,
             PaymentVerifier paymentVerifier
     ) {
         this.registrationRepository = registrationRepository;
         this.eventRepository = eventRepository;
         this.userRepository = userRepository;
+        this.garderieReservationRepository = garderieReservationRepository;
         this.paymentVerifier = paymentVerifier;
     }
 
     @PostMapping("/register")
+    @Transactional
     public EventRegistrationResponseDto register(
             @Valid @RequestBody EventRegistrationRequest request,
             Authentication authentication
@@ -61,7 +67,7 @@ public class EventRegistrationController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cet événement est déjà passé");
         }
 
-        if (registrationRepository.existsByUserAndEvent(user, event)) {
+        if (registrationRepository.existsByUserAndEventAndStatusNot(user, event, EventRegistrationStatus.CANCELLED)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Vous êtes déjà inscrit à cet événement");
         }
 
@@ -72,26 +78,70 @@ public class EventRegistrationController {
             }
         }
 
-        Double totalPrice = 0.0;
-        if (event.getPrice() != null && event.getPrice() > 0) {
-            totalPrice = event.getPrice() * request.getNumberOfParticipants();
+        // Handle childcare if requested
+        GarderieSession garderieSession = event.getGarderieSession();
+        int numberOfChildren = 0;
+        double garderiePrice = 0.0;
 
-            if (request.getPaymentIntentId() == null || request.getPaymentIntentId().isBlank()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Paiement requis pour cet événement");
+        if (request.isAddChildcare() && garderieSession != null) {
+            numberOfChildren = request.getNumberOfChildren() != null ? request.getNumberOfChildren() : 0;
+            if (numberOfChildren <= 0) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nombre d'enfants invalide");
             }
 
+            if (garderieSession.getStatus() != GarderieSessionStatus.OPEN) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La garderie n'est pas disponible pour cet événement");
+            }
+
+            Integer currentChildren = garderieReservationRepository.countTotalChildrenBySessionId(garderieSession.getId());
+            if (currentChildren == null) currentChildren = 0;
+            if (currentChildren + numberOfChildren > garderieSession.getCapacity()) {
+                int remaining = garderieSession.getCapacity() - currentChildren;
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Capacité garderie insuffisante. Places restantes : " + remaining);
+            }
+
+            garderiePrice = garderieSession.getPricePerChild() * numberOfChildren;
+        }
+
+        Double eventPrice = 0.0;
+        if (event.getPrice() != null && event.getPrice() > 0) {
+            eventPrice = event.getPrice() * request.getNumberOfParticipants();
+        }
+
+        Double totalPrice = eventPrice + garderiePrice;
+
+        // Verify payment if required
+        if (totalPrice > 0) {
+            if (request.getPaymentIntentId() == null || request.getPaymentIntentId().isBlank()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Paiement requis");
+            }
             paymentVerifier.verifyPayment(request.getPaymentIntentId());
         }
 
+        // Create event registration
         EventRegistration registration = new EventRegistration();
         registration.setUser(user);
         registration.setEvent(event);
         registration.setNumberOfParticipants(request.getNumberOfParticipants());
-        registration.setTotalPrice(totalPrice);
+        registration.setTotalPrice(eventPrice);
         registration.setPaymentIntentId(request.getPaymentIntentId());
         registration.setStatus(EventRegistrationStatus.CONFIRMED);
 
         EventRegistration saved = registrationRepository.save(registration);
+
+        // Create childcare reservation if requested
+        if (request.isAddChildcare() && garderieSession != null && numberOfChildren > 0) {
+            GarderieReservation garderieReservation = new GarderieReservation();
+            garderieReservation.setUser(user);
+            garderieReservation.setSession(garderieSession);
+            garderieReservation.setNumberOfChildren(numberOfChildren);
+            garderieReservation.setTotalPrice(garderiePrice);
+            garderieReservation.setPaymentIntentId(request.getPaymentIntentId());
+            garderieReservation.setStatus(GarderieReservationStatus.CONFIRMED);
+            garderieReservationRepository.save(garderieReservation);
+        }
+
         return EventRegistrationResponseDto.fromEntity(saved);
     }
 

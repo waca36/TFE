@@ -100,7 +100,18 @@ public class PaymentController {
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Evenement introuvable"));
             Double price = event.getPrice() != null ? event.getPrice() : 0.0;
             int participants = request.getNumberOfParticipants() != null ? request.getNumberOfParticipants() : 1;
-            return Math.round(price * participants * 100);
+            double eventTotal = price * participants;
+
+            // Add childcare price if applicable
+            double garderieTotal = 0.0;
+            if (request.getNumberOfChildren() != null && request.getNumberOfChildren() > 0) {
+                GarderieSession session = event.getGarderieSession();
+                if (session != null) {
+                    garderieTotal = session.getPricePerChild() * request.getNumberOfChildren();
+                }
+            }
+
+            return Math.round((eventTotal + garderieTotal) * 100);
         }
 
         if ("GARDERIE".equalsIgnoreCase(type) && request.getSessionId() != null) {

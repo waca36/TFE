@@ -2,6 +2,7 @@ package be.cercle.asblcercle.repository;
 
 import be.cercle.asblcercle.entity.Event;
 import be.cercle.asblcercle.entity.EventRegistration;
+import be.cercle.asblcercle.entity.EventRegistrationStatus;
 import be.cercle.asblcercle.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -23,6 +24,8 @@ public interface EventRegistrationRepository extends JpaRepository<EventRegistra
     Optional<EventRegistration> findByUserAndEvent(User user, Event event);
 
     boolean existsByUserAndEvent(User user, Event event);
+
+    boolean existsByUserAndEventAndStatusNot(User user, Event event, EventRegistrationStatus status);
 
     @Query("SELECT COALESCE(SUM(er.numberOfParticipants), 0) FROM EventRegistration er WHERE er.event.id = :eventId AND er.status != 'CANCELLED'")
     Integer countTotalParticipantsByEventId(@Param("eventId") Long eventId);

@@ -235,7 +235,10 @@
         "full": "Complet",
         "cancelReservation": "Annuler",
         "confirmCancel": "Êtes-vous sûr de vouloir annuler cette réservation ?",
-        "sessionPassed": "Session passée"
+        "sessionPassed": "Session passée",
+        "available": "Garderie disponible",
+        "addToRegistration": "Ajouter la garderie à mon inscription",
+        "perChild": "enfant"
     },
     "payment": {
         "title": "Paiement",

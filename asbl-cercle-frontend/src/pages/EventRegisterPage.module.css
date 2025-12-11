@@ -63,6 +63,113 @@
   margin-right: 0.5rem;
 }
 
+.childcareSection {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 1px solid #f59e0b;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-top: 1rem;
+}
+
+.childcareHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.childcareIcon {
+  font-size: 1.5rem;
+}
+
+.childcareTitle {
+  font-weight: 600;
+  color: #92400e;
+  font-size: 1rem;
+}
+
+.childcareToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  padding: 0.75rem;
+  background: #fff;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.childcareToggle:hover {
+  border-color: #f59e0b;
+}
+
+.childcareToggleActive {
+  border-color: #f59e0b;
+  background: #fffbeb;
+}
+
+.childcareCheckbox {
+  width: 20px;
+  height: 20px;
+  accent-color: #f59e0b;
+}
+
+.childcareToggleText {
+  flex: 1;
+}
+
+.childcareToggleLabel {
+  font-weight: 500;
+  color: #374151;
+  display: block;
+}
+
+.childcareTogglePrice {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.childcareDetails {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 8px;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.childcareRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.childcareInput {
+  width: 80px;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.childcareSubtotal {
+  margin-left: auto;
+  font-weight: 600;
+  color: #92400e;
+}
+
 .childcareBlock {
   margin-top: 0.5rem;
 }

@@ -14,6 +14,11 @@ public class EventRegistrationRequest {
 
     private String paymentIntentId;
 
+    private boolean addChildcare = false;
+
+    @Min(1)
+    private Integer numberOfChildren;
+
     public Long getEventId() { return eventId; }
     public void setEventId(Long eventId) { this.eventId = eventId; }
 
@@ -22,4 +27,10 @@ public class EventRegistrationRequest {
 
     public String getPaymentIntentId() { return paymentIntentId; }
     public void setPaymentIntentId(String paymentIntentId) { this.paymentIntentId = paymentIntentId; }
+
+    public boolean isAddChildcare() { return addChildcare; }
+    public void setAddChildcare(boolean addChildcare) { this.addChildcare = addChildcare; }
+
+    public Integer getNumberOfChildren() { return numberOfChildren; }
+    public void setNumberOfChildren(Integer numberOfChildren) { this.numberOfChildren = numberOfChildren; }
 }

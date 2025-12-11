@@ -234,7 +234,10 @@
                       "full":  "Volzet",
                       "cancelReservation":  "Annuleren",
                       "confirmCancel":  "Weet u zeker dat u deze reservering wilt annuleren?",
-                      "sessionPassed":  "Sessie voorbij"
+                      "sessionPassed":  "Sessie voorbij",
+                      "available":  "Kinderopvang beschikbaar",
+                      "addToRegistration":  "Kinderopvang toevoegen aan mijn inschrijving",
+                      "perChild":  "kind"
                   },
     "payment":  {
                     "title":  "Betaling",
