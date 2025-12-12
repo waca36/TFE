@@ -102,12 +102,14 @@
         "loginLink": "Connexion",
         "loginError": "Email ou mot de passe incorrect",
         "registerError": "Erreur d'inscription",
-        "accountSuspended": "Votre compte a été suspendu. Veuillez contacter l'administration."
+        "accountSuspended": "Votre compte a été suspendu. Veuillez contacter l'administration.",
+        "backToHome": "← Retour à l'accueil"
     },
     "spaces": {
         "title": "Espaces disponibles",
         "welcome": "Bienvenue",
         "reserve": "Réserver cet espace",
+        "loginToReserve": "Connectez-vous pour réserver",
         "noSpaces": "Aucun espace disponible",
         "space": "Espace",
         "auditoriumRequiresApproval": "Les réservations d'auditoire nécessitent une justification et doivent être approuvées par un administrateur.",
@@ -258,7 +260,8 @@
         "sessionPassed": "Session passée",
         "available": "Garderie disponible",
         "addToRegistration": "Ajouter la garderie à mon inscription",
-        "perChild": "enfant"
+        "perChild": "enfant",
+        "loginToReserve": "Connectez-vous pour réserver"
     },
     "payment": {
         "title": "Paiement",

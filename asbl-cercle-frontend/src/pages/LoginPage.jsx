@@ -64,6 +64,9 @@ export default function LoginPage() {
         <p className={styles.link}>
           {t("auth.noAccount")} <Link to="/register">{t("auth.createAccount")}</Link>
         </p>
+        <p className={styles.homeLink}>
+          <Link to="/">{t("auth.backToHome")}</Link>
+        </p>
       </div>
     </div>
   );

@@ -148,6 +148,27 @@
   color: var(--surface);
 }
 
+.loginLink {
+  color: var(--surface);
+  background: linear-gradient(135deg, var(--blue-dark) 0%, #2a4a6d 100%);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  transition: all var(--transition-normal);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  box-shadow: 0 2px 8px rgba(30, 52, 85, 0.2);
+}
+
+.loginLink:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(30, 52, 85, 0.3);
+  color: var(--surface);
+}
+
 .error {
   color: #dc2626;
   padding: 1rem;

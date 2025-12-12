@@ -102,12 +102,14 @@
                  "loginLink":  "Inloggen",
                  "loginError":  "Onjuiste e-mail of wachtwoord",
                  "registerError":  "Registratiefout",
-                 "accountSuspended":  "Uw account is geschorst. Neem contact op met de administratie."
+                 "accountSuspended":  "Uw account is geschorst. Neem contact op met de administratie.",
+                 "backToHome":  "← Terug naar home"
              },
     "spaces":  {
                    "title":  "Beschikbare ruimtes",
                    "welcome":  "Welkom",
                    "reserve":  "Reserveer deze ruimte",
+                   "loginToReserve":  "Log in om te reserveren",
                    "noSpaces":  "Geen ruimtes beschikbaar",
                    "space":  "Ruimte",
                    "auditoriumRequiresApproval":  "Auditoriumreserveringen vereisen een motivatie en moeten worden goedgekeurd door een beheerder.",
@@ -258,7 +260,8 @@
                       "sessionPassed":  "Sessie voorbij",
                       "available":  "Kinderopvang beschikbaar",
                       "addToRegistration":  "Kinderopvang toevoegen aan mijn inschrijving",
-                      "perChild":  "kind"
+                      "perChild":  "kind",
+                      "loginToReserve":  "Log in om te reserveren"
                   },
     "payment":  {
                     "title":  "Betaling",

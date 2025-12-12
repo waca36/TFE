@@ -29,6 +29,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    develop:
+      watch:
+        - action: rebuild
+          path: ./asbl-cercle/src
+        - action: rebuild
+          path: ./asbl-cercle/pom.xml
 
   frontend:
     build: ./asbl-cercle-frontend
@@ -40,6 +46,11 @@ services:
       - /app/node_modules
     depends_on:
       - backend
+    develop:
+      watch:
+        - action: sync
+          path: ./asbl-cercle-frontend/src
+          target: /app/src
 
 volumes:
   mysql_data:

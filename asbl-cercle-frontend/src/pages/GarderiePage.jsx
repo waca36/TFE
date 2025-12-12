@@ -44,7 +44,7 @@ export default function GarderiePage() {
               <th>{t("common.date")}</th>
               <th>{t("common.time")}</th>
               <th>{t("childcare.pricePerChild")}</th>
-              <th>{t("childcare.places")}</th>
+              <th>{t("common.capacity")}</th>
               <th>{t("common.actions")}</th>
             </tr>
           </thead>
@@ -79,8 +79,8 @@ export default function GarderiePage() {
                         </Link>
                       )
                     ) : (
-                      <Link to="/login" className={styles.primaryLink}>
-                        {t("nav.login")}
+                      <Link to="/login" className={styles.loginLink}>
+                        {t("childcare.loginToReserve")}
                       </Link>
                     )}
                   </td>

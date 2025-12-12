@@ -104,13 +104,15 @@
     "loginLink": "Login",
     "loginError": "Incorrect email or password",
     "registerError": "Registration error",
-    "accountSuspended": "Your account has been suspended. Please contact administration."
+    "accountSuspended": "Your account has been suspended. Please contact administration.",
+    "backToHome": "← Back to home"
   },
 
   "spaces": {
     "title": "Available spaces",
     "welcome": "Welcome",
     "reserve": "Book this space",
+    "loginToReserve": "Log in to book",
     "noSpaces": "No spaces available",
     "space": "Space",
     "auditoriumRequiresApproval": "Auditorium reservations require justification and must be approved by an administrator.",
@@ -266,7 +268,8 @@
     "sessionPassed": "Session passed",
     "available": "Childcare available",
     "addToRegistration": "Add childcare to my registration",
-    "perChild": "child"
+    "perChild": "child",
+    "loginToReserve": "Log in to book"
   },
 
   "payment": {

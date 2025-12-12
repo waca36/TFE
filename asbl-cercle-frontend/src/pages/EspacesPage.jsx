@@ -54,9 +54,15 @@ export default function EspacesPage() {
               </div>
 
               <div className={styles.cardFooter}>
-                <Link to={`/reservations/new/${e.id}`} className={styles.reserveButton}>
-                  {t('spaces.reserve')} →
-                </Link>
+                {user ? (
+                  <Link to={`/reservations/new/${e.id}`} className={styles.reserveButton}>
+                    {t('spaces.reserve')} →
+                  </Link>
+                ) : (
+                  <Link to="/login" className={styles.loginButton}>
+                    {t('spaces.loginToReserve')}
+                  </Link>
+                )}
               </div>
             </div>
           ))}

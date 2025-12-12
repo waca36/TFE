@@ -140,3 +140,19 @@
 .link a:hover {
   color: var(--orange);
 }
+
+.homeLink {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.homeLink a {
+  color: var(--taupe-dark);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.homeLink a:hover {
+  color: var(--orange);
+}
