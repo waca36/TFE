@@ -14,13 +14,14 @@
 }
 
 .navButton {
-  background: #f3f4f6;
+  background: var(--surface-muted);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 0.5rem 1rem;
   font-size: 1.2rem;
   cursor: pointer;
   color: var(--blue-dark);
+  box-shadow: none;
 }
 
 .monthYear {
@@ -85,11 +86,11 @@
 }
 
 .daySelected {
-  border: 3px solid #1f2937;
+  border: 3px solid var(--blue-dark);
 }
 
 .dayToday {
-  box-shadow: 0 0 0 2px #2563eb inset;
+  box-shadow: 0 0 0 2px var(--blue-light) inset;
   font-weight: 700;
 }
 

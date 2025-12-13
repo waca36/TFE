@@ -25,16 +25,40 @@
   --radius-md: 10px;
   --radius-lg: 14px;
   --radius-xl: 20px;
+  --text-primary: var(--blue-dark);
+  --text-secondary: var(--taupe-dark);
+  --text-muted: var(--taupe-light);
 
   font-family: "Poppins", "Segoe UI", -apple-system, system-ui, sans-serif;
   line-height: 1.6;
   font-weight: 400;
-  color: var(--blue-dark);
+  color: var(--text-primary);
   background-color: var(--bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+[data-theme="dark"] {
+  --blue-dark: #e4e8ed;
+  --blue-darker: #f0f3f7;
+  --blue-light: #7da4d4;
+  --taupe-dark: #b5b0a5;
+  --taupe-light: #8a857b;
+  --bg: #121820;
+  --bg-gradient: linear-gradient(135deg, #1a222d 0%, #0f151c 100%);
+  --surface: #1a222d;
+  --surface-hover: #222c3a;
+  --surface-muted: rgba(255, 255, 255, 0.05);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.15);
+  --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.4);
+  --shadow-strong: 0 16px 48px rgba(0, 0, 0, 0.5);
+  --text-primary: #e4e8ed;
+  --text-secondary: #b5b0a5;
+  --text-muted: #8a857b;
 }
 
 html {
@@ -55,7 +79,16 @@ body {
     radial-gradient(ellipse 80% 50% at 50% -20%, rgba(97, 140, 195, 0.15), transparent),
     radial-gradient(ellipse 60% 40% at 100% 0%, rgba(194, 117, 70, 0.08), transparent),
     var(--bg);
-  color: var(--blue-dark);
+  color: var(--text-primary);
+  transition: background var(--transition-normal), color var(--transition-normal);
+}
+
+[data-theme="dark"] body {
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, transparent 30%),
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(97, 140, 195, 0.1), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(194, 117, 70, 0.05), transparent),
+    var(--bg);
 }
 
 main {

@@ -63,7 +63,6 @@ export default function EventsPage() {
 
   const filteredAndSortedEvents = events
     .filter((ev) => {
-      // Search filter
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
         const matchesTitle = ev.title?.toLowerCase().includes(query);
@@ -72,16 +71,13 @@ export default function EventsPage() {
         if (!matchesTitle && !matchesDescription && !matchesLocation) return false;
       }
 
-      // Price filter
       if (priceFilter === "free" && (ev.price && ev.price > 0)) return false;
       if (priceFilter === "paid" && (!ev.price || ev.price === 0)) return false;
 
-      // Availability filter
       const isFull = ev.availablePlaces !== null && ev.availablePlaces !== undefined && ev.availablePlaces <= 0;
       if (availabilityFilter === "available" && isFull) return false;
       if (availabilityFilter === "full" && !isFull) return false;
 
-      // Childcare filter
       if (childcareFilter === "with" && !ev.garderieSessionId) return false;
       if (childcareFilter === "without" && ev.garderieSessionId) return false;
 

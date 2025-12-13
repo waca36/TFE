@@ -68,7 +68,6 @@ public class PaymentController {
     @PostMapping("/create-payment-intent")
     public ResponseEntity<PaymentResponse> createPaymentIntent(@RequestBody PaymentRequest request) {
         try {
-            // Vérifier si l'utilisateur est déjà inscrit à l'événement
             if ("EVENT".equalsIgnoreCase(request.getReservationType()) && request.getEventId() != null) {
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                 String email = auth.getName();
@@ -83,6 +82,10 @@ public class PaymentController {
             }
 
             Long calculatedAmount = calculateServerSideAmount(request);
+
+            if (calculatedAmount <= 0) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Le montant doit être supérieur à 0");
+            }
 
             if (request.getAmount() != null && !request.getAmount().equals(calculatedAmount)) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Montant invalide");
@@ -114,7 +117,7 @@ public class PaymentController {
 
             return ResponseEntity.ok(new PaymentResponse(paymentIntent.getClientSecret(), publicKey));
         } catch (StripeException e) {
-            return ResponseEntity.badRequest().build();
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erreur Stripe: " + e.getMessage());
         }
     }
 
@@ -128,7 +131,6 @@ public class PaymentController {
             int participants = request.getNumberOfParticipants() != null ? request.getNumberOfParticipants() : 1;
             double eventTotal = price * participants;
 
-            // Add childcare price if applicable
             double garderieTotal = 0.0;
             if (request.getNumberOfChildren() != null && request.getNumberOfChildren() > 0) {
                 GarderieSession session = event.getGarderieSession();

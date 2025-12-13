@@ -71,6 +71,26 @@ export async function registerRequest(data) {
   return res.json();
 }
 
+export async function forgotPasswordRequest(email) {
+  const res = await fetch(`${API_URL}/api/auth/forgot-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email }),
+  });
+  if (!res.ok) throw new Error("Erreur lors de l'envoi de l'email");
+  return res.json();
+}
+
+export async function resetPasswordRequest(token, newPassword) {
+  const res = await fetch(`${API_URL}/api/auth/reset-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token, newPassword }),
+  });
+  if (!res.ok) throw new Error("Erreur lors de la réinitialisation du mot de passe");
+  return res.json();
+}
+
 export async function getEspaces() {
   const res = await fetch(`${API_URL}/api/public/espaces`);
   if (!res.ok) throw new Error("Erreur lors du chargement des espaces");

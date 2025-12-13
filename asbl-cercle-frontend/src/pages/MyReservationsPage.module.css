@@ -7,11 +7,11 @@
 .title {
   font-size: 1.8rem;
   margin-bottom: 1.5rem;
-  color: #1f2937;
+  color: var(--blue-dark);
 }
 
 .info {
-  color: #1f2937;
+  color: var(--blue-dark);
 }
 
 .error {
@@ -19,22 +19,22 @@
 }
 
 .approvedSection {
-  background: #f8fafc;
+  background: var(--surface);
   padding: 1rem;
   border-radius: 8px;
   margin-bottom: 1.5rem;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border);
 }
 
 .sectionTitle {
   font-size: 1.3rem;
   margin-bottom: 0.5rem;
-  color: #111827;
+  color: var(--blue-dark);
 }
 
 .sectionDesc {
   margin-bottom: 1rem;
-  color: #4b5563;
+  color: var(--taupe-dark);
 }
 
 .approvedList {
@@ -44,11 +44,11 @@
 }
 
 .approvedCard {
-  background: #fff;
+  background: var(--surface);
   border-radius: 8px;
   padding: 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  border: 1px solid #e5e7eb;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border);
 }
 
 .approvedHeader {
@@ -61,10 +61,11 @@
 .approvedEspace {
   margin: 0;
   font-size: 1.1rem;
+  color: var(--blue-dark);
 }
 
 .approvedDetails {
-  color: #4b5563;
+  color: var(--taupe-dark);
   line-height: 1.5;
   margin-bottom: 0.5rem;
 }
@@ -81,28 +82,35 @@
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  box-shadow: none;
 }
 
 .cancelButtonSmall {
   padding: 0.5rem 0.8rem;
-  background: #f3f4f6;
-  color: #111827;
-  border: 1px solid #e5e7eb;
+  background: var(--surface-muted);
+  color: var(--blue-dark);
+  border: 1px solid var(--border);
   border-radius: 6px;
   cursor: pointer;
+  box-shadow: none;
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
-  background: #fff;
+  background: var(--surface);
 }
 
 .table th,
 .table td {
   padding: 0.75rem;
   text-align: left;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border);
+  color: var(--blue-dark);
+}
+
+.table th {
+  color: var(--taupe-dark);
 }
 
 .badge {
@@ -129,8 +137,8 @@
 }
 
 .statusCancelled {
-  background: #f3f4f6;
-  color: #6b7280;
+  background: var(--surface-muted);
+  color: var(--taupe-dark);
 }
 
 .statusRejected {
@@ -139,8 +147,8 @@
 }
 
 .statusDefault {
-  background: #f3f4f6;
-  color: #6b7280;
+  background: var(--surface-muted);
+  color: var(--taupe-dark);
 }
 
 .cancelButton {
@@ -151,41 +159,43 @@
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.85rem;
+  box-shadow: none;
 }
 
 .disabledText {
-  color: #9ca3af;
+  color: var(--taupe-light);
   font-size: 0.85rem;
 }
 
 .rejectionReason {
-  color: #9ca3af;
+  color: var(--taupe-light);
   font-size: 0.9rem;
   margin-top: 0.25rem;
 }
 
 .paymentCard {
-  background: #fff;
+  background: var(--surface);
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border);
 }
 
 .loadingBox {
-  background: #fff;
+  background: var(--surface);
   border-radius: 8px;
   padding: 2rem;
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-soft);
+  color: var(--blue-dark);
 }
 
-/* Tabs */
 .tabs {
   display: flex;
   gap: 0.5rem;
   margin-bottom: 1.5rem;
-  border-bottom: 2px solid #e5e7eb;
+  border-bottom: 2px solid var(--border);
   padding-bottom: 0;
 }
 
@@ -198,15 +208,17 @@
   cursor: pointer;
   font-size: 0.95rem;
   font-weight: 500;
-  color: #6b7280;
+  color: var(--taupe-dark);
   transition: all 0.2s;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  box-shadow: none;
 }
 
 .tab:hover {
-  color: #111827;
+  color: var(--blue-dark);
+  transform: none;
 }
 
 .tabActive {
@@ -215,8 +227,8 @@
 }
 
 .tabCount {
-  background: #e5e7eb;
-  color: #374151;
+  background: var(--surface-muted);
+  color: var(--blue-dark);
   padding: 0.1rem 0.5rem;
   border-radius: 999px;
   font-size: 0.8rem;

@@ -5,7 +5,7 @@
 }
 
 .title {
-  color: #1e3455;
+  color: var(--blue-dark);
   margin-bottom: 1rem;
 }
 
@@ -14,13 +14,13 @@
 }
 
 .linkGhost {
-  color: #618cc3;
+  color: var(--blue-light);
   text-decoration: none;
   font-weight: 500;
 }
 
 .info {
-  color: #1f2937;
+  color: var(--blue-dark);
 }
 
 .error {
@@ -35,11 +35,11 @@
 }
 
 .statCard {
-  background: #fff;
+  background: var(--surface);
   padding: 1rem 1.5rem;
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border-left: 4px solid #6b7280;
+  box-shadow: var(--shadow-soft);
+  border-left: 4px solid var(--taupe-dark);
   display: flex;
   flex-direction: column;
   min-width: 120px;
@@ -64,12 +64,12 @@
 .statNumber {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #1f2937;
+  color: var(--blue-dark);
 }
 
 .statLabel {
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--taupe-dark);
 }
 
 .filtersContainer {
@@ -77,10 +77,11 @@
   gap: 1rem;
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
-  background: #fff;
+  background: var(--surface);
   padding: 1rem;
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border);
 }
 
 .filterGroup {
@@ -92,15 +93,17 @@
 .filterLabel {
   font-size: 0.8rem;
   font-weight: 500;
-  color: #6b7280;
+  color: var(--taupe-dark);
 }
 
 .select,
 .searchInput {
   padding: 0.5rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border);
   border-radius: 6px;
   font-size: 0.9rem;
+  background: var(--surface);
+  color: var(--blue-dark);
 }
 
 .searchInput {
@@ -109,9 +112,10 @@
 
 .tableContainer {
   overflow-x: auto;
-  background: #fff;
+  background: var(--surface);
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border);
 }
 
 .table {
@@ -122,29 +126,29 @@
 .th {
   padding: 0.75rem 1rem;
   text-align: left;
-  background: #f9fafb;
-  border-bottom: 2px solid #e5e7eb;
+  background: var(--surface-muted);
+  border-bottom: 2px solid var(--border);
   font-size: 0.85rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--taupe-dark);
   white-space: nowrap;
 }
 
 .tr {
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border);
 }
 
 .td {
   padding: 0.75rem 1rem;
   font-size: 0.9rem;
-  color: #374151;
+  color: var(--blue-dark);
   vertical-align: middle;
 }
 
 .noData {
   padding: 2rem;
   text-align: center;
-  color: #9ca3af;
+  color: var(--taupe-light);
 }
 
 .typeBadge {
@@ -170,8 +174,8 @@
 }
 
 .typeDefault {
-  background: #f3f4f6;
-  color: #374151;
+  background: var(--surface-muted);
+  color: var(--taupe-dark);
 }
 
 .statusBadge {
@@ -197,8 +201,8 @@
 }
 
 .statusDefault {
-  background: #f3f4f6;
-  color: #374151;
+  background: var(--surface-muted);
+  color: var(--taupe-dark);
 }
 
 .userInfo {
@@ -208,11 +212,12 @@
 
 .userName {
   font-weight: 500;
+  color: var(--blue-dark);
 }
 
 .userEmail {
   font-size: 0.8rem;
-  color: #6b7280;
+  color: var(--taupe-dark);
 }
 
 .paidBadge {
@@ -227,6 +232,6 @@
 
 .resultCount {
   margin-top: 1rem;
-  color: #6b7280;
+  color: var(--taupe-dark);
   font-size: 0.9rem;
 }

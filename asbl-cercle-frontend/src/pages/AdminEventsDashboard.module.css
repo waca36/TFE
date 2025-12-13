@@ -21,21 +21,21 @@
 .kicker {
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #756d5b;
+  color: var(--taupe-dark);
   font-size: 0.8rem;
   margin: 0;
 }
 
 .title {
   margin: 0;
-  color: #1e3455;
+  color: var(--blue-dark);
   font-size: 2rem;
   font-weight: 700;
 }
 
 .subtitle {
   margin: 0;
-  color: #4b5563;
+  color: var(--taupe-dark);
 }
 
 .actions {
@@ -45,7 +45,7 @@
 }
 
 .primary {
-  background: #c27546;
+  background: var(--orange);
   color: #ffffff;
   border: none;
   border-radius: 10px;
@@ -61,6 +61,7 @@
 
 .primary:hover {
   background: #a25f39;
+  transform: none;
 }
 
 .primary:active {
@@ -68,8 +69,8 @@
 }
 
 .secondary {
-  border: 1px solid #1e3455;
-  color: #1e3455;
+  border: 1px solid var(--blue-dark);
+  color: var(--blue-dark);
   background: transparent;
   border-radius: 10px;
   padding: 11px 16px;
@@ -79,20 +80,21 @@
   align-items: center;
   gap: 8px;
   cursor: pointer;
+  box-shadow: none;
 }
 
 .section {
-  background: #ffffff;
+  background: var(--surface);
   border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  box-shadow: 0 8px 26px rgba(30, 52, 85, 0.08);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
   padding: 18px;
   margin-bottom: 18px;
 }
 
 .sectionTitle {
   margin: 0 0 12px;
-  color: #1e3455;
+  color: var(--blue-dark);
   font-size: 1.25rem;
   display: flex;
   align-items: center;
@@ -100,7 +102,7 @@
 }
 
 .badge {
-  background: #c27546;
+  background: var(--orange);
   color: #ffffff;
   padding: 4px 10px;
   border-radius: 999px;
@@ -121,13 +123,14 @@
 .table td {
   padding: 12px 10px;
   text-align: left;
-  border-bottom: 1px solid #ebe7df;
-  color: #1e3455;
+  border-bottom: 1px solid var(--border);
+  color: var(--blue-dark);
 }
 
 .table th {
   font-weight: 700;
-  background: #f7f6f4;
+  background: var(--surface-muted);
+  color: var(--taupe-dark);
 }
 
 .rowActions {
@@ -137,7 +140,7 @@
 }
 
 .link {
-  color: #1e3455;
+  color: var(--blue-dark);
   text-decoration: none;
   font-weight: 600;
 }
@@ -147,28 +150,28 @@
   padding: 6px 10px;
   border-radius: 999px;
   font-weight: 600;
-  background: rgba(97, 140, 195, 0.15);
-  color: #1e3455;
+  background: var(--surface-muted);
+  color: var(--blue-dark);
 }
 
 .statusDraft {
-  background: rgba(164, 161, 151, 0.3);
-  color: #756d5b;
+  background: var(--surface-muted);
+  color: var(--taupe-dark);
 }
 
 .statusPublished {
   background: rgba(97, 140, 195, 0.2);
-  color: #1e3455;
+  color: var(--blue-dark);
 }
 
 .statusCancelled {
   background: rgba(194, 117, 70, 0.18);
-  color: #c27546;
+  color: var(--orange);
 }
 
 .info {
   margin: 12px 0;
-  color: #4b5563;
+  color: var(--taupe-dark);
 }
 
 .error {

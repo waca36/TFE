@@ -26,15 +26,12 @@ export default function MyReservationsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Space reservations
   const [spaceReservations, setSpaceReservations] = useState([]);
   const [payingReservation, setPayingReservation] = useState(null);
   const [processingPayment, setProcessingPayment] = useState(false);
 
-  // Event registrations
   const [eventRegistrations, setEventRegistrations] = useState([]);
 
-  // Garderie reservations
   const [garderieReservations, setGarderieReservations] = useState([]);
 
   useEffect(() => {
@@ -68,7 +65,6 @@ export default function MyReservationsPage() {
     }
   };
 
-  // Space handlers
   const handleCancelSpace = async (id) => {
     if (!window.confirm(t("reservation.confirmCancel"))) return;
     try {
@@ -93,7 +89,6 @@ export default function MyReservationsPage() {
     }
   };
 
-  // Event handlers
   const handleCancelEvent = async (id) => {
     if (!window.confirm(t("events.confirmCancel"))) return;
     try {
@@ -104,7 +99,6 @@ export default function MyReservationsPage() {
     }
   };
 
-  // Garderie handlers
   const handleCancelGarderie = async (id) => {
     if (!window.confirm(t("childcare.confirmCancel"))) return;
     try {
@@ -129,7 +123,6 @@ export default function MyReservationsPage() {
   if (loading) return <p className={styles.info}>{t("common.loading")}</p>;
   if (error) return <p className={styles.error}>{error}</p>;
 
-  // Payment form view
   if (payingReservation) {
     return (
       <div className={styles.container}>
@@ -177,7 +170,6 @@ export default function MyReservationsPage() {
     <div className={styles.container}>
       <h1 className={styles.title}>{t("nav.myReservations")}</h1>
 
-      {/* Tabs */}
       <div className={styles.tabs}>
         {tabs.map((tab) => (
           <button
@@ -191,7 +183,6 @@ export default function MyReservationsPage() {
         ))}
       </div>
 
-      {/* Spaces Tab */}
       {activeTab === "spaces" && (
         <div className={styles.tabContent}>
           {approvedSpaceReservations.length > 0 && (
@@ -277,7 +268,6 @@ export default function MyReservationsPage() {
         </div>
       )}
 
-      {/* Events Tab */}
       {activeTab === "events" && (
         <div className={styles.tabContent}>
           {eventRegistrations.length === 0 ? (
@@ -327,7 +317,6 @@ export default function MyReservationsPage() {
         </div>
       )}
 
-      {/* Childcare Tab */}
       {activeTab === "childcare" && (
         <div className={styles.tabContent}>
           {garderieReservations.length === 0 ? (

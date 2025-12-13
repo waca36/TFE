@@ -60,6 +60,9 @@ export default function LoginPage() {
             {t("auth.loginButton")}
           </button>
         </form>
+        <p className={styles.forgotLink}>
+          <Link to="/forgot-password">{t("auth.forgotPassword")}</Link>
+        </p>
         {error && <p className={styles.error}>{error}</p>}
         <p className={styles.link}>
           {t("auth.noAccount")} <Link to="/register">{t("auth.createAccount")}</Link>

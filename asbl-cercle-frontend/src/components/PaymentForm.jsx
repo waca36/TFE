@@ -59,21 +59,18 @@ function CheckoutForm({ amount, description, reservationType, metadata, onSucces
 
       if (!response.ok) {
         let errorMessage = t("payment.error");
+        const text = await response.text();
         try {
-          const errorData = await response.json();
+          const errorData = JSON.parse(text);
           if (errorData?.message) {
             errorMessage = errorData.message;
           } else if (errorData?.error) {
             errorMessage = errorData.error;
-          } else if (typeof errorData === "string") {
-            errorMessage = errorData;
+          } else if (errorData?.reason) {
+            errorMessage = errorData.reason;
           }
         } catch {
-          // Si le JSON échoue, essayer le texte brut
-          try {
-            const text = await response.text();
-            if (text) errorMessage = text;
-          } catch {}
+          if (text) errorMessage = text;
         }
         throw new Error(errorMessage);
       }

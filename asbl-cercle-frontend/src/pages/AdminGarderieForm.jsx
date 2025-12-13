@@ -7,6 +7,7 @@ import {
 } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "react-i18next";
+import styles from "./AdminGarderieForm.module.css";
 
 export default function AdminGarderieForm() {
   const { token } = useAuth();
@@ -81,11 +82,11 @@ export default function AdminGarderieForm() {
     }
   };
 
-  if (loading) return <p>{t('common.loading')}</p>;
+  if (loading) return <p className={styles.info}>{t('common.loading')}</p>;
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>
+    <div className={styles.container}>
+      <h1 className={styles.title}>
         {isEdit ? t('admin.editSession') : t('admin.newSession')}
       </h1>
 
@@ -93,23 +94,23 @@ export default function AdminGarderieForm() {
         <Link to="/admin/garderie">← {t('admin.backToList')}</Link>
       </p>
 
-      {error && <p style={styles.error}>{error}</p>}
+      {error && <p className={styles.error}>{error}</p>}
 
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <div style={styles.formGroup}>
-          <label style={styles.label}>{t('common.title')} :</label>
+      <form onSubmit={handleSubmit} className={styles.form}>
+        <div className={styles.formGroup}>
+          <label className={styles.label}>{t('common.title')} :</label>
           <input
             type="text"
             name="title"
             value={form.title}
             onChange={handleChange}
             required
-            style={styles.input}
+            className={styles.input}
           />
         </div>
 
-        <div style={styles.formGroup}>
-          <label style={styles.label}>{t('common.description')} :</label>
+        <div className={styles.formGroup}>
+          <label className={styles.label}>{t('common.description')} :</label>
           <textarea
             name="description"
             value={form.description}
@@ -117,50 +118,50 @@ export default function AdminGarderieForm() {
             rows="3"
             minLength={10}
             required
-            style={styles.textarea}
+            className={styles.textarea}
           />
         </div>
 
-        <div style={styles.formGroup}>
-          <label style={styles.label}>{t('common.date')} :</label>
+        <div className={styles.formGroup}>
+          <label className={styles.label}>{t('common.date')} :</label>
           <input
             type="date"
             name="sessionDate"
             value={form.sessionDate}
             onChange={handleChange}
             required
-            style={styles.input}
+            className={styles.input}
           />
         </div>
 
-        <div style={styles.formRow}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>{t('reservation.startTime')} :</label>
+        <div className={styles.formRow}>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>{t('reservation.startTime')} :</label>
             <input
               type="time"
               name="startTime"
               value={form.startTime}
               onChange={handleChange}
               required
-              style={styles.input}
+              className={styles.input}
             />
           </div>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>{t('reservation.endTime')} :</label>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>{t('reservation.endTime')} :</label>
             <input
               type="time"
               name="endTime"
               value={form.endTime}
               onChange={handleChange}
               required
-              style={styles.input}
+              className={styles.input}
             />
           </div>
         </div>
 
-        <div style={styles.formRow}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>{t('common.capacity')} :</label>
+        <div className={styles.formRow}>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>{t('common.capacity')} :</label>
             <input
               type="number"
               name="capacity"
@@ -168,11 +169,11 @@ export default function AdminGarderieForm() {
               onChange={handleChange}
               required
               min="1"
-              style={styles.input}
+              className={styles.input}
             />
           </div>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>{t('childcare.pricePerChild')} (€) :</label>
+          <div className={styles.formGroup}>
+            <label className={styles.label}>{t('childcare.pricePerChild')} (€) :</label>
             <input
               type="number"
               name="pricePerChild"
@@ -181,18 +182,18 @@ export default function AdminGarderieForm() {
               required
               min="0"
               step="0.01"
-              style={styles.input}
+              className={styles.input}
             />
           </div>
         </div>
 
-        <div style={styles.formGroup}>
-          <label style={styles.label}>{t('common.status')} :</label>
+        <div className={styles.formGroup}>
+          <label className={styles.label}>{t('common.status')} :</label>
           <select
             name="status"
             value={form.status}
             onChange={handleChange}
-            style={styles.select}
+            className={styles.select}
           >
             <option value="OPEN">{t('status.open')}</option>
             <option value="CLOSED">{t('status.closed')}</option>
@@ -200,15 +201,15 @@ export default function AdminGarderieForm() {
           </select>
         </div>
 
-        <div style={styles.buttonGroup}>
+        <div className={styles.buttonGroup}>
           <button
             type="button"
             onClick={() => navigate("/admin/garderie")}
-            style={styles.cancelButton}
+            className={styles.cancelButton}
           >
             {t('common.cancel')}
           </button>
-          <button type="submit" style={styles.submitButton}>
+          <button type="submit" className={styles.submitButton}>
             {isEdit ? t('common.save') : t('common.create')}
           </button>
         </div>
@@ -216,93 +217,3 @@ export default function AdminGarderieForm() {
     </div>
   );
 }
-
-const styles = {
-  container: {
-    maxWidth: "500px",
-    margin: "0 auto",
-  },
-  title: {
-    fontSize: "1.8rem",
-    marginBottom: "1rem",
-    color: "#1f2937",
-  },
-  form: {
-    background: "#fff",
-    borderRadius: "8px",
-    padding: "1.5rem",
-    boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-  },
-  formGroup: {
-    marginBottom: "1rem",
-    flex: 1,
-  },
-  formRow: {
-    display: "flex",
-    gap: "1rem",
-  },
-  label: {
-    display: "block",
-    marginBottom: "0.5rem",
-    fontWeight: "500",
-    color: "#374151",
-  },
-  input: {
-    width: "100%",
-    padding: "0.5rem",
-    border: "1px solid #d1d5db",
-    borderRadius: "6px",
-    fontSize: "1rem",
-    boxSizing: "border-box",
-  },
-  textarea: {
-    width: "100%",
-    padding: "0.5rem",
-    border: "1px solid #d1d5db",
-    borderRadius: "6px",
-    fontSize: "1rem",
-    boxSizing: "border-box",
-    resize: "vertical",
-  },
-  select: {
-    width: "100%",
-    padding: "0.5rem",
-    border: "1px solid #d1d5db",
-    borderRadius: "6px",
-    fontSize: "1rem",
-    boxSizing: "border-box",
-  },
-  error: {
-    color: "#dc2626",
-    background: "#fef2f2",
-    padding: "0.75rem",
-    borderRadius: "6px",
-    marginBottom: "1rem",
-  },
-  buttonGroup: {
-    display: "flex",
-    gap: "1rem",
-    marginTop: "1.5rem",
-  },
-  cancelButton: {
-    flex: 1,
-    padding: "0.75rem 1rem",
-    border: "1px solid #d1d5db",
-    borderRadius: "6px",
-    background: "#fff",
-    color: "#374151",
-    fontSize: "1rem",
-    cursor: "pointer",
-  },
-  submitButton: {
-    flex: 1,
-    padding: "0.75rem 1rem",
-    border: "none",
-    borderRadius: "6px",
-    background: "#2563eb",
-    color: "#fff",
-    fontSize: "1rem",
-    fontWeight: "500",
-    cursor: "pointer",
-  },
-};

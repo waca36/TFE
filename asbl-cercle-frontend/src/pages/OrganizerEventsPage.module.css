@@ -5,16 +5,16 @@
 }
 
 .info {
-  color: #1f2937;
+  color: var(--blue-dark);
 }
 
 .title {
-  color: #1e3455;
+  color: var(--blue-dark);
   margin: 0;
 }
 
 .subtitle {
-  color: #4b5563;
+  color: var(--taupe-dark);
   margin: 0.2rem 0 0;
 }
 
@@ -53,10 +53,10 @@
 }
 
 .statCard {
-  background: #fff;
+  background: var(--surface);
   padding: 1.25rem;
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-soft);
   cursor: pointer;
   border-left: 4px solid #6366f1;
   transition: transform 0.2s, box-shadow 0.2s;
@@ -64,7 +64,7 @@
 
 .statCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-medium);
 }
 
 .statPending {
@@ -87,12 +87,12 @@
   display: block;
   font-size: 2rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--blue-dark);
 }
 
 .statLabel {
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--taupe-dark);
 }
 
 .filterTabs {
@@ -100,7 +100,7 @@
   gap: 0.5rem;
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
-  background: #f3f4f6;
+  background: var(--surface-muted);
   padding: 0.5rem;
   border-radius: 12px;
 }
@@ -112,22 +112,27 @@
   border-radius: 8px;
   cursor: pointer;
   font-size: 0.9rem;
-  color: #6b7280;
+  color: var(--taupe-dark);
   display: flex;
   align-items: center;
   gap: 0.5rem;
   transition: all 0.2s;
+  box-shadow: none;
+}
+
+.filterTab:hover {
+  transform: none;
 }
 
 .filterTabActive {
-  background: #fff;
-  color: #111827;
+  background: var(--surface);
+  color: var(--blue-dark);
   font-weight: 600;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-soft);
 }
 
 .filterCount {
-  background: #e5e7eb;
+  background: var(--surface-muted);
   padding: 0.15rem 0.5rem;
   border-radius: 10px;
   font-size: 0.75rem;
@@ -136,9 +141,10 @@
 .emptyState {
   text-align: center;
   padding: 4rem 2rem;
-  background: #f9fafb;
+  background: var(--surface);
   border-radius: 16px;
-  border: 2px dashed #e5e7eb;
+  border: 2px dashed var(--border);
+  color: var(--taupe-dark);
 }
 
 .emptyIcon {
@@ -157,15 +163,16 @@
 }
 
 .eventCard {
-  background: #fff;
+  background: var(--surface);
   border-radius: 16px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  box-shadow: var(--shadow-soft);
   overflow: hidden;
+  border: 1px solid var(--border);
 }
 
 .eventHeader {
   padding: 1.25rem;
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -175,7 +182,7 @@
 .eventTitle {
   margin: 0;
   font-size: 1.1rem;
-  color: #111827;
+  color: var(--blue-dark);
   flex: 1;
 }
 
@@ -201,7 +208,7 @@
   align-items: center;
   gap: 0.75rem;
   font-size: 0.9rem;
-  color: #4b5563;
+  color: var(--taupe-dark);
 }
 
 .detailIcon {
@@ -212,7 +219,7 @@
 
 .eventActions {
   padding: 1rem 1.25rem;
-  border-top: 1px solid #f3f4f6;
+  border-top: 1px solid var(--border);
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
@@ -220,12 +227,13 @@
 
 .editButton {
   padding: 0.5rem 1rem;
-  background: #f3f4f6;
-  color: #374151;
+  background: var(--surface-muted);
+  color: var(--blue-dark);
   text-decoration: none;
   border-radius: 8px;
   font-size: 0.85rem;
   font-weight: 500;
+  border: 1px solid var(--border);
 }
 
 .cancelButton {
@@ -237,6 +245,7 @@
   font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
+  box-shadow: none;
 }
 
 .viewButton {
@@ -247,6 +256,7 @@
   border-radius: 8px;
   font-size: 0.85rem;
   font-weight: 500;
+  border: 1px solid rgba(37, 99, 235, 0.2);
 }
 
 .pendingNote {
@@ -262,14 +272,15 @@
 .legend {
   margin-top: 2rem;
   padding: 1.5rem;
-  background: #f9fafb;
+  background: var(--surface);
   border-radius: 12px;
+  border: 1px solid var(--border);
 }
 
 .legendTitle {
   margin: 0 0 1rem 0;
   font-size: 1rem;
-  color: #374151;
+  color: var(--blue-dark);
 }
 
 .legendGrid {
@@ -283,7 +294,7 @@
   align-items: center;
   gap: 0.75rem;
   font-size: 0.85rem;
-  color: #6b7280;
+  color: var(--taupe-dark);
 }
 
 .statusBadge {
@@ -312,6 +323,6 @@
 }
 
 .statusCancelled {
-  background: #f3f4f6;
-  color: #6b7280;
+  background: var(--surface-muted);
+  color: var(--taupe-dark);
 }

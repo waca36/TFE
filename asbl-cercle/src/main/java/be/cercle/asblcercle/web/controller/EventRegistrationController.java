@@ -78,7 +78,6 @@ public class EventRegistrationController {
             }
         }
 
-        // Handle childcare if requested
         GarderieSession garderieSession = event.getGarderieSession();
         int numberOfChildren = 0;
         double garderiePrice = 0.0;
@@ -111,7 +110,6 @@ public class EventRegistrationController {
 
         Double totalPrice = eventPrice + garderiePrice;
 
-        // Verify payment if required
         if (totalPrice > 0) {
             if (request.getPaymentIntentId() == null || request.getPaymentIntentId().isBlank()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Paiement requis");
@@ -119,7 +117,6 @@ public class EventRegistrationController {
             paymentVerifier.verifyPayment(request.getPaymentIntentId());
         }
 
-        // Create event registration
         EventRegistration registration = new EventRegistration();
         registration.setUser(user);
         registration.setEvent(event);
@@ -130,7 +127,6 @@ public class EventRegistrationController {
 
         EventRegistration saved = registrationRepository.save(registration);
 
-        // Create childcare reservation if requested
         if (request.isAddChildcare() && garderieSession != null && numberOfChildren > 0) {
             GarderieReservation garderieReservation = new GarderieReservation();
             garderieReservation.setUser(user);

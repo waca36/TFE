@@ -103,7 +103,24 @@
         "loginError": "Email ou mot de passe incorrect",
         "registerError": "Erreur d'inscription",
         "accountSuspended": "Votre compte a été suspendu. Veuillez contacter l'administration.",
-        "backToHome": "← Retour à l'accueil"
+        "backToHome": "← Retour à l'accueil",
+        "forgotPassword": "Mot de passe oublié ?",
+        "forgotPasswordDescription": "Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+        "emailPlaceholder": "votre@email.com",
+        "sendResetLink": "Envoyer le lien",
+        "emailSent": "Email envoyé !",
+        "checkYourEmail": "Vérifiez votre boîte de réception. Si un compte existe avec cette adresse, vous recevrez un lien pour réinitialiser votre mot de passe.",
+        "backToLogin": "← Retour à la connexion",
+        "forgotPasswordError": "Erreur lors de l'envoi de l'email",
+        "resetPassword": "Réinitialiser le mot de passe",
+        "enterNewPassword": "Entrez votre nouveau mot de passe.",
+        "passwordTooShort": "Le mot de passe doit contenir au moins 6 caractères",
+        "resetPasswordError": "Erreur lors de la réinitialisation du mot de passe",
+        "passwordResetSuccess": "Mot de passe réinitialisé !",
+        "redirectingToLogin": "Vous allez être redirigé vers la page de connexion...",
+        "invalidLink": "Lien invalide",
+        "invalidLinkDescription": "Ce lien de réinitialisation est invalide ou a expiré.",
+        "requestNewLink": "Demander un nouveau lien"
     },
     "spaces": {
         "title": "Espaces disponibles",
@@ -261,7 +278,8 @@
         "available": "Garderie disponible",
         "addToRegistration": "Ajouter la garderie à mon inscription",
         "perChild": "enfant",
-        "loginToReserve": "Connectez-vous pour réserver"
+        "loginToReserve": "Connectez-vous pour réserver",
+        "ageRequirement": "La garderie accueille les enfants de {{minAge}} à {{maxAge}} ans."
     },
     "payment": {
         "title": "Paiement",
@@ -450,6 +468,8 @@
     },
     "error": {
         "404": "Page non trouvée",
+        "404Description": "La page que vous recherchez n'existe pas ou a été déplacée.",
+        "backToHome": "Retour à l'accueil",
         "generic": "Une erreur est survenue"
     }
 }

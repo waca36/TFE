@@ -13,7 +13,7 @@
 }
 
 .title {
-  color: #1e3455;
+  color: var(--blue-dark);
   margin: 0;
 }
 
@@ -23,13 +23,13 @@
 }
 
 .linkGhost {
-  color: #618cc3;
+  color: var(--blue-light);
   text-decoration: none;
   font-weight: 500;
 }
 
 .primaryLink {
-  background: #c27546;
+  background: var(--orange);
   color: #fff;
   padding: 0.6rem 1rem;
   border-radius: 8px;
@@ -40,21 +40,28 @@
 .table {
   width: 100%;
   border-collapse: collapse;
-  background: #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
   border-radius: 8px;
   overflow: hidden;
+  border: 1px solid var(--border);
 }
 
 .table th,
 .table td {
   padding: 0.75rem 0.9rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border);
   text-align: left;
+  color: var(--blue-dark);
+}
+
+.table th {
+  background: var(--surface-muted);
+  color: var(--taupe-dark);
 }
 
 .info {
-  color: #1f2937;
+  color: var(--blue-dark);
 }
 
 .error {
@@ -72,4 +79,5 @@
   padding: 0.4rem 0.8rem;
   cursor: pointer;
   font-weight: 600;
+  box-shadow: none;
 }

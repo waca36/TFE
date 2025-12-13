@@ -134,6 +134,10 @@ export default function GarderieReservePage() {
               <strong>{t("common.description")} :</strong> {session.description || "-"}
             </p>
           </div>
+          <div className={styles.ageInfo}>
+            <span className={styles.ageIcon}>i</span>
+            <span>{t("childcare.ageRequirement", { minAge: 3, maxAge: 12 })}</span>
+          </div>
         </div>
       )}
 

@@ -6,14 +6,18 @@
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(246, 244, 241, 0.95) 100%);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(30, 52, 85, 0.08);
-  box-shadow: 0 4px 30px rgba(30, 52, 85, 0.08);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
+  transition: background var(--transition-normal), border-color var(--transition-normal);
 }
 
-/* Top bar for auth & language */
+:global([data-theme="dark"]) .header {
+  background: linear-gradient(180deg, rgba(26, 34, 45, 0.98) 0%, rgba(18, 24, 32, 0.95) 100%);
+}
+
 .topBar {
-  background: rgba(30, 52, 85, 0.03);
-  border-bottom: 1px solid rgba(30, 52, 85, 0.06);
+  background: var(--surface-muted);
+  border-bottom: 1px solid var(--border);
 }
 
 .topBarContent {
@@ -21,9 +25,15 @@
   margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 1rem;
   padding: 0.4rem 2.5rem;
+}
+
+.leftControls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .authSection {
@@ -49,7 +59,7 @@
 
 .topButton {
   background: transparent;
-  border: 1px solid rgba(30, 52, 85, 0.2);
+  border: 1px solid var(--border-hover);
   color: var(--taupe-dark);
   font-size: 0.8rem;
   font-weight: 500;
@@ -57,12 +67,14 @@
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
+  box-shadow: none;
 }
 
 .topButton:hover {
-  background: var(--blue-dark);
-  border-color: var(--blue-dark);
+  background: var(--orange);
+  border-color: var(--orange);
   color: #fff;
+  transform: none;
 }
 
 .topCta {
@@ -98,7 +110,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  color: #0b1220;
+  color: var(--blue-dark);
   text-decoration: none;
   padding: 0.5rem 0.75rem;
   border-radius: 12px;
@@ -106,7 +118,7 @@
 }
 
 .logo:hover {
-  background: rgba(30, 52, 85, 0.04);
+  background: var(--surface-muted);
   transform: translateY(-1px);
 }
 
@@ -191,7 +203,7 @@
 
 .link:hover {
   color: var(--orange);
-  background: rgba(194, 117, 70, 0.06);
+  background: var(--surface-muted);
 }
 
 .link:hover::after {
@@ -205,8 +217,8 @@
   font-weight: 600;
   padding: 0.5rem 0.9rem;
   border-radius: 10px;
-  background: linear-gradient(135deg, rgba(30, 52, 85, 0.08) 0%, rgba(97, 140, 195, 0.12) 100%);
-  border: 1px solid rgba(30, 52, 85, 0.12);
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
@@ -214,10 +226,10 @@
 }
 
 .highlightLink:hover {
-  background: linear-gradient(135deg, rgba(30, 52, 85, 0.12) 0%, rgba(97, 140, 195, 0.18) 100%);
-  border-color: rgba(30, 52, 85, 0.2);
+  background: var(--surface-hover);
+  border-color: var(--border-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(30, 52, 85, 0.15);
+  box-shadow: var(--shadow-soft);
 }
 
 .adminLink {
@@ -247,7 +259,7 @@
   align-items: center;
   gap: 0.25rem;
   padding: 0.2rem 0.6rem;
-  background: rgba(30, 52, 85, 0.15);
+  background: var(--surface-muted);
   color: var(--blue-dark);
   border-radius: 999px;
   font-size: 0.7rem;

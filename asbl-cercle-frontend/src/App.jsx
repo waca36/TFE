@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 
 import Layout from "./components/Layout";
 import LoginPage from "./pages/LoginPage";
@@ -24,9 +23,11 @@ import ProfilePage from "./pages/ProfilePage";
 import OrganizerEventsPage from "./pages/OrganizerEventsPage";
 import OrganizerEventForm from "./pages/OrganizerEventForm";
 import HomePage from "./pages/HomePage";
+import NotFoundPage from "./pages/NotFoundPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 export default function App() {
-  const { t } = useTranslation();
 
   return (
     <Routes>
@@ -41,6 +42,8 @@ export default function App() {
 
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password" element={<ResetPasswordPage />} />
 
       <Route
         path="/espace"
@@ -253,7 +256,7 @@ export default function App() {
         path="*"
         element={
           <Layout>
-            <div className="page404">{t("error.404")}</div>
+            <NotFoundPage />
           </Layout>
         }
       />

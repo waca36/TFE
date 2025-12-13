@@ -16,23 +16,23 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--taupe-dark);
   margin: 0;
 }
 
 .title {
   margin: 0.2rem 0;
   font-size: 1.8rem;
-  color: #1e3455;
+  color: var(--blue-dark);
 }
 
 .subtitle {
   margin: 0;
-  color: #4b5563;
+  color: var(--taupe-dark);
 }
 
 .backLink {
-  color: #618cc3;
+  color: var(--blue-light);
   text-decoration: none;
   font-weight: 500;
 }
@@ -62,16 +62,18 @@
   cursor: pointer;
   font-weight: 600;
   font-size: 0.85rem;
+  box-shadow: none;
 }
 
 .alertButton:hover {
   background: #d97706;
+  transform: none;
 }
 
 .subsectionTitle {
   margin: 1.5rem 0 0.75rem;
   font-size: 1rem;
-  color: #374151;
+  color: var(--blue-dark);
   font-weight: 600;
 }
 
@@ -79,7 +81,7 @@
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
-  background: #f3f4f6;
+  background: var(--surface-muted);
   padding: 0.5rem;
   border-radius: 12px;
   margin-bottom: 1rem;
@@ -92,30 +94,37 @@
   border-radius: 10px;
   cursor: pointer;
   font-weight: 600;
-  color: #374151;
+  color: var(--taupe-dark);
   display: flex;
   align-items: center;
   gap: 0.35rem;
+  box-shadow: none;
+}
+
+.tab:hover {
+  transform: none;
 }
 
 .tabActive {
-  background: #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: var(--surface);
+  box-shadow: var(--shadow-soft);
+  color: var(--blue-dark);
 }
 
 .tabBadge {
-  background: #e5e7eb;
+  background: var(--surface-muted);
   padding: 0.1rem 0.6rem;
   border-radius: 999px;
   font-size: 0.75rem;
 }
 
 .section {
-  background: #fff;
+  background: var(--surface);
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-soft);
   padding: 1rem;
   margin-bottom: 1rem;
+  border: 1px solid var(--border);
 }
 
 .sectionHeader {
@@ -128,7 +137,7 @@
 .sectionTitle {
   margin: 0;
   font-size: 1.2rem;
-  color: #111827;
+  color: var(--blue-dark);
 }
 
 .statsGrid {
@@ -138,10 +147,10 @@
 }
 
 .statCard {
-  background: #f9fafb;
+  background: var(--surface-muted);
   border-radius: 10px;
   padding: 1rem;
-  border-left: 4px solid #6b7280;
+  border-left: 4px solid var(--taupe-dark);
 }
 
 .statBlue {
@@ -158,12 +167,11 @@
 
 .statPurple {
   border-color: #8b5cf6;
-  background: #f5f3ff;
 }
 
 .statLabel {
   margin: 0;
-  color: #6b7280;
+  color: var(--taupe-dark);
   font-size: 0.85rem;
 }
 
@@ -171,7 +179,7 @@
   margin: 0.35rem 0 0;
   font-size: 1.6rem;
   font-weight: 700;
-  color: #111827;
+  color: var(--blue-dark);
 }
 
 .grid {
@@ -181,8 +189,8 @@
 }
 
 .card {
-  background: #fff;
-  border: 1px solid #e5e7eb;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 10px;
   padding: 1rem;
 }
@@ -196,23 +204,23 @@
 .cardTitle {
   margin: 0.1rem 0 0;
   font-size: 1.05rem;
-  color: #1f2937;
+  color: var(--blue-dark);
 }
 
 .cardDate {
   margin: 0;
-  color: #6b7280;
+  color: var(--taupe-dark);
   font-size: 0.85rem;
 }
 
 .cardMeta {
   margin: 0.35rem 0 0;
-  color: #6b7280;
+  color: var(--taupe-dark);
   font-size: 0.9rem;
 }
 
 .cardDesc {
-  color: #4b5563;
+  color: var(--taupe-dark);
 }
 
 .badge {
@@ -234,7 +242,7 @@
 }
 
 .btnPrimary {
-  background: #618cc3;
+  background: var(--blue-light);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -257,6 +265,7 @@
   padding: 0.5rem 0.9rem;
   cursor: pointer;
   font-weight: 600;
+  box-shadow: none;
 }
 
 .btnDanger {
@@ -267,6 +276,7 @@
   padding: 0.5rem 0.9rem;
   cursor: pointer;
   font-weight: 600;
+  box-shadow: none;
 }
 
 .btnDangerSmall {
@@ -277,20 +287,22 @@
   padding: 0.35rem 0.7rem;
   cursor: pointer;
   font-weight: 600;
+  box-shadow: none;
 }
 
 .btnGhost {
-  background: #f3f4f6;
-  color: #111827;
+  background: var(--surface-muted);
+  color: var(--blue-dark);
   border: none;
   border-radius: 8px;
   padding: 0.5rem 0.9rem;
   cursor: pointer;
   font-weight: 600;
+  box-shadow: none;
 }
 
 .linkGhost {
-  color: #618cc3;
+  color: var(--blue-light);
   text-decoration: none;
   font-weight: 500;
 }
@@ -302,10 +314,12 @@
 .textarea {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border);
   border-radius: 6px;
   margin-bottom: 0.5rem;
   resize: vertical;
+  background: var(--surface);
+  color: var(--blue-dark);
 }
 
 .rejectActions {
@@ -322,25 +336,33 @@
 .table {
   width: 100%;
   border-collapse: collapse;
+  background: var(--surface);
 }
 
 .table th,
 .table td {
   padding: 0.75rem 0.9rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--border);
   text-align: left;
+  color: var(--blue-dark);
+}
+
+.table th {
+  color: var(--taupe-dark);
 }
 
 .select {
   padding: 0.4rem 0.6rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border);
   border-radius: 6px;
+  background: var(--surface);
+  color: var(--blue-dark);
 }
 
 .loading {
   text-align: center;
   padding: 3rem;
-  color: #6b7280;
+  color: var(--taupe-dark);
 }
 
 .error {

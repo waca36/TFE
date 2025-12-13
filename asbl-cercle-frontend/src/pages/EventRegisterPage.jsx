@@ -118,7 +118,7 @@ export default function EventRegisterPage() {
             metadata={{
               eventId: parseInt(id),
               numberOfParticipants,
-              garderieSessionId: hasGarderie && addChildcare ? event.garderieSessionId : undefined,
+              sessionId: hasGarderie && addChildcare ? event.garderieSessionId : undefined,
               numberOfChildren: hasGarderie && addChildcare ? childrenCount : undefined,
             }}
             onSuccess={handlePaymentSuccess}

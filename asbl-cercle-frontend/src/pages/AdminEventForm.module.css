@@ -2,14 +2,14 @@
   max-width: 720px;
   margin: 0 auto;
   padding: 24px;
-  background: #f7f6f4;
+  background: var(--surface-muted);
   border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--border);
 }
 
 .title {
   margin: 0 0 8px;
-  color: #1e3455;
+  color: var(--blue-dark);
   font-weight: 600;
   font-size: 1.75rem;
 }
@@ -18,7 +18,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: #1e3455;
+  color: var(--blue-dark);
   text-decoration: none;
   font-weight: 500;
   margin-bottom: 16px;
@@ -34,11 +34,11 @@
 }
 
 .form {
-  background: #ffffff;
+  background: var(--surface);
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 6px 20px rgba(30, 52, 85, 0.08);
-  border: 1px solid rgba(0, 0, 0, 0.03);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -58,7 +58,7 @@
 
 .label {
   font-weight: 600;
-  color: #1e3455;
+  color: var(--blue-dark);
   font-size: 0.95rem;
 }
 
@@ -68,10 +68,10 @@
   width: 100%;
   padding: 10px 12px;
   border-radius: 10px;
-  border: 1px solid #d7d3c8;
-  background: #fbfbfb;
+  border: 1px solid var(--border);
+  background: var(--surface);
   font-size: 1rem;
-  color: #1e3455;
+  color: var(--blue-dark);
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
@@ -79,9 +79,9 @@
 .textarea:focus,
 .select:focus {
   outline: none;
-  border-color: #618cc3;
+  border-color: var(--blue-light);
   box-shadow: 0 0 0 3px rgba(97, 140, 195, 0.2);
-  background: #ffffff;
+  background: var(--surface);
 }
 
 .textarea {
@@ -107,7 +107,7 @@
   align-items: center;
   gap: 8px;
   font-weight: 600;
-  color: #1e3455;
+  color: var(--blue-dark);
 }
 
 .garderieGrid {
@@ -117,29 +117,31 @@
 }
 
 .secondary {
-  border: 1px solid #1e3455;
+  border: 1px solid var(--blue-dark);
   background: transparent;
-  color: #1e3455;
+  color: var(--blue-dark);
   padding: 12px;
   border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: none;
 }
 
 .secondary:hover {
-  background: rgba(30, 52, 85, 0.08);
+  background: var(--surface-hover);
 }
 
 .primary {
   border: none;
-  background: #c27546;
+  background: var(--orange);
   color: #ffffff;
   padding: 12px;
   border-radius: 10px;
   font-weight: 700;
   cursor: pointer;
   transition: background 0.2s ease, transform 0.2s ease;
+  box-shadow: none;
 }
 
 .primary:hover {

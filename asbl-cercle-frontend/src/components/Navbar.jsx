@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "./LanguageSwitcher";
+import ThemeToggle from "./ThemeToggle";
 import styles from "./Navbar.module.css";
 
 export default function Navbar() {
@@ -16,10 +17,12 @@ export default function Navbar() {
 
   return (
     <header className={styles.header}>
-      {/* Top bar - auth & language */}
       <div className={styles.topBar}>
         <div className={styles.topBarContent}>
-          <LanguageSwitcher />
+          <div className={styles.leftControls}>
+            <LanguageSwitcher />
+            <ThemeToggle />
+          </div>
           <div className={styles.authSection}>
             {user ? (
               <>
@@ -47,7 +50,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Main navbar */}
       <div className={styles.bar}>
         <Link to="/" className={styles.logo}>
           <div className={styles.logoMark}>

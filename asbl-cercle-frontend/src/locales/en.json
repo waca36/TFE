@@ -105,7 +105,24 @@
     "loginError": "Incorrect email or password",
     "registerError": "Registration error",
     "accountSuspended": "Your account has been suspended. Please contact administration.",
-    "backToHome": "← Back to home"
+    "backToHome": "← Back to home",
+    "forgotPassword": "Forgot password?",
+    "forgotPasswordDescription": "Enter your email address and we'll send you a link to reset your password.",
+    "emailPlaceholder": "your@email.com",
+    "sendResetLink": "Send reset link",
+    "emailSent": "Email sent!",
+    "checkYourEmail": "Check your inbox. If an account exists with this address, you will receive a link to reset your password.",
+    "backToLogin": "← Back to login",
+    "forgotPasswordError": "Error sending email",
+    "resetPassword": "Reset password",
+    "enterNewPassword": "Enter your new password.",
+    "passwordTooShort": "Password must be at least 6 characters",
+    "resetPasswordError": "Error resetting password",
+    "passwordResetSuccess": "Password reset!",
+    "redirectingToLogin": "You will be redirected to the login page...",
+    "invalidLink": "Invalid link",
+    "invalidLinkDescription": "This reset link is invalid or has expired.",
+    "requestNewLink": "Request a new link"
   },
 
   "spaces": {
@@ -269,7 +286,8 @@
     "available": "Childcare available",
     "addToRegistration": "Add childcare to my registration",
     "perChild": "child",
-    "loginToReserve": "Log in to book"
+    "loginToReserve": "Log in to book",
+    "ageRequirement": "Childcare welcomes children aged {{minAge}} to {{maxAge}} years."
   },
 
   "payment": {
@@ -471,6 +489,8 @@
 
   "error": {
     "404": "Page not found",
+    "404Description": "The page you are looking for does not exist or has been moved.",
+    "backToHome": "Back to home",
     "generic": "An error occurred"
   }
 }

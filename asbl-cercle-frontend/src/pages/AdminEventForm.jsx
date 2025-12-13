@@ -26,8 +26,6 @@ export default function AdminEventForm() {
     garderieRequired: false,
     garderiePrice: "",
     garderieCapacity: "",
-    garderieMinAge: "",
-    garderieMaxAge: "",
     status: "DRAFT",
   });
 
@@ -65,8 +63,6 @@ export default function AdminEventForm() {
               garderieRequired: ev.garderieRequired || false,
               garderiePrice: ev.garderiePrice ?? "",
               garderieCapacity: ev.garderieCapacity ?? "",
-              garderieMinAge: ev.garderieMinAge ?? "",
-              garderieMaxAge: ev.garderieMaxAge ?? "",
               status: ev.status,
             });
           }
@@ -125,8 +121,6 @@ export default function AdminEventForm() {
       price: event.price ? Number(event.price) : null,
       garderiePrice: event.garderiePrice !== "" ? Number(event.garderiePrice) : null,
       garderieCapacity: event.garderieCapacity !== "" ? Number(event.garderieCapacity) : null,
-      garderieMinAge: event.garderieMinAge !== "" ? Number(event.garderieMinAge) : null,
-      garderieMaxAge: event.garderieMaxAge !== "" ? Number(event.garderieMaxAge) : null,
       externalAddress: event.locationType === "EXTERNAL" ? event.location : null,
     };
 
@@ -325,28 +319,6 @@ export default function AdminEventForm() {
                 value={event.garderieCapacity}
                 onChange={handleChange}
                 min="1"
-                className={styles.input}
-              />
-            </div>
-            <div className={styles.field}>
-              <label className={styles.label}>{t("organizer.childcareMinAge")}</label>
-              <input
-                type="number"
-                name="garderieMinAge"
-                value={event.garderieMinAge}
-                onChange={handleChange}
-                min="0"
-                className={styles.input}
-              />
-            </div>
-            <div className={styles.field}>
-              <label className={styles.label}>{t("organizer.childcareMaxAge")}</label>
-              <input
-                type="number"
-                name="garderieMaxAge"
-                value={event.garderieMaxAge}
-                onChange={handleChange}
-                min="0"
                 className={styles.input}
               />
             </div>

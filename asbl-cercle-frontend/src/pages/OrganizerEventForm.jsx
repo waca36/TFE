@@ -23,8 +23,6 @@ export default function OrganizerEventForm() {
     garderieRequired: false,
     garderiePrice: "",
     garderieCapacity: "",
-    garderieMinAge: "",
-    garderieMaxAge: "",
   });
   const [originalEvent, setOriginalEvent] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -54,8 +52,6 @@ export default function OrganizerEventForm() {
             garderieRequired: event.garderieRequired || false,
             garderiePrice: event.garderiePrice ?? "",
             garderieCapacity: event.garderieCapacity ?? "",
-            garderieMinAge: event.garderieMinAge ?? "",
-            garderieMaxAge: event.garderieMaxAge ?? "",
           });
         })
         .catch((err) => setError(err.message))
@@ -111,8 +107,6 @@ export default function OrganizerEventForm() {
       price: form.price ? parseFloat(form.price) : 0,
       garderiePrice: form.garderiePrice !== "" ? parseFloat(form.garderiePrice) : null,
       garderieCapacity: form.garderieCapacity !== "" ? parseInt(form.garderieCapacity) : null,
-      garderieMinAge: form.garderieMinAge !== "" ? parseInt(form.garderieMinAge) : null,
-      garderieMaxAge: form.garderieMaxAge !== "" ? parseInt(form.garderieMaxAge) : null,
     };
 
     try {
@@ -308,28 +302,6 @@ export default function OrganizerEventForm() {
                   value={form.garderieCapacity}
                   onChange={handleChange}
                   min="1"
-                  className={styles.input}
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label className={styles.label}>{t("organizer.childcareMinAge")}</label>
-                <input
-                  type="number"
-                  name="garderieMinAge"
-                  value={form.garderieMinAge}
-                  onChange={handleChange}
-                  min="0"
-                  className={styles.input}
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label className={styles.label}>{t("organizer.childcareMaxAge")}</label>
-                <input
-                  type="number"
-                  name="garderieMaxAge"
-                  value={form.garderieMaxAge}
-                  onChange={handleChange}
-                  min="0"
                   className={styles.input}
                 />
               </div>

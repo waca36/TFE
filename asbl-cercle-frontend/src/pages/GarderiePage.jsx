@@ -26,6 +26,11 @@ export default function GarderiePage() {
     <div className={styles.container}>
       <h1 className={styles.title}>{t("childcare.title")}</h1>
 
+      <div className={styles.ageInfo}>
+        <span className={styles.ageIcon}>i</span>
+        <span>{t("childcare.ageRequirement", { minAge: 3, maxAge: 12 })}</span>
+      </div>
+
       {user && (
         <p className={styles.linkRow}>
           <Link to="/my-reservations?tab=childcare" className={styles.linkGhost}>

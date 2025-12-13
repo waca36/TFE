@@ -41,7 +41,8 @@
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-  background: #f9fafb;
+  background: var(--surface-muted);
+  color: var(--blue-dark);
 }
 
 .available {
@@ -57,7 +58,7 @@
 }
 
 .past {
-  background: #f3f4f6;
+  background: var(--surface-muted);
   color: var(--taupe-dark);
   cursor: not-allowed;
   opacity: 0.6;
